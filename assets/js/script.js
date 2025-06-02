@@ -157,3 +157,54 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
   });
 }
+
+  const ytPlayers = {};
+  function loadYouTubeVideo2(container) {
+    const videoId = container.getAttribute('data-video-id');
+
+    // Prevent duplicate player creation
+    if (ytPlayers[videoId]) return;
+
+    // Hide thumbnail container if exists
+    const thumbnail = container.querySelector('.youtube-thumbnail');
+    if (thumbnail) thumbnail.style.display = 'none';
+
+    // Create player container
+    const iframeWrapper = document.createElement('div');
+    const playerDivId = `yt-player-${videoId}`;
+    iframeWrapper.id = playerDivId;
+    iframeWrapper.style.width = '100%';
+    iframeWrapper.style.height = container.offsetHeight + 'px';
+
+    container.appendChild(iframeWrapper);
+
+    // Create YouTube player
+    ytPlayers[videoId] = new YT.Player(playerDivId, {
+      videoId: videoId,
+      playerVars: {
+    autoplay: 1,
+  controls: 0,            // Hide playback controls
+  modestbranding: 1,      // Hide YouTube logo on control bar
+  rel: 0,                 // Don't show related videos at end
+  fs: 0,                  // Hide fullscreen button
+  loop: 1,
+  playlist: videoId,      // Required for looping
+  disablekb: 1,           // Disable keyboard shortcuts
+  iv_load_policy: 3,      // Hide annotations
+  showinfo: 0             // Deprecated, but some legacy support
+  
+
+      },
+      events: {
+        onStateChange: function (event) {
+          if (event.data === YT.PlayerState.ENDED) {
+            ytPlayers[videoId].destroy();
+            ytPlayers[videoId] = null;
+
+            container.removeChild(iframeWrapper);
+            if (thumbnail) thumbnail.style.display = 'block';
+          }
+        }
+      }
+    });
+  }
