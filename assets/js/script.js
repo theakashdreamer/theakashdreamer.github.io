@@ -208,3 +208,21 @@ for (let i = 0; i < navigationLinks.length; i++) {
       }
     });
   }
+function showProductModal(title, description, imageSrc) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDescription').textContent = description;
+  document.getElementById('modalImage').src = imageSrc;
+  document.getElementById('productModal').style.display = 'block';
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').style.display = 'none';
+}
+
+// Optional: Close modal when clicking outside the modal content
+window.onclick = function(event) {
+  const modal = document.getElementById('productModal');
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+}
