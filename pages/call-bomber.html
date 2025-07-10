@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Call Bomber (Demo UI)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+      text-align: center;
+    }
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+    input {
+      padding: 10px;
+      width: 90%;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ff5252;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e04e4e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Call Trigger (Demo)</h2>
+    <form id="callForm">
+      <input type="text" id="fromNumber" placeholder="From Number" required /><br>
+      <input type="text" id="toNumber" placeholder="To Number" required /><br>
+      <button type="submit">Send</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    document.getElementById("callForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const from = document.getElementById("fromNumber").value;
+      const to = document.getElementById("toNumber").value;
+      // ⚠️ Replace this alert with an actual backend API call
+      document.getElementById("status").innerText = `Pretending to call from ${from} to ${to}`;
+    });
+  </script>
+
+</body>
+</html>
