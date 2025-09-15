@@ -3,39 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Call Bomber (Demo UI)</title>
+  <title>Call Trigger UI</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #f0f2f5;
       padding: 30px;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
     .form-container {
       background: #fff;
-      padding: 20px;
+      padding: 25px 20px;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0,0,0,0.1);
       max-width: 400px;
-      margin: auto;
+      width: 100%;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: 600;
     }
     input {
       padding: 10px;
-      width: 90%;
-      margin-bottom: 10px;
+      width: 100%;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      font-size: 1rem;
     }
     button {
       padding: 10px 20px;
-      background-color: #ff5252;
+      background-color: #007bff;
       border: none;
       color: white;
       border-radius: 8px;
       cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
     }
     button:hover {
-      background-color: #e04e4e;
+      background-color: #0056b3;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
     }
   </style>
 </head>
@@ -44,20 +70,52 @@
   <div class="form-container">
     <h2>Call Trigger (Demo)</h2>
     <form id="callForm">
-      <input type="text" id="fromNumber" placeholder="From Number" required /><br>
-      <input type="text" id="toNumber" placeholder="To Number" required /><br>
-      <button type="submit">Send</button>
+      <label for="fromNumber">From Number</label>
+      <input type="tel" id="fromNumber" placeholder="+1XXXXXXXXXX" required pattern="^\+?[0-9]{10,15}$" />
+      
+      <label for="toNumber">To Number</label>
+      <input type="tel" id="toNumber" placeholder="+91XXXXXXXXXX" required pattern="^\+?[0-9]{10,15}$" />
+      
+      <button type="submit">Send Call</button>
     </form>
     <p id="status"></p>
   </div>
 
   <script>
-    document.getElementById("callForm").addEventListener("submit", function (e) {
+    const form = document.getElementById("callForm");
+    const statusText = document.getElementById("status");
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const from = document.getElementById("fromNumber").value;
-      const to = document.getElementById("toNumber").value;
-      // ⚠️ Replace this alert with an actual backend API call
-      document.getElementById("status").innerText = `Pretending to call from ${from} to ${to}`;
+
+      const from = document.getElementById("fromNumber").value.trim();
+      const to = document.getElementById("toNumber").value.trim();
+
+      statusText.textContent = "Sending call...";
+      statusText.className = "";
+
+      try {
+        const res = await fetch("/api/call", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ from, to })
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          statusText.textContent = result.message;
+          statusText.className = "success";
+        } else {
+          throw new Error(result.message || "Unknown error");
+        }
+
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Call failed: " + err.message;
+        statusText.className = "error";
+      }
     });
   </script>
 
