@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
+
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
@@ -26,13 +27,13 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
+
         // Make them globally available
         window.firebaseApp = app;
         window.db = db;
         window.firestoreCollection = collection;
         window.firestoreAddDoc = addDoc;
-        
+
         console.log("Firebase initialized successfully!");
     </script>
     <!-- ✅ EmailJS SDK + init -->
@@ -43,6 +44,27 @@
                 publicKey: "fVgfG7vadbALBC7xr",   // <-- yahan apna EmailJS public key daalo (public_xxx)
             });
         })();
+        document.addEventListener("keydown", function (e) {
+            // F12
+            if (e.key === "F12") {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+I (Inspect)
+            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+J (Console)
+            if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j")) {
+                e.preventDefault();
+            }
+
+            // Ctrl+U (View Source)
+            if (e.ctrlKey && (e.key === "U" || e.key === "u")) {
+                e.preventDefault();
+            }
+        });
     </script>
 
     <style>
@@ -71,7 +93,7 @@
 
         body {
             background: radial-gradient(circle at top left, #f97316 0, transparent 50%),
-                        radial-gradient(circle at bottom right, #6366f1 0, #0f172a 55%);
+                radial-gradient(circle at bottom right, #6366f1 0, #0f172a 55%);
             color: var(--text);
             line-height: 1.6;
             padding: 20px;
@@ -89,8 +111,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(16px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .card {
@@ -255,13 +284,13 @@
         .card-body {
             padding: 26px 26px 26px;
             background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.09) 0, transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.07) 0, transparent 60%),
-                        rgba(15, 23, 42, 0.9);
+                radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.07) 0, transparent 60%),
+                rgba(15, 23, 42, 0.9);
         }
 
         .card-body-inner {
             display: grid;
-            grid-template-columns: minmax(0,1.1fr) minmax(0,0.9fr);
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
             gap: 26px;
         }
 
@@ -414,12 +443,29 @@
             animation: slideIn 0.45s ease forwards;
         }
 
-        .form-group:nth-child(1) { animation-delay: 0.05s; }
-        .form-group:nth-child(2) { animation-delay: 0.1s; }
-        .form-group:nth-child(3) { animation-delay: 0.15s; }
-        .form-group:nth-child(4) { animation-delay: 0.2s; }
-        .form-group:nth-child(5) { animation-delay: 0.25s; }
-        .form-group:nth-child(6) { animation-delay: 0.3s; }
+        .form-group:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .form-group:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .form-group:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+
+        .form-group:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+
+        .form-group:nth-child(6) {
+            animation-delay: 0.3s;
+        }
 
         @keyframes slideIn {
             to {
@@ -454,7 +500,9 @@
             font-size: 14px;
         }
 
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 11px 12px 11px 40px;
             border: 1px solid rgba(55, 65, 81, 0.9);
@@ -483,20 +531,22 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             background-image: linear-gradient(45deg, transparent 50%, #9ca3af 50%),
-                              linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+                linear-gradient(135deg, #9ca3af 50%, transparent 50%);
             background-position:
                 calc(100% - 16px) calc(50% - 3px),
                 calc(100% - 11px) calc(50% - 3px);
             background-size: 6px 6px,
-                            6px 6px;
+                6px 6px;
             background-repeat: no-repeat;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.7),
-                        0 0 0 6px rgba(79, 70, 229, 0.35);
+                0 0 0 6px rgba(79, 70, 229, 0.35);
             background-color: rgba(15, 23, 42, 1);
         }
 
@@ -571,9 +621,17 @@
         }
 
         @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .submit-btn:active {
@@ -595,7 +653,7 @@
         .field-error {
             border-color: var(--danger) !important;
             box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.8),
-                        0 0 0 5px rgba(248, 113, 113, 0.2) !important;
+                0 0 0 5px rgba(248, 113, 113, 0.2) !important;
         }
 
         .error-text {
@@ -631,7 +689,7 @@
             position: fixed;
             inset: 0;
             background: radial-gradient(circle at top, rgba(34, 197, 94, 0.32), transparent 60%),
-                        rgba(15, 23, 42, 0.85);
+                rgba(15, 23, 42, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -645,13 +703,20 @@
         }
 
         @keyframes overlayFadeIn {
-            from { opacity: 0; transform: scale(1.02); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(1.02);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .success-modal {
             background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.3) 0, transparent 55%),
-                        rgba(15, 23, 42, 0.98);
+                rgba(15, 23, 42, 0.98);
             border-radius: 20px;
             padding: 22px 22px 18px;
             max-width: 380px;
@@ -664,9 +729,19 @@
         }
 
         @keyframes modalPop {
-            0% { transform: scale(0.9) translateY(15px); opacity: 0; }
-            60% { transform: scale(1.03) translateY(0); opacity: 1; }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0.9) translateY(15px);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.03) translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .success-icon-wrapper {
@@ -844,9 +919,122 @@
             .payment-info {
                 padding: 14px 14px;
             }
+
+            /* QR Scan & Pay box */
+            .qr-pay-box {
+                margin-top: 14px;
+                padding: 12px 14px;
+                border-radius: 14px;
+                border: 1px dashed rgba(148, 163, 184, 0.7);
+                background: radial-gradient(circle at top, rgba(59, 130, 246, 0.15) 0, transparent 55%),
+                    rgba(15, 23, 42, 0.95);
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .qr-image-wrapper {
+                position: relative;
+                width: 90px;
+                height: 90px;
+                border-radius: 12px;
+                overflow: hidden;
+                background: #020617;
+                border: 1px solid rgba(148, 163, 184, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .qr-image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* Scanner-like moving line (just visual effect) */
+            .qr-scan-line {
+                position: absolute;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #22c55e, transparent);
+                animation: scanMove 2s linear infinite;
+            }
+
+            @keyframes scanMove {
+                0% {
+                    top: 10%;
+                    opacity: 0.2;
+                }
+
+                50% {
+                    top: 50%;
+                    opacity: 1;
+                }
+
+                100% {
+                    top: 90%;
+                    opacity: 0.2;
+                }
+            }
+
+            .qr-pay-content {
+                flex: 1;
+                color: #e5e7eb;
+                font-size: 12px;
+            }
+
+            .qr-pay-title {
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .qr-pay-title i {
+                color: #22c55e;
+                font-size: 13px;
+            }
+
+            .qr-pay-meta {
+                font-size: 11px;
+                color: #9ca3af;
+            }
+
+            /* Default (Desktop & Large screens) */
+            .qr-image {
+                width: 140px;
+                height: 140px;
+                object-fit: cover;
+                border-radius: 12px;
+                border: 2px solid rgba(129, 140, 248, 0.6);
+                box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
+            }
+
+            /* Tablets */
+            @media (max-width: 768px) {
+                .qr-image {
+                    width: 120px;
+                    height: 120px;
+                }
+            }
+
+            /* Mobiles */
+            @media (max-width: 480px) {
+                .qr-image {
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+
+
         }
     </style>
 </head>
+
 <body>
     <!-- Success Overlay -->
     <div class="success-overlay" id="successOverlay">
@@ -912,7 +1100,7 @@
             </div>
 
             <div class="card-body">
-    
+
                 <div class="card-body-inner">
                     <div class="info-column">
                         <!-- Payment Information -->
@@ -921,7 +1109,8 @@
                                 <h3><i class="fas fa-credit-card"></i> Payment Instructions</h3>
                                 <span class="payment-badge"><i class="fas fa-shield-alt"></i> 100% Secure</span>
                             </div>
-                            <p>Complete your payment using the details below, then add your transaction ID in the form.</p>
+                            <p>Complete your payment using the details below, then add your transaction ID in the form.
+                            </p>
                             <ul>
                                 <li><strong>Bank:</strong> Example Bank</li>
                                 <li><strong>Account No:</strong> 1234 5678 9012</li>
@@ -953,7 +1142,8 @@
                                 <label for="name" class="required">Full Name</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-user"></i>
-                                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                                    <input type="text" id="name" name="name" placeholder="Enter your full name"
+                                        required>
                                 </div>
                                 <div class="error-text" id="nameError">Please enter your full name.</div>
                             </div>
@@ -984,7 +1174,8 @@
                                     </label>
                                     <label class="radio-option">
                                         <input type="radio" id="prefer-not" name="gender" value="Prefer not to say">
-                                        <label for="prefer-not"><i class="fas fa-question-circle"></i> Prefer not to say</label>
+                                        <label for="prefer-not"><i class="fas fa-question-circle"></i> Prefer not to
+                                            say</label>
                                     </label>
                                 </div>
                                 <div class="error-text" id="genderError">Please select your gender.</div>
@@ -994,16 +1185,38 @@
                                 <label for="address" class="required">Address</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-map-marker-alt"></i>
-                                    <textarea id="address" name="address" rows="3" placeholder="Enter your complete address" required></textarea>
+                                    <textarea id="address" name="address" rows="3"
+                                        placeholder="Enter your complete address" required></textarea>
                                 </div>
                                 <div class="error-text" id="addressError">Please enter your address.</div>
                             </div>
+
+
+                            <!-- ✅ Place this ABOVE Transaction ID -->
+                            <div class="mini-qr-wrapper">
+                                <div class="mini-qr-img-box">
+                                    <!-- Replace with your real QR image path  -->
+                                  <img class="qr-image" src="../../assets/images/payment-qr.jpeg" alt="Scan to Pay" />
+                                </div>
+                                <div class="mini-qr-text">
+                                    <div class="mini-qr-text-title">
+                                        <i class="fas fa-qrcode"></i>
+                                        <span>Scan & Pay</span>
+                                    </div>
+                                    <span>Scan this QR using Google Pay / PhonePe / Paytm / Banking App.</span>
+                                    <small>After paying, copy your Transaction ID and enter it below.</small>
+                                </div>
+                            </div>
+
+                            <!-- Existing Transaction ID Field (no changes inside this) -->
+
 
                             <div class="form-group">
                                 <label for="transactionId" class="required">Transaction ID</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-receipt"></i>
-                                    <input type="text" id="transactionId" name="transactionId" placeholder="Enter your payment transaction ID" required>
+                                    <input type="text" id="transactionId" name="transactionId"
+                                        placeholder="Enter your payment transaction ID" required>
                                 </div>
                                 <div class="error-text" id="transactionError">Please enter your transaction ID.</div>
                             </div>
@@ -1084,20 +1297,20 @@
         });
 
         // Form submission handling
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        document.getElementById('registrationForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             if (!validateForm()) {
                 return;
             }
-            
+
             const submitBtn = document.querySelector('.submit-btn');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             submitBtn.disabled = true;
-            
+
             document.getElementById('errorMessage').style.display = 'none';
-            
+
             try {
                 // Check if Firebase is initialized
                 if (!window.db) {
@@ -1115,13 +1328,13 @@
                     timestamp: new Date().toISOString(),
                     status: 'pending'
                 };
-                
+
                 // Save to Firestore
                 const docRef = await window.firestoreAddDoc(
                     window.firestoreCollection(window.db, 'registrations'),
                     formData
                 );
-                
+
                 console.log('Registration saved with ID: ', docRef.id);
                 console.log('Form data:', formData);
 
@@ -1166,7 +1379,7 @@
         // Form validation
         function validateForm() {
             let isValid = true;
-            
+
             // Reset errors
             document.querySelectorAll('.field-error').forEach(el => {
                 el.classList.remove('field-error');
@@ -1174,7 +1387,7 @@
             document.querySelectorAll('.error-text').forEach(el => {
                 el.style.display = 'none';
             });
-            
+
             // Validate name
             const name = document.getElementById('name').value.trim();
             if (!name) {
@@ -1182,7 +1395,7 @@
                 document.getElementById('nameError').style.display = 'block';
                 isValid = false;
             }
-            
+
             // Validate email
             const email = document.getElementById('email').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1191,14 +1404,14 @@
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
             }
-            
+
             // Validate gender
             const genderSelected = document.querySelector('input[name="gender"]:checked');
             if (!genderSelected) {
                 document.getElementById('genderError').style.display = 'block';
                 isValid = false;
             }
-            
+
             // Validate address
             const address = document.getElementById('address').value.trim();
             if (!address) {
@@ -1206,7 +1419,7 @@
                 document.getElementById('addressError').style.display = 'block';
                 isValid = false;
             }
-            
+
             // Validate transaction ID
             const transactionId = document.getElementById('transactionId').value.trim();
             if (!transactionId) {
@@ -1214,15 +1427,15 @@
                 document.getElementById('transactionError').style.display = 'block';
                 isValid = false;
             }
-            
+
             return isValid;
         }
 
         // Real-time validation
-        document.getElementById('email').addEventListener('input', function() {
+        document.getElementById('email').addEventListener('input', function () {
             const email = this.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
+
             if (email && !emailRegex.test(email)) {
                 this.classList.add('field-error');
                 document.getElementById('emailError').style.display = 'block';
@@ -1232,21 +1445,21 @@
             }
         });
 
-        document.getElementById('name').addEventListener('input', function() {
+        document.getElementById('name').addEventListener('input', function () {
             if (this.value.trim()) {
                 this.classList.remove('field-error');
                 document.getElementById('nameError').style.display = 'none';
             }
         });
 
-        document.getElementById('address').addEventListener('input', function() {
+        document.getElementById('address').addEventListener('input', function () {
             if (this.value.trim()) {
                 this.classList.remove('field-error');
                 document.getElementById('addressError').style.display = 'none';
             }
         });
 
-        document.getElementById('transactionId').addEventListener('input', function() {
+        document.getElementById('transactionId').addEventListener('input', function () {
             if (this.value.trim()) {
                 this.classList.remove('field-error');
                 document.getElementById('transactionError').style.display = 'none';
@@ -1254,13 +1467,14 @@
         });
 
         document.querySelectorAll('input[name="gender"]').forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 document.getElementById('genderError').style.display = 'none';
             });
         });
-   
-   
-   
-   </script>
+
+
+
+    </script>
 </body>
+
 </html>
