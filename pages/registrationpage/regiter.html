@@ -35,6 +35,15 @@
         
         console.log("Firebase initialized successfully!");
     </script>
+    <!-- ✅ EmailJS SDK + init -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init({
+                publicKey: "fVgfG7vadbALBC7xr",   // <-- yahan apna EmailJS public key daalo (public_xxx)
+            });
+        })();
+    </script>
 
     <style>
         :root {
@@ -1038,7 +1047,9 @@
         setTimeout(() => {
             if (window.db) {
                 const statusEl = document.getElementById('firebaseStatus');
-                statusEl.style.display = 'block';
+                if (statusEl) {
+                    statusEl.style.display = 'block';
+                }
             }
         }, 1000);
 
@@ -1113,6 +1124,26 @@
                 
                 console.log('Registration saved with ID: ', docRef.id);
                 console.log('Form data:', formData);
+
+                // ✅ EmailJS: confirmation email bhejo
+                try {
+                    await emailjs.send(
+                        "service_9lr2pdn",           // tumhara Service ID
+                        "template_uiepphb",        // <-- yahan apna Template ID daalo (EmailJS se)
+                        {
+                            to_name: formData.name,
+                            to_email: formData.email,
+                            transaction_id: formData.transactionId,
+                            payment_method: formData.paymentMethod,
+                            ref_id: docRef.id,
+                            order_id: docRef.id,
+                        }
+                    );
+                    console.log("EmailJS: confirmation email sent");
+                } catch (emailError) {
+                    console.error("EmailJS error:", emailError);
+                    // yahan UI fail nahi kar rahe, sirf log kar rahe hain
+                }
 
                 // Reset form
                 this.reset();
@@ -1227,6 +1258,9 @@
                 document.getElementById('genderError').style.display = 'none';
             });
         });
-    </script>
+   
+   
+   
+   </script>
 </body>
 </html>
