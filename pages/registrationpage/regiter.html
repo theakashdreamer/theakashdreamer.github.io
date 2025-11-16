@@ -921,112 +921,91 @@
             }
 
             /* QR Scan & Pay box */
-            .qr-pay-box {
-                margin-top: 14px;
-                padding: 12px 14px;
+            .mini-qr-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 14px;
                 border-radius: 14px;
                 border: 1px dashed rgba(148, 163, 184, 0.7);
                 background: radial-gradient(circle at top, rgba(59, 130, 246, 0.15) 0, transparent 55%),
                     rgba(15, 23, 42, 0.95);
-                display: flex;
-                gap: 12px;
-                align-items: center;
             }
 
-            .qr-image-wrapper {
-                position: relative;
-                width: 90px;
-                height: 90px;
+            /* Left: QR image box */
+            .mini-qr-img-box {
+                flex-shrink: 0;
+                width: 110px;
+                height: 110px;
                 border-radius: 12px;
                 overflow: hidden;
-                background: #020617;
                 border: 1px solid rgba(148, 163, 184, 0.7);
                 display: flex;
-                align-items: center;
                 justify-content: center;
+                align-items: center;
+                background: #020617;
             }
 
-            .qr-image-wrapper img {
+            /* QR image auto-resize */
+            .mini-qr-img-box img {
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain;
             }
 
-            /* Scanner-like moving line (just visual effect) */
-            .qr-scan-line {
-                position: absolute;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, #22c55e, transparent);
-                animation: scanMove 2s linear infinite;
-            }
-
-            @keyframes scanMove {
-                0% {
-                    top: 10%;
-                    opacity: 0.2;
-                }
-
-                50% {
-                    top: 50%;
-                    opacity: 1;
-                }
-
-                100% {
-                    top: 90%;
-                    opacity: 0.2;
-                }
-            }
-
-            .qr-pay-content {
+            /* Right: text content */
+            .mini-qr-text {
                 flex: 1;
-                color: #e5e7eb;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
                 font-size: 12px;
+                line-height: 1.4;
+                color: #ffffff !important;
             }
 
-            .qr-pay-title {
-                font-size: 13px;
+            .gradient-white-text {
+                background: linear-gradient(90deg, #ffffff, #f8f9ff, #e9ecff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
                 font-weight: 600;
-                margin-bottom: 4px;
+                filter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 0.35));
+            }
+
+            /* Title */
+            .mini-qr-text-title {
+                font-size: 14px;
+                font-weight: 600;
                 display: flex;
                 align-items: center;
                 gap: 6px;
+                color: #ffffff !important;
             }
 
-            .qr-pay-title i {
+            .mini-qr-text-title i {
                 color: #22c55e;
-                font-size: 13px;
             }
 
-            .qr-pay-meta {
-                font-size: 11px;
-                color: #9ca3af;
+            /* Description */
+            .mini-qr-text span,
+            .mini-qr-text small {
+                color: #ffffff !important;
             }
 
-            /* Default (Desktop & Large screens) */
-            .qr-image {
-                width: 140px;
-                height: 140px;
-                object-fit: cover;
-                border-radius: 12px;
-                border: 2px solid rgba(129, 140, 248, 0.6);
-                box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
-            }
-
-            /* Tablets */
-            @media (max-width: 768px) {
-                .qr-image {
-                    width: 120px;
-                    height: 120px;
-                }
-            }
-
-            /* Mobiles */
+            /* Responsive: stack on mobile */
             @media (max-width: 480px) {
-                .qr-image {
-                    width: 100px;
-                    height: 100px;
+                .mini-qr-wrapper {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .mini-qr-text {
+                    text-align: center;
+                }
+
+                .mini-qr-img-box {
+                    width: 90px;
+                    height: 90px;
                 }
             }
 
@@ -1195,11 +1174,10 @@
                             <!-- ✅ Place this ABOVE Transaction ID -->
                             <div class="mini-qr-wrapper">
                                 <div class="mini-qr-img-box">
-                                    <!-- Replace with your real QR image path  -->
-                                  <img class="qr-image" src="../../assets/images/payment-qr.jpeg" alt="Scan to Pay" />
+                                    <img src="../../assets/images/payment-qr.jpeg" alt="Scan to Pay" width="150" />
                                 </div>
                                 <div class="mini-qr-text">
-                                    <div class="mini-qr-text-title">
+                                    <div class="mini-qr-text-title gradient-white-text">
                                         <i class="fas fa-qrcode"></i>
                                         <span>Scan & Pay</span>
                                     </div>
@@ -1207,6 +1185,7 @@
                                     <small>After paying, copy your Transaction ID and enter it below.</small>
                                 </div>
                             </div>
+
 
                             <!-- Existing Transaction ID Field (no changes inside this) -->
 
