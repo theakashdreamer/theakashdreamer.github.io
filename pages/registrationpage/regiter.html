@@ -36,34 +36,22 @@
 
         console.log("Firebase initialized successfully!");
     </script>
+
     <!-- ✅ EmailJS SDK + init -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         (function () {
             emailjs.init({
-                publicKey: "fVgfG7vadbALBC7xr",   // <-- yahan apna EmailJS public key daalo (public_xxx)
+                publicKey: "fVgfG7vadbALBC7xr",   // EmailJS public key
             });
         })();
+
+        // Disable Inspect shortcuts
         document.addEventListener("keydown", function (e) {
-            // F12
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
-
-            // Ctrl+Shift+I (Inspect)
-            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) {
-                e.preventDefault();
-            }
-
-            // Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j")) {
-                e.preventDefault();
-            }
-
-            // Ctrl+U (View Source)
-            if (e.ctrlKey && (e.key === "U" || e.key === "u")) {
-                e.preventDefault();
-            }
+            if (e.key === "F12") e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j")) e.preventDefault();
+            if (e.ctrlKey && (e.key === "U" || e.key === "u")) e.preventDefault();
         });
     </script>
 
@@ -251,10 +239,26 @@
             margin-bottom: 6px;
         }
 
+        .price-box {
+            text-align: right;
+        }
+
+        .price-original {
+            font-size: 12px;
+            color: #9ca3af;
+            text-decoration: line-through;
+            opacity: 0.8;
+            visibility: hidden;
+        }
+
         .price-highlight {
             font-size: 22px;
             font-weight: 700;
             color: #f97316;
+        }
+
+        .price-discounted {
+            color: #22c55e !important;
         }
 
         .save-text {
@@ -920,7 +924,6 @@
                 padding: 14px 14px;
             }
 
-            /* QR Scan & Pay box */
             .mini-qr-wrapper {
                 display: flex;
                 align-items: center;
@@ -932,7 +935,6 @@
                     rgba(15, 23, 42, 0.95);
             }
 
-            /* Left: QR image box */
             .mini-qr-img-box {
                 flex-shrink: 0;
                 width: 110px;
@@ -946,14 +948,12 @@
                 background: #020617;
             }
 
-            /* QR image auto-resize */
             .mini-qr-img-box img {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
             }
 
-            /* Right: text content */
             .mini-qr-text {
                 flex: 1;
                 display: flex;
@@ -972,7 +972,6 @@
                 filter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 0.35));
             }
 
-            /* Title */
             .mini-qr-text-title {
                 font-size: 14px;
                 font-weight: 600;
@@ -986,30 +985,26 @@
                 color: #22c55e;
             }
 
-            /* Description */
             .mini-qr-text span,
             .mini-qr-text small {
                 color: #ffffff !important;
             }
+        }
 
-            /* Responsive: stack on mobile */
-            @media (max-width: 480px) {
-                .mini-qr-wrapper {
-                    flex-direction: column;
-                    text-align: center;
-                }
-
-                .mini-qr-text {
-                    text-align: center;
-                }
-
-                .mini-qr-img-box {
-                    width: 90px;
-                    height: 90px;
-                }
+        @media (max-width: 480px) {
+            .mini-qr-wrapper {
+                flex-direction: column;
+                text-align: center;
             }
 
+            .mini-qr-text {
+                text-align: center;
+            }
 
+            .mini-qr-img-box {
+                width: 90px;
+                height: 90px;
+            }
         }
     </style>
 </head>
@@ -1056,7 +1051,6 @@
 
                         <div class="card-badge-row">
                             <span class="pill"><i class="fas fa-video"></i> Live Session + Q&A</span>
-                            <!-- <span class="pill"><i class="fas fa-certificate"></i> Certificate of Completion</span> -->
                             <span class="pill"><i class="fas fa-user-check"></i> Limited Seats</span>
                         </div>
                     </div>
@@ -1064,9 +1058,10 @@
                     <div class="card-header-side">
                         <div class="card-header-side-title">
                             <span>Today’s Offer</span>
-                            <div style="text-align: right;">
-                                <div class="price-highlight">₹199</div>
-                                <div class="save-text">One-time secure payment</div>
+                            <div class="price-box">
+                                <div class="price-original" id="originalPrice">₹2499</div>
+                                <div class="price-highlight" id="finalPrice">₹2499</div>
+                                <div class="save-text" id="priceNote">Enter coupon to unlock special price</div>
                             </div>
                         </div>
                         <ul class="card-header-side-list">
@@ -1075,7 +1070,6 @@
                             <li><i class="fas fa-check-circle"></i> Guided reflections & self-awareness tools</li>
                             <li><i class="fas fa-check-circle"></i> Community support for long-term growth</li>
                         </ul>
-
                     </div>
                 </div>
             </div>
@@ -1090,12 +1084,9 @@
                                 <h3><i class="fas fa-credit-card"></i> Payment Instructions</h3>
                                 <span class="payment-badge"><i class="fas fa-shield-alt"></i> 100% Secure</span>
                             </div>
-                            <p>Complete your payment using the details below, then add your transaction ID in the form.
-                            </p>
+                            <p>Complete your payment using the QR code or UPI apps below, then add your transaction ID in the form.</p>
                             <ul>
-                                <li><strong>Bank:</strong> Example Bank</li>
-                                <li><strong>Account No:</strong> 1234 5678 9012</li>
-                                <li><strong>Amount:</strong> $199</li>
+                                <li><strong>Amount:</strong> <span id="amountValue">₹2499</span></li>
                             </ul>
                             <div class="highlight-line">
                                 <i class="fas fa-info-circle"></i>
@@ -1119,12 +1110,24 @@
                         </div>
 
                         <form id="registrationForm">
+
+
+                            <!-- Coupon Field -->
+                            <div class="form-group">
+                                <label for="coupon">Coupon Code</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-tags"></i>
+                                    <input type="text" id="coupon" name="coupon" placeholder="Enter coupon (optional)">
+                                </div>
+                                <div class="error-text" id="couponError">Invalid coupon code.</div>
+                            </div>
+
+
                             <div class="form-group">
                                 <label for="name" class="required">Full Name</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-user"></i>
-                                    <input type="text" id="name" name="name" placeholder="Enter your full name"
-                                        required>
+                                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
                                 </div>
                                 <div class="error-text" id="nameError">Please enter your full name.</div>
                             </div>
@@ -1153,7 +1156,6 @@
                                         <input type="radio" id="other" name="gender" value="Other">
                                         <label for="other"><i class="fas fa-user"></i> Other</label>
                                     </label>
-
                                 </div>
                                 <div class="error-text" id="genderError">Please select your gender.</div>
                             </div>
@@ -1162,17 +1164,14 @@
                                 <label for="address" class="required">Address</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-map-marker-alt"></i>
-                                    <textarea id="address" name="address" rows="3"
-                                        placeholder="Enter your complete address" required></textarea>
+                                    <textarea id="address" name="address" rows="3" placeholder="Enter your complete address" required></textarea>
                                 </div>
                                 <div class="error-text" id="addressError">Please enter your address.</div>
                             </div>
 
-
-                            <!-- ✅ Place this ABOVE Transaction ID -->
+                            <!-- QR Scan & Pay box -->
                             <div class="mini-qr-wrapper">
                                 <div class="mini-qr-img-box">
-                                    <!-- QR image -->
                                     <img src="../../assets/images/payment-qr.jpeg" alt="Scan to Pay" width="200" />
                                 </div>
 
@@ -1190,17 +1189,12 @@
                                 </div>
                             </div>
 
-
-
-                            <!-- Existing Transaction ID Field (no changes inside this) -->
-
-
+                            <!-- Transaction ID Field -->
                             <div class="form-group">
                                 <label for="transactionId" class="required">Transaction ID</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-receipt"></i>
-                                    <input type="text" id="transactionId" name="transactionId"
-                                        placeholder="Enter your payment transaction ID" required>
+                                    <input type="text" id="transactionId" name="transactionId" placeholder="Enter your payment transaction ID" required>
                                 </div>
                                 <div class="error-text" id="transactionError">Please enter your transaction ID.</div>
                             </div>
@@ -1211,9 +1205,9 @@
                                     <i class="fas fa-credit-card"></i>
                                     <select id="paymentMethod" name="paymentMethod">
                                         <option value="">Select payment method</option>
-                                        <option value="Bank Transfer">PhonePe</option>
-                                        <option value="Credit Card">Google Pay</option>
-                                        <option value="PayPal">Paytm</option>
+                                        <option value="PhonePe">PhonePe</option>
+                                        <option value="Google Pay">Google Pay</option>
+                                        <option value="Paytm">Paytm</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
@@ -1240,7 +1234,14 @@
     </div>
 
     <script>
-        // Show Firebase status when ready
+        // 🔢 Pricing & coupon config
+        const ORIGINAL_AMOUNT = 2499;
+        const DISCOUNTED_AMOUNT = 199;
+        const VALID_COUPON = "GROW199"; // <-- apna coupon code yahan change kar sakte ho
+
+        window.currentPayableAmount = ORIGINAL_AMOUNT;
+
+        // Show Firebase status when ready (optional)
         setTimeout(() => {
             if (window.db) {
                 const statusEl = document.getElementById('firebaseStatus');
@@ -1249,6 +1250,74 @@
                 }
             }
         }, 1000);
+
+        // ✅ Coupon apply logic
+        function applyCoupon() {
+            const couponInput = document.getElementById('coupon');
+            if (!couponInput) return;
+
+            const code = couponInput.value.trim().toUpperCase();
+            const amountValueEl = document.getElementById('amountValue');
+            const finalPriceEl = document.getElementById('finalPrice');
+            const originalPriceEl = document.getElementById('originalPrice');
+            const priceNoteEl = document.getElementById('priceNote');
+            const couponErrorEl = document.getElementById('couponError');
+
+            // Reset error
+            couponErrorEl.style.display = 'none';
+
+            // No coupon
+            if (!code) {
+                window.currentPayableAmount = ORIGINAL_AMOUNT;
+
+                if (amountValueEl) amountValueEl.textContent = `₹${ORIGINAL_AMOUNT}`;
+                if (finalPriceEl) {
+                    finalPriceEl.textContent = `₹${ORIGINAL_AMOUNT}`;
+                    finalPriceEl.classList.remove('price-discounted');
+                }
+                if (originalPriceEl) {
+                    originalPriceEl.style.visibility = 'hidden';
+                }
+                if (priceNoteEl) {
+                    priceNoteEl.textContent = 'Enter coupon to unlock special price';
+                }
+                return;
+            }
+
+            // Valid coupon
+            if (code === VALID_COUPON) {
+                window.currentPayableAmount = DISCOUNTED_AMOUNT;
+
+                if (amountValueEl) amountValueEl.textContent = `₹${DISCOUNTED_AMOUNT}`;
+                if (finalPriceEl) {
+                    finalPriceEl.textContent = `₹${DISCOUNTED_AMOUNT}`;
+                    finalPriceEl.classList.add('price-discounted');
+                }
+                if (originalPriceEl) {
+                    originalPriceEl.style.visibility = 'visible';
+                }
+                if (priceNoteEl) {
+                    priceNoteEl.textContent = 'Coupon applied! You pay only ₹199 🎉';
+                }
+            } else {
+                // Invalid coupon
+                window.currentPayableAmount = ORIGINAL_AMOUNT;
+
+                if (amountValueEl) amountValueEl.textContent = `₹${ORIGINAL_AMOUNT}`;
+                if (finalPriceEl) {
+                    finalPriceEl.textContent = `₹${ORIGINAL_AMOUNT}`;
+                    finalPriceEl.classList.remove('price-discounted');
+                }
+                if (originalPriceEl) {
+                    originalPriceEl.style.visibility = 'hidden';
+                }
+                if (priceNoteEl) {
+                    priceNoteEl.textContent = 'Invalid coupon. Please check and try again.';
+                }
+
+                couponErrorEl.style.display = 'block';
+            }
+        }
 
         // Success overlay helpers
         function openSuccessOverlay(docId) {
@@ -1266,14 +1335,12 @@
         document.getElementById('successCloseBtn').addEventListener('click', closeSuccessOverlay);
         document.getElementById('successOkBtn').addEventListener('click', closeSuccessOverlay);
 
-        // Example: you can redirect WhatsApp/support link here
         document.getElementById('successPrimaryBtn').addEventListener('click', function () {
-            // TODO: Replace with your real WhatsApp or support URL
-            // window.open('https://whatsapp.com/channel/0029VbBDPlXE50UfAWA6jf0h', '_blank');
+            // Yahan apna WhatsApp / Support link daalo
+             window.open('https://whatsapp.com/channel/0029VbBDPlXE50UfAWA6jf0h', '_blank');
             closeSuccessOverlay();
         });
 
-        // Close overlay when clicking outside modal
         document.getElementById('successOverlay').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeSuccessOverlay();
@@ -1296,12 +1363,10 @@
             document.getElementById('errorMessage').style.display = 'none';
 
             try {
-                // Check if Firebase is initialized
                 if (!window.db) {
                     throw new Error('Firebase not initialized. Please wait a moment and try again.');
                 }
 
-                // Get form data
                 const formData = {
                     name: document.getElementById('name').value.trim(),
                     email: document.getElementById('email').value.trim(),
@@ -1309,6 +1374,8 @@
                     address: document.getElementById('address').value.trim(),
                     transactionId: document.getElementById('transactionId').value.trim(),
                     paymentMethod: document.getElementById('paymentMethod').value || 'Not specified',
+                    couponCode: (document.getElementById('coupon')?.value.trim() || null),
+                    amountPayable: window.currentPayableAmount || ORIGINAL_AMOUNT,
                     timestamp: new Date().toISOString(),
                     status: 'pending'
                 };
@@ -1322,11 +1389,11 @@
                 console.log('Registration saved with ID: ', docRef.id);
                 console.log('Form data:', formData);
 
-                // ✅ EmailJS: confirmation email bhejo
+                // ✅ EmailJS: confirmation email
                 try {
                     await emailjs.send(
-                        "service_9lr2pdn",           // tumhara Service ID
-                        "template_uiepphb",        // <-- yahan apna Template ID daalo (EmailJS se)
+                        "service_9lr2pdn",
+                        "template_uiepphb",
                         {
                             to_name: formData.name,
                             to_email: formData.email,
@@ -1334,17 +1401,19 @@
                             payment_method: formData.paymentMethod,
                             ref_id: docRef.id,
                             order_id: docRef.id,
+                            amount_payable: formData.amountPayable,
+                            coupon_code: formData.couponCode || "N/A"
                         }
                     );
                     console.log("EmailJS: confirmation email sent");
                 } catch (emailError) {
                     console.error("EmailJS error:", emailError);
-                    // yahan UI fail nahi kar rahe, sirf log kar rahe hain
                 }
 
                 // Reset form
                 this.reset();
                 document.querySelectorAll('input[name="gender"]').forEach(r => (r.checked = false));
+                applyCoupon(); // reset prices after form reset
 
                 // Show success overlay with doc ID
                 openSuccessOverlay(docRef.id);
@@ -1364,7 +1433,6 @@
         function validateForm() {
             let isValid = true;
 
-            // Reset errors
             document.querySelectorAll('.field-error').forEach(el => {
                 el.classList.remove('field-error');
             });
@@ -1372,7 +1440,6 @@
                 el.style.display = 'none';
             });
 
-            // Validate name
             const name = document.getElementById('name').value.trim();
             if (!name) {
                 document.getElementById('name').classList.add('field-error');
@@ -1380,7 +1447,6 @@
                 isValid = false;
             }
 
-            // Validate email
             const email = document.getElementById('email').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || !emailRegex.test(email)) {
@@ -1389,14 +1455,12 @@
                 isValid = false;
             }
 
-            // Validate gender
             const genderSelected = document.querySelector('input[name="gender"]:checked');
             if (!genderSelected) {
                 document.getElementById('genderError').style.display = 'block';
                 isValid = false;
             }
 
-            // Validate address
             const address = document.getElementById('address').value.trim();
             if (!address) {
                 document.getElementById('address').classList.add('field-error');
@@ -1404,7 +1468,6 @@
                 isValid = false;
             }
 
-            // Validate transaction ID
             const transactionId = document.getElementById('transactionId').value.trim();
             if (!transactionId) {
                 document.getElementById('transactionId').classList.add('field-error');
@@ -1456,8 +1519,15 @@
             });
         });
 
+        // Coupon field listeners
+        const couponField = document.getElementById('coupon');
+        if (couponField) {
+            couponField.addEventListener('input', applyCoupon);
+            couponField.addEventListener('blur', applyCoupon);
+        }
 
-
+        // Initial price state
+        applyCoupon();
     </script>
 </body>
 
