@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Class Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css for additional animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <!-- Firebase SDK -->
     <script type="module">
@@ -89,6 +92,71 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(255, 101, 132, 0.1));
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 85%;
+            animation-delay: -10s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 80%;
+            left: 15%;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
         }
 
         .container {
@@ -118,6 +186,19 @@
             overflow: hidden;
             transition: var(--transition);
             border: 1px solid rgba(148, 163, 184, 0.35);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f97316, #7cec48, #6366f1);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
         }
 
         .card:hover {
@@ -141,6 +222,36 @@
             font-size: 12px;
             letter-spacing: 0.03em;
             border: 1px solid rgba(148, 163, 184, 0.5);
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-chip span::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .top-chip span:hover::before {
+            left: 100%;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+            }
         }
 
         .top-chip span i {
@@ -165,6 +276,19 @@
             height: 320px;
             background: radial-gradient(circle, rgba(129, 140, 248, 0.5) 0%, transparent 70%);
             opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
         }
 
         .card-header-inner {
@@ -215,6 +339,14 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: rgba(30, 41, 59, 0.8);
         }
 
         .pill i {
@@ -228,6 +360,41 @@
             border-radius: 14px;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(236, 72, 153, 0.1));
             border: 1px solid rgba(129, 140, 248, 0.5);
+            animation: slideInRight 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-side::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .card-header-side-title {
@@ -237,6 +404,8 @@
             font-size: 13px;
             color: #e5e7eb;
             margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
         }
 
         .price-box {
@@ -255,6 +424,7 @@
             font-size: 22px;
             font-weight: 700;
             color: #f97316;
+            transition: var(--transition);
         }
 
         .price-discounted {
@@ -271,6 +441,8 @@
             font-size: 12px;
             color: #cbd5f5;
             margin-top: 4px;
+            position: relative;
+            z-index: 1;
         }
 
         .card-header-side-list li {
@@ -278,6 +450,11 @@
             align-items: center;
             gap: 8px;
             padding-block: 2px;
+            transition: var(--transition);
+        }
+
+        .card-header-side-list li:hover {
+            transform: translateX(4px);
         }
 
         .card-header-side-list li i {
@@ -309,6 +486,30 @@
             padding: 16px 18px;
             border-radius: 14px;
             border: 1px solid rgba(148, 163, 184, 0.5);
+            animation: slideInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #f97316, #6366f1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .payment-info-header {
@@ -410,6 +611,32 @@
             padding: 18px 18px 20px;
             border-radius: 16px;
             border: 1px solid rgba(148, 163, 184, 0.6);
+            animation: slideInLeft 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #f97316, #7cec48, #6366f1);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .form-header {
@@ -471,6 +698,18 @@
             animation-delay: 0.3s;
         }
 
+        .form-group:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+
+        .form-group:nth-child(8) {
+            animation-delay: 0.4s;
+        }
+
+        .form-group:nth-child(9) {
+            animation-delay: 0.45s;
+        }
+
         @keyframes slideIn {
             to {
                 opacity: 1;
@@ -502,6 +741,12 @@
             transform: translateY(-50%);
             color: #60a5fa;
             font-size: 14px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        input:focus + i {
+            color: #f97316;
         }
 
         input,
@@ -515,6 +760,7 @@
             transition: var(--transition);
             background-color: rgba(15, 23, 42, 0.9);
             color: #e5e7eb;
+            position: relative;
         }
 
         textarea {
@@ -572,11 +818,29 @@
             color: #e5e7eb;
             background: rgba(15, 23, 42, 0.85);
             font-size: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radio-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .radio-option:hover::before {
+            left: 100%;
         }
 
         .radio-option:hover {
             border-color: rgba(129, 140, 248, 0.9);
             background-color: rgba(31, 41, 55, 0.95);
+            transform: scale(1.05);
         }
 
         .radio-option input {
@@ -592,6 +856,8 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            position: relative;
+            z-index: 1;
         }
 
         .radio-option label i {
@@ -616,6 +882,23 @@
             justify-content: center;
             gap: 8px;
             box-shadow: 0 12px 30px rgba(236, 72, 153, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
         }
 
         .submit-btn:hover {
@@ -758,6 +1041,19 @@
             justify-content: center;
             background: radial-gradient(circle, rgba(34, 197, 94, 0.25) 0, transparent 60%);
             position: relative;
+            animation: successPulse 2s infinite;
+        }
+
+        @keyframes successPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
         }
 
         .success-icon-wrapper::before,
@@ -834,6 +1130,23 @@
             width: 100%;
             box-shadow: 0 12px 28px rgba(22, 163, 74, 0.65);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-primary:hover {
@@ -855,6 +1168,23 @@
             gap: 6px;
             width: 100%;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-ghost::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-ghost:hover::before {
+            left: 100%;
         }
 
         .btn-ghost:hover {
@@ -878,6 +1208,128 @@
         .success-close:hover {
             opacity: 1;
             transform: scale(1.1);
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(148, 163, 184, 0.3);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e5e7eb;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .step-circle.active {
+            background: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.3);
+        }
+
+        .step-circle.completed {
+            background: var(--success);
+        }
+
+        .step-label {
+            font-size: 10px;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        /* Floating elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(255, 101, 132, 0.1));
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 85%;
+            animation-delay: -10s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 80%;
+            left: 15%;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
         }
 
         /* Responsive */
@@ -1010,6 +1462,14 @@
 </head>
 
 <body>
+    <!-- Floating Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
     <!-- Success Overlay -->
     <div class="success-overlay" id="successOverlay">
         <div class="success-modal">
@@ -1025,7 +1485,7 @@
             <p>Thank you for joining the Master Class. Your registration has been received.</p>
             <small>
                 Reference ID: <span id="docIdOverlay"></span><br>
-                <span>We’ll contact you shortly with next steps.</span>
+                <span>We'll contact you shortly with next steps.</span>
             </small>
             <div class="success-actions">
                 <button class="btn-primary" id="successPrimaryBtn">
@@ -1057,10 +1517,10 @@
 
                     <div class="card-header-side">
                         <div class="card-header-side-title">
-                            <span>Today’s Offer</span>
+                            <span>Today's Offer</span>
                             <div class="price-box">
-                                <div class="price-original" id="originalPrice">₹2499</div>
-                                <div class="price-highlight" id="finalPrice">₹2499</div>
+                                <div class="price-original" id="originalPrice">₹599</div>
+                                <div class="price-highlight" id="finalPrice">₹599</div>
                                 <div class="save-text" id="priceNote">Enter coupon to unlock special price</div>
                             </div>
                         </div>
@@ -1075,6 +1535,21 @@
             </div>
 
             <div class="card-body">
+                <!-- Progress Indicator -->
+                <div class="progress-indicator">
+                    <div class="progress-step">
+                        <div class="step-circle active">1</div>
+                        <div class="step-label">Personal Info</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Payment</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Confirmation</div>
+                    </div>
+                </div>
 
                 <div class="card-body-inner">
                     <div class="info-column">
@@ -1086,7 +1561,7 @@
                             </div>
                             <p>Complete your payment using the QR code or UPI apps below, then add your transaction ID in the form.</p>
                             <ul>
-                                <li><strong>Amount:</strong> <span id="amountValue">₹2499</span></li>
+                                <li><strong>Amount:</strong> <span id="amountValue">₹599</span></li>
                             </ul>
                             <div class="highlight-line">
                                 <i class="fas fa-info-circle"></i>
@@ -1110,8 +1585,6 @@
                         </div>
 
                         <form id="registrationForm">
-
-
                             <!-- Coupon Field -->
                             <div class="form-group">
                                 <label for="coupon">Coupon Code</label>
@@ -1122,7 +1595,6 @@
                                 <div class="error-text" id="couponError">Invalid coupon code.</div>
                             </div>
 
-
                             <div class="form-group">
                                 <label for="name" class="required">Full Name</label>
                                 <div class="input-with-icon">
@@ -1130,6 +1602,16 @@
                                     <input type="text" id="name" name="name" placeholder="Enter your full name" required>
                                 </div>
                                 <div class="error-text" id="nameError">Please enter your full name.</div>
+                            </div>
+
+                            <!-- Mobile Number Field -->
+                            <div class="form-group">
+                                <label for="mobile" class="required">Mobile Number</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <input type="tel" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+                                </div>
+                                <div class="error-text" id="mobileError">Please enter a valid mobile number.</div>
                             </div>
 
                             <div class="form-group">
@@ -1235,7 +1717,7 @@
 
     <script>
         // 🔢 Pricing & coupon config
-        const ORIGINAL_AMOUNT = 2499;
+        const ORIGINAL_AMOUNT = 599;
         const DISCOUNTED_AMOUNT = 199;
         const VALID_COUPON = "GROW199"; // <-- apna coupon code yahan change kar sakte ho
 
@@ -1369,6 +1851,7 @@
 
                 const formData = {
                     name: document.getElementById('name').value.trim(),
+                    mobile: document.getElementById('mobile').value.trim(),
                     email: document.getElementById('email').value.trim(),
                     gender: document.querySelector('input[name="gender"]:checked').value,
                     address: document.getElementById('address').value.trim(),
@@ -1447,6 +1930,14 @@
                 isValid = false;
             }
 
+            const mobile = document.getElementById('mobile').value.trim();
+            const mobileRegex = /^[6-9]\d{9}$/;
+            if (!mobile || !mobileRegex.test(mobile)) {
+                document.getElementById('mobile').classList.add('field-error');
+                document.getElementById('mobileError').style.display = 'block';
+                isValid = false;
+            }
+
             const email = document.getElementById('email').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || !emailRegex.test(email)) {
@@ -1489,6 +1980,19 @@
             } else {
                 this.classList.remove('field-error');
                 document.getElementById('emailError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('mobile').addEventListener('input', function () {
+            const mobile = this.value;
+            const mobileRegex = /^[6-9]\d{9}$/;
+
+            if (mobile && !mobileRegex.test(mobile)) {
+                this.classList.add('field-error');
+                document.getElementById('mobileError').style.display = 'block';
+            } else {
+                this.classList.remove('field-error');
+                document.getElementById('mobileError').style.display = 'none';
             }
         });
 
