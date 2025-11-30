@@ -1267,6 +1267,17 @@
             text-align: center;
         }
 
+        /* Progress line */
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 2px;
+            background: var(--primary);
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
+
         /* Floating elements */
         .floating-elements {
             position: fixed;
@@ -1537,16 +1548,17 @@
             <div class="card-body">
                 <!-- Progress Indicator -->
                 <div class="progress-indicator">
+                    <div class="progress-line" id="progressLine"></div>
                     <div class="progress-step">
-                        <div class="step-circle active">1</div>
+                        <div class="step-circle active" id="step1">1</div>
                         <div class="step-label">Personal Info</div>
                     </div>
                     <div class="progress-step">
-                        <div class="step-circle">2</div>
+                        <div class="step-circle" id="step2">2</div>
                         <div class="step-label">Payment</div>
                     </div>
                     <div class="progress-step">
-                        <div class="step-circle">3</div>
+                        <div class="step-circle" id="step3">3</div>
                         <div class="step-label">Confirmation</div>
                     </div>
                 </div>
@@ -1723,6 +1735,10 @@
 
         window.currentPayableAmount = ORIGINAL_AMOUNT;
 
+        // Progress tracking variables
+        let currentStep = 1;
+        const totalSteps = 3;
+
         // Show Firebase status when ready (optional)
         setTimeout(() => {
             if (window.db) {
@@ -1799,6 +1815,69 @@
 
                 couponErrorEl.style.display = 'block';
             }
+        }
+
+        // Update progress indicator
+        function updateProgressIndicator() {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const progressLine = document.getElementById('progressLine');
+            
+            // Reset all steps
+            step1.classList.remove('active', 'completed');
+            step2.classList.remove('active', 'completed');
+            step3.classList.remove('active', 'completed');
+            
+            // Update steps based on current step
+            if (currentStep >= 1) {
+                step1.classList.add('completed');
+                if (currentStep === 1) {
+                    step1.classList.add('active');
+                }
+            }
+            
+            if (currentStep >= 2) {
+                step2.classList.add('completed');
+                if (currentStep === 2) {
+                    step2.classList.add('active');
+                }
+            }
+            
+            if (currentStep >= 3) {
+                step3.classList.add('completed');
+                if (currentStep === 3) {
+                    step3.classList.add('active');
+                }
+            }
+            
+            // Update progress line
+            const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressLine.style.width = `${progressPercentage}%`;
+        }
+
+        // Check form completion to update progress
+        function checkFormCompletion() {
+            const name = document.getElementById('name').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const gender = document.querySelector('input[name="gender"]:checked');
+            const address = document.getElementById('address').value.trim();
+            const transactionId = document.getElementById('transactionId').value.trim();
+            
+            // Step 1: Personal info complete
+            if (name && mobile && email && gender && address) {
+                currentStep = 2;
+            } else {
+                currentStep = 1;
+            }
+            
+            // Step 2: Payment info complete
+            if (transactionId) {
+                currentStep = 3;
+            }
+            
+            updateProgressIndicator();
         }
 
         // Success overlay helpers
@@ -1969,7 +2048,7 @@
             return isValid;
         }
 
-        // Real-time validation
+        // Real-time validation and progress tracking
         document.getElementById('email').addEventListener('input', function () {
             const email = this.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1981,6 +2060,8 @@
                 this.classList.remove('field-error');
                 document.getElementById('emailError').style.display = 'none';
             }
+            
+            checkFormCompletion();
         });
 
         document.getElementById('mobile').addEventListener('input', function () {
@@ -1994,6 +2075,8 @@
                 this.classList.remove('field-error');
                 document.getElementById('mobileError').style.display = 'none';
             }
+            
+            checkFormCompletion();
         });
 
         document.getElementById('name').addEventListener('input', function () {
@@ -2001,6 +2084,8 @@
                 this.classList.remove('field-error');
                 document.getElementById('nameError').style.display = 'none';
             }
+            
+            checkFormCompletion();
         });
 
         document.getElementById('address').addEventListener('input', function () {
@@ -2008,6 +2093,8 @@
                 this.classList.remove('field-error');
                 document.getElementById('addressError').style.display = 'none';
             }
+            
+            checkFormCompletion();
         });
 
         document.getElementById('transactionId').addEventListener('input', function () {
@@ -2015,11 +2102,14 @@
                 this.classList.remove('field-error');
                 document.getElementById('transactionError').style.display = 'none';
             }
+            
+            checkFormCompletion();
         });
 
         document.querySelectorAll('input[name="gender"]').forEach(radio => {
             radio.addEventListener('change', function () {
                 document.getElementById('genderError').style.display = 'none';
+                checkFormCompletion();
             });
         });
 
@@ -2030,8 +2120,9 @@
             couponField.addEventListener('blur', applyCoupon);
         }
 
-        // Initial price state
+        // Initial price state and progress indicator
         applyCoupon();
+        updateProgressIndicator();
     </script>
 </body>
 
