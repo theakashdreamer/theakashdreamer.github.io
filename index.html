@@ -29,9 +29,84 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+    
+    <style>
+      /* Particle background animation - Added to your existing code */
+      .particles-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        background: #1a1a2e; /* Dark blue background for particles */
+      }
+      
+      /* Ensure main content stays above particles */
+      main {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Smooth scrolling for the page */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Add subtle fade-in animation for page content */
+      article[data-page] {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Back to top button */
+      .back-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .back-to-top.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .back-to-top:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+    </style>
   </head>
 
   <body>
+    <!-- Particle Background Animation -->
+    <div class="particles-background" id="particles-js"></div>
+    
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+      <ion-icon name="arrow-up-outline"></ion-icon>
+    </div>
+
     <!--
     - #MAIN
   -->
@@ -221,13 +296,13 @@
               Alongside my studies, I'm currently working as a
               <strong>Junior Android Developer</strong> at
               <strong>Technosys Technologies Pvt. Ltd., Lucknow</strong>, where
-              I’m gaining hands-on experience in mobile application development.
+              I'm gaining hands-on experience in mobile application development.
             </p>
 
             <p>
               I love exploring the Android ecosystem, solving real-world
               problems with code, and constantly learning new technologies. My
-              favorite hobby? <strong>Playing with code</strong> — it’s where I
+              favorite hobby? <strong>Playing with code</strong> — it's where I
               find creativity and fun!
             </p>
 
@@ -765,114 +840,6 @@
             </div>
 
             <ul class="project-list">
-              <!-- <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-1.jpg" alt="finance" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Finance</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li> -->
-              <!-- 
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-2.png" alt="orizon" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Orizon</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li> -->
-
-              <!-- <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-3.jpg" alt="fundo" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Fundo</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li> -->
-
-              <!-- <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-5.png" alt="dsm." loading="lazy">
-                </figure>
-
-                <h3 class="project-title">DSM.</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li> -->
-              <!-- 
-            <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-6.png" alt="metaspark" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">MetaSpark</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li> -->
-
-              <!-- <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-7.png" alt="summary" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Summary</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li> -->
-
               <li
                 class="project-item active"
                 data-filter-item
@@ -896,24 +863,6 @@
                   <p class="project-category">Applications</p>
                 </a>
               </li>
-
-              <!-- <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-9.png" alt="arrival" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Arrival</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li> -->
             </ul>
           </section>
         </article>
@@ -976,7 +925,7 @@
                       class="h3 blog-item-title"
                       onclick="showProductModal(
       'Vestige SF9 Blemish Gel',
-      '✨ Say goodbye to pimples, blemishes, and dark spots with Vestige Skin Formula 9 Blemish Gel! I used this acne-fighting gel for 7 days—did it really work? Let’s find out!',
+      '✨ Say goodbye to pimples, blemishes, and dark spots with Vestige Skin Formula 9 Blemish Gel! I used this acne-fighting gel for 7 days—did it really work? Let\'s find out!',
       './assets/images/skin_formula_skin_care.jpg'
     )"
                     >
@@ -988,7 +937,7 @@
                       ✨ Say goodbye to pimples, blemishes, and dark spots with
                       <strong>Vestige Skin Formula 9 Blemish Gel</strong>! I
                       used this acne-fighting gel for 7 days—did it really work?
-                      Let’s find out!
+                      Let's find out!
                     </p>
                   </div>
                 </a>
@@ -1040,7 +989,7 @@
                       class="h3 blog-item-title"
                       onclick="showProductModal(
       'Joints & Bones Supplements',
-      '  🦴 After using <strong>Vestige Calcium, Glucosamine & Collagen supplements</strong> for 3 months, here’s my honest experience on how they improved my <strong>joint flexibility</strong>, <strong>bone strength</strong>, and <strong>daily mobility</strong>. Real results you don’t want to miss—let’s dive in! 💪',
+      '  🦴 After using <strong>Vestige Calcium, Glucosamine & Collagen supplements</strong> for 3 months, here\'s my honest experience on how they improved my <strong>joint flexibility</strong>, <strong>bone strength</strong>, and <strong>daily mobility</strong>. Real results you don\'t want to miss—let\'s dive in! 💪',
       './assets/images/joints_pain_thumbnail.jpg'
     )"
                     >
@@ -1054,11 +1003,11 @@
                         >Vestige Calcium, Glucosamine & Collagen
                         supplements</strong
                       >
-                      for 3 months, here’s my honest experience on how they
+                      for 3 months, here's my honest experience on how they
                       improved my <strong>joint flexibility</strong>,
                       <strong>bone strength</strong>, and
-                      <strong>daily mobility</strong>. Real results you don’t
-                      want to miss—let’s dive in! 💪
+                      <strong>daily mobility</strong>. Real results you don't
+                      want to miss—let's dive in! 💪
                     </p>
                   </div>
                 </a>
@@ -1163,5 +1112,192 @@
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
+    
+    <!-- Particles.js library for background animation -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+      // Initialize particle background animation
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize particles.js
+        if (document.getElementById('particles-js')) {
+          particlesJS('particles-js', {
+            particles: {
+              number: {
+                value: 80,
+                density: {
+                  enable: true,
+                  value_area: 800
+                }
+              },
+              color: {
+                value: "#ffffff"
+              },
+              shape: {
+                type: "circle",
+                stroke: {
+                  width: 0,
+                  color: "#000000"
+                }
+              },
+              opacity: {
+                value: 0.3,
+                random: true,
+                anim: {
+                  enable: true,
+                  speed: 1,
+                  opacity_min: 0.1,
+                  sync: false
+                }
+              },
+              size: {
+                value: 3,
+                random: true,
+                anim: {
+                  enable: true,
+                  speed: 2,
+                  size_min: 0.1,
+                  sync: false
+                }
+              },
+              line_linked: {
+                enable: true,
+                distance: 150,
+                color: "#ffffff",
+                opacity: 0.2,
+                width: 1
+              },
+              move: {
+                enable: true,
+                speed: 1,
+                direction: "none",
+                random: true,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+                attract: {
+                  enable: false,
+                  rotateX: 600,
+                  rotateY: 1200
+                }
+              }
+            },
+            interactivity: {
+              detect_on: "canvas",
+              events: {
+                onhover: {
+                  enable: true,
+                  mode: "repulse"
+                },
+                onclick: {
+                  enable: true,
+                  mode: "push"
+                },
+                resize: true
+              },
+              modes: {
+                grab: {
+                  distance: 400,
+                  line_linked: {
+                    opacity: 1
+                  }
+                },
+                bubble: {
+                  distance: 400,
+                  size: 40,
+                  duration: 2,
+                  opacity: 8,
+                  speed: 3
+                },
+                repulse: {
+                  distance: 100,
+                  duration: 0.4
+                },
+                push: {
+                  particles_nb: 4
+                },
+                remove: {
+                  particles_nb: 2
+                }
+              }
+            },
+            retina_detect: true
+          });
+        }
+
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+          if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('active');
+          } else {
+            backToTopButton.classList.remove('active');
+          }
+        });
+
+        backToTopButton.addEventListener('click', function() {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+
+        // Add fade-in animation to page sections when they come into view
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+            }
+          });
+        }, observerOptions);
+
+        // Observe timeline items and project items for animation
+        document.querySelectorAll('.timeline-item, .project-item, .blog-post-item').forEach(el => {
+          observer.observe(el);
+        });
+      });
+
+      // Existing functions from your original code
+      function loadYouTubeVideo2(element) {
+        const videoId = element.getAttribute('data-video-id');
+        if (videoId) {
+          element.innerHTML = `
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          `;
+        }
+      }
+
+      function showProductModal(title, description, imageSrc) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalDescription').innerHTML = description;
+        document.getElementById('modalImage').src = imageSrc;
+        document.getElementById('productModal').style.display = 'block';
+      }
+
+      function closeProductModal() {
+        document.getElementById('productModal').style.display = 'none';
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('productModal');
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      };
+    </script>
   </body>
 </html>
