@@ -754,7 +754,7 @@
       z-index: 1;
     }
 
-    input:focus+ i {
+    input:focus+i {
       color: #f97316;
     }
 
@@ -1425,11 +1425,84 @@
         width: 90px;
         height: 90px;
       }
+
+    }
+
+    /* ================= WAVE EDUCATION BACKGROUND ================= */
+
+    .wave-bg {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 35vh;
+      z-index: -2;
+      /* below floating elements */
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .wave-bg svg {
+      width: 200%;
+      height: 100%;
+      animation: waveMove 18s linear infinite;
+    }
+
+    @keyframes waveMove {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Second wave for depth */
+    .wave-bg.wave-2 {
+      opacity: 0.35;
+      height: 30vh;
+      animation-duration: 25s;
+      filter: blur(2px);
+    }
+
+    /* Optional education glow */
+    .wave-glow {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50vh;
+      background: radial-gradient(circle at bottom center,
+          rgba(99, 102, 241, 0.25),
+          transparent 70%);
+      z-index: -3;
+      pointer-events: none;
     }
   </style>
 </head>
 
 <body>
+  <!-- Wave Glow -->
+<div class="wave-glow"></div>
+
+<!-- Wave Layer 1 -->
+<div class="wave-bg">
+  <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="#6366f1" fill-opacity="0.35"
+      d="M0,224L60,229.3C120,235,240,245,360,234.7C480,224,600,192,720,181.3C840,171,960,181,1080,186.7C1200,192,1320,192,1380,192L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+    </path>
+  </svg>
+</div>
+
+<!-- Wave Layer 2 -->
+<div class="wave-bg wave-2">
+  <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="#22c55e" fill-opacity="0.25"
+      d="M0,256L80,240C160,224,320,192,480,186.7C640,181,800,203,960,202.7C1120,203,1280,181,1360,170.7L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z">
+    </path>
+  </svg>
+</div>
   <div class="floating-elements">
     <div class="floating-element"></div>
     <div class="floating-element"></div>
@@ -1526,7 +1599,8 @@
                 <h3><i class="fas fa-credit-card"></i> Payment Instructions</h3>
                 <span class="payment-badge"><i class="fas fa-shield-alt"></i> 100% Secure</span>
               </div>
-              <p>Complete your payment using the QR code or UPI apps below, then add your transaction ID in the form.</p>
+              <p>Complete your payment using the QR code or UPI apps below, then add your transaction ID in the form.
+              </p>
               <ul>
                 <li><strong>Amount:</strong> <span id="amountValue">₹999</span></li>
               </ul>
@@ -1613,7 +1687,8 @@
                 <label for="address" class="required">Address</label>
                 <div class="input-with-icon">
                   <i class="fas fa-map-marker-alt"></i>
-                  <textarea id="address" name="address" rows="3" placeholder="Enter your complete address" required></textarea>
+                  <textarea id="address" name="address" rows="3" placeholder="Enter your complete address"
+                    required></textarea>
                 </div>
                 <div class="error-text" id="addressError">Please enter your address.</div>
               </div>
@@ -1641,7 +1716,8 @@
                 <label for="transactionId" class="required">Transaction ID</label>
                 <div class="input-with-icon">
                   <i class="fas fa-receipt"></i>
-                  <input type="text" id="transactionId" name="transactionId" placeholder="Enter your payment transaction ID" required>
+                  <input type="text" id="transactionId" name="transactionId"
+                    placeholder="Enter your payment transaction ID" required>
                 </div>
                 <div class="error-text" id="transactionError">Please enter your transaction ID.</div>
               </div>

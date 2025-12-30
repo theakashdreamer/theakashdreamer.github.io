@@ -30,72 +30,7 @@
       rel="stylesheet"
     />
     
-    <style>
-      /* Particle background animation - Added to your existing code */
-      .particles-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-        background: #1a1a2e; /* Dark blue background for particles */
-      }
-      
-      /* Ensure main content stays above particles */
-      main {
-        position: relative;
-        z-index: 1;
-      }
-      
-      /* Smooth scrolling for the page */
-      html {
-        scroll-behavior: smooth;
-      }
-      
-      /* Add subtle fade-in animation for page content */
-      article[data-page] {
-        animation: fadeIn 0.5s ease-in-out;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      
-      /* Back to top button */
-      .back-to-top {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      }
-      
-      .back-to-top.active {
-        opacity: 1;
-        visibility: visible;
-      }
-      
-      .back-to-top:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      }
-    </style>
+      <link rel="stylesheet" href="./assets/css/pages.css" />
   </head>
 
   <body>
