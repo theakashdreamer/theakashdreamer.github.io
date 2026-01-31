@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      padding: 20px;
+    }
+    h2 {
+      margin-top: 40px;
+      color: #38bdf8;
+    }
+    form {
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    textarea { resize: vertical; }
+    .success {
+      color: #22c55e;
+      margin-top: 10px;
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+      authDomain: "registration-93e51.firebaseapp.com",
+      projectId: "registration-93e51",
+      storageBucket: "registration-93e51.firebasestorage.app",
+      messagingSenderId: "509440941274",
+      appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+    window.addDoc = addDoc;
+    window.collection = collection;
+    window.serverTimestamp = serverTimestamp;
+  </script>
+</head>
+
+<body>
+
+  <h1>🔥 Admin Dashboard</h1>
+
+  <!-- ================= PORTFOLIO MODULE ================= -->
+  <h2>Add Portfolio</h2>
+
+  <form id="portfolioForm">
+    <input type="text" placeholder="Project Title" required id="pTitle">
+    <input type="text" placeholder="Image URL" required id="pImage">
+
+    <select id="pCategory" required>
+      <option value="">Select Category</option>
+      <option value="Applications">Applications</option>
+      <option value="Web design">Web design</option>
+      <option value="Web development">Web development</option>
+    </select>
+
+    <button type="submit">Add Portfolio</button>
+    <div class="success" id="pSuccess"></div>
+  </form>
+
+  <!-- ================= BLOG MODULE ================= -->
+  <h2>Add Blog</h2>
+
+  <form id="blogForm">
+    <input type="text" placeholder="Blog Title" required id="bTitle">
+    <input type="text" placeholder="Image URL" required id="bImage">
+    <input type="text" placeholder="YouTube Video ID (optional)" id="bVideo">
+    <input type="text" placeholder="Category" required id="bCategory">
+    <input type="date" required id="bDate">
+    <textarea placeholder="Short Description" required id="bDesc"></textarea>
+
+    <button type="submit">Add Blog</button>
+    <div class="success" id="bSuccess"></div>
+  </form>
+
+  <!-- ================= JS LOGIC ================= -->
+  <script>
+    // Portfolio submit
+    document.getElementById("portfolioForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      await window.addDoc(
+        window.collection(window.db, "portfolio"),
+        {
+          title: pTitle.value,
+          image: pImage.value,
+          category: pCategory.value,
+          createdAt: window.serverTimestamp()
+        }
+      );
+
+      e.target.reset();
+      pSuccess.textContent = "Portfolio added successfully ✔";
+    });
+
+    // Blog submit
+    document.getElementById("blogForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      await window.addDoc(
+        window.collection(window.db, "blogs"),
+        {
+          title: bTitle.value,
+          image: bImage.value,
+          videoId: bVideo.value,
+          category: bCategory.value,
+          description: bDesc.value,
+          date: bDate.value,
+          createdAt: window.serverTimestamp()
+        }
+      );
+
+      e.target.reset();
+      bSuccess.textContent = "Blog added successfully ✔";
+    });
+  </script>
+
+</body>
+</html>

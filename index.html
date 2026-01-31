@@ -1,341 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Akash Singh</title>
 
-    <!--
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akash Singh</title>
+
+  <!--
     - favicon code tiwilingo--- 12LUPSQ57ZZ7X88W9PRB3S63
   -->
-    <link
-      rel="shortcut icon"
-      href="./assets/images/akash_profile_pic.png"
-      type="image/x-icon"
-    />
+  <link rel="shortcut icon" href="./assets/images/akash_profile_pic.png" type="image/x-icon" />
 
-    <!--
+  <!--
     - custom css link
   -->
-    <link rel="stylesheet" href="./assets/css/style.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
 
-    <!--
+  <!--
     - google font link
   -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    
-      <link rel="stylesheet" href="./assets/css/pages.css" />
-  </head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <body>
-    <!-- Particle Background Animation -->
-    <div class="particles-background" id="particles-js"></div>
-    
-    <!-- Back to Top Button -->
-    <div class="back-to-top" id="backToTop">
-      <ion-icon name="arrow-up-outline"></ion-icon>
-    </div>
+  <link rel="stylesheet" href="./assets/css/pages.css" />
 
-    <!--
+  <!-- Firebase SDK -->
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+      authDomain: "registration-93e51.firebaseapp.com",
+      projectId: "registration-93e51",
+      storageBucket: "registration-93e51.firebasestorage.app",
+      messagingSenderId: "509440941274",
+      appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3",
+      measurementId: "G-S8YQNKQWB6"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+    window.firestoreCollection = collection;
+    window.firestoreAddDoc = addDoc;
+    window.firestoreGetDocs = getDocs;
+    window.firestoreQuery = query;
+    window.firestoreOrderBy = orderBy;
+
+    console.log("Firebase initialized successfully!");
+  </script>
+
+
+
+
+</head>
+
+<body>
+  <!-- Particle Background Animation -->
+  <div class="particles-background" id="particles-js"></div>
+
+  <!-- Back to Top Button -->
+  <div class="back-to-top" id="backToTop">
+    <ion-icon name="arrow-up-outline"></ion-icon>
+  </div>
+
+  <!--
     - #MAIN
   -->
 
-    <main>
-      <!--
+  <main>
+    <!--
       - #SIDEBAR
     -->
 
-      <aside class="sidebar" data-sidebar>
-        <div class="sidebar-info">
-          <figure class="avatar-box">
-            <img
-              src="./assets/images/akash_profile_pic.png"
-              alt="Akash Singh"
-              width="80"
-              height="80"
-            />
-          </figure>
+    <aside class="sidebar" data-sidebar>
+      <div class="sidebar-info">
+        <figure class="avatar-box">
+          <img src="./assets/images/akash_profile_pic.png" alt="Akash Singh" width="80" height="80" />
+        </figure>
 
-          <div class="info-content">
-            <h1 class="name" title="Akash Singh">Akash Singh</h1>
+        <div class="info-content">
+          <h1 class="name" title="Akash Singh">Akash Singh</h1>
 
-            <p class="title">Android developer</p>
-          </div>
-
-          <button class="info_more-btn" data-sidebar-btn>
-            <span>Show Contacts</span>
-
-            <ion-icon name="chevron-down"></ion-icon>
-          </button>
+          <p class="title">Android developer</p>
         </div>
 
-        <div class="sidebar-info_more">
-          <div class="separator"></div>
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
 
-          <ul class="contacts-list">
-            <li class="contact-item">
-              <div class="icon-box">
-                <ion-icon name="mail-outline"></ion-icon>
-              </div>
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+      </div>
 
-              <div class="contact-info">
-                <p class="contact-title">Email</p>
+      <div class="sidebar-info_more">
+        <div class="separator"></div>
 
-                <a href="mailto:theakashdreamer@gmail.com" class="contact-link"
-                  >theakashdreamer@gmail.com</a
-                >
-              </div>
-            </li>
+        <ul class="contacts-list">
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
 
-            <li class="contact-item">
-              <div class="icon-box">
-                <ion-icon name="phone-portrait-outline"></ion-icon>
-              </div>
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
 
-              <div class="contact-info">
-                <p class="contact-title">Phone</p>
+              <a href="mailto:theakashdreamer@gmail.com" class="contact-link">theakashdreamer@gmail.com</a>
+            </div>
+          </li>
 
-                <a href="tel:+12133522795" class="contact-link"
-                  >+91 7880335787</a
-                >
-              </div>
-            </li>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </div>
 
-            <li class="contact-item">
-              <div class="icon-box">
-                <ion-icon name="calendar-outline"></ion-icon>
-              </div>
+            <div class="contact-info">
+              <p class="contact-title">Phone</p>
 
-              <div class="contact-info">
-                <p class="contact-title">Birthday</p>
+              <a href="tel:+12133522795" class="contact-link">+91 7880335787</a>
+            </div>
+          </li>
 
-                <time datetime="1982-06-23">May 27, 2002</time>
-              </div>
-            </li>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
 
-            <li class="contact-item">
-              <div class="icon-box">
-                <ion-icon name="location-outline"></ion-icon>
-              </div>
+            <div class="contact-info">
+              <p class="contact-title">Birthday</p>
 
-              <div class="contact-info">
-                <p class="contact-title">Location</p>
+              <time datetime="1982-06-23">May 27, 2002</time>
+            </div>
+          </li>
 
-                <address>Pratapgarh,Uttar Pradesh,India</address>
-              </div>
-            </li>
-          </ul>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
 
-          <div class="separator"></div>
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
 
-          <ul class="social-list">
-            <li class="social-item">
-              <a
-                href="https://www.facebook.com/somvansiakash.singh.3/"
-                class="social-link"
-              >
-                <ion-icon name="logo-facebook"></ion-icon>
-              </a>
-            </li>
+              <address>Pratapgarh,Uttar Pradesh,India</address>
+            </div>
+          </li>
+        </ul>
 
-            <li class="social-item">
-              <a
-                href="https://www.linkedin.com/in/akash-singh-270b62365/"
-                class="social-link"
-              >
-                <ion-icon name="logo-linkedin"></ion-icon>
-              </a>
-            </li>
+        <div class="separator"></div>
 
-            <li class="social-item">
-              <a
-                href="https://www.instagram.com/the_akashdreamer/"
-                class="social-link"
-              >
-                <ion-icon name="logo-instagram"></ion-icon>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </aside>
+        <ul class="social-list">
+          <li class="social-item">
+            <a href="https://www.facebook.com/somvansiakash.singh.3/" class="social-link">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
 
-      <!--
+          <li class="social-item">
+            <a href="https://www.linkedin.com/in/akash-singh-270b62365/" class="social-link">
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://www.instagram.com/the_akashdreamer/" class="social-link">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!--
       - #main-content
     -->
 
-      <div class="main-content">
-        <!--
+    <div class="main-content">
+      <!--
         - #NAVBAR
       -->
 
-        <nav class="navbar">
-          <ul class="navbar-list">
-            <li class="navbar-item">
-              <button class="navbar-link active" data-nav-link>About</button>
-            </li>
+      <nav class="navbar">
+        <ul class="navbar-list">
+          <li class="navbar-item">
+            <button class="navbar-link active" data-nav-link>About</button>
+          </li>
 
-            <li class="navbar-item">
-              <button class="navbar-link" data-nav-link>Resume</button>
-            </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resume</button>
+          </li>
 
-            <li class="navbar-item">
-              <button class="navbar-link" data-nav-link>Portfolio</button>
-            </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Portfolio</button>
+          </li>
 
-            <li class="navbar-item">
-              <button class="navbar-link" data-nav-link>Blog</button>
-            </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Blog</button>
+          </li>
 
-            <li class="navbar-item">
-              <button class="navbar-link" data-nav-link>Contact</button>
-            </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Contact</button>
+          </li>
 
-            <!-- <li class="navbar-item">
+          <!-- <li class="navbar-item">
               <a href="/pages/registrationpage/regiter.html" class="navbar-link"
                 >regiter</a
               >
             </li> -->
-          </ul>
-        </nav>
+        </ul>
+      </nav>
 
-        <!--
+      <!--
         - #ABOUT
       -->
 
-        <article class="about active" data-page="about">
-          <header>
-            <h2 class="h2 article-title">About me</h2>
-          </header>
-          <section class="about-text">
-            <p>
-              Hi everyone,<br />
-              Welcome to my tech world! 👨‍💻
-            </p>
+      <article class="about active" data-page="about">
+        <header>
+          <h2 class="h2 article-title">About me</h2>
+        </header>
+        <section class="about-text">
+          <p>
+            Hi everyone,<br />
+            Welcome to my tech world! 👨‍💻
+          </p>
 
-            <p>
-              I'm <strong>Akash Singh</strong>, a passionate tech enthusiast
-              currently pursuing a
-              <strong>Bachelor of Technology (B.Tech)</strong> in
-              <strong>Computer Science and Engineering</strong>. I previously
-              completed a Diploma in the same field from
-              <strong>Government Polytechnic</strong>.
-            </p>
+          <p>
+            I'm <strong>Akash Singh</strong>, a passionate tech enthusiast
+            currently pursuing a
+            <strong>Bachelor of Technology (B.Tech)</strong> in
+            <strong>Computer Science and Engineering</strong>. I previously
+            completed a Diploma in the same field from
+            <strong>Government Polytechnic</strong>.
+          </p>
 
-            <p>
-              Alongside my studies, I'm currently working as a
-              <strong>Junior Android Developer</strong> at
-              <strong>Technosys Technologies Pvt. Ltd., Lucknow</strong>, where
-              I'm gaining hands-on experience in mobile application development.
-            </p>
+          <p>
+            Alongside my studies, I'm currently working as a
+            <strong>Junior Android Developer</strong> at
+            <strong>Technosys Technologies Pvt. Ltd., Lucknow</strong>, where
+            I'm gaining hands-on experience in mobile application development.
+          </p>
 
-            <p>
-              I love exploring the Android ecosystem, solving real-world
-              problems with code, and constantly learning new technologies. My
-              favorite hobby? <strong>Playing with code</strong> — it's where I
-              find creativity and fun!
-            </p>
+          <p>
+            I love exploring the Android ecosystem, solving real-world
+            problems with code, and constantly learning new technologies. My
+            favorite hobby? <strong>Playing with code</strong> — it's where I
+            find creativity and fun!
+          </p>
 
-            <p>Thanks for visiting my portfolio!</p>
-          </section>
+          <p>Thanks for visiting my portfolio!</p>
+        </section>
 
-          <!--
+        <!--
           - service
         -->
 
-          <section class="service">
-            <h3 class="h3 service-title">What i'm doing</h3>
+        <section class="service">
+          <h3 class="h3 service-title">What i'm doing</h3>
 
-            <ul class="service-list">
-              <li class="service-item">
-                <div class="service-icon-box">
-                  <img
-                    src="./assets/images/icon-app.svg"
-                    alt="mobile app icon"
-                    width="40"
-                  />
-                </div>
+          <ul class="service-list">
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40" />
+              </div>
 
-                <div class="service-content-box">
-                  <h4 class="h4 service-item-title">Mobile apps</h4>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Mobile apps</h4>
 
-                  <p class="service-item-text">
-                    Professional development of applications for iOS and
-                    Android.
-                  </p>
-                </div>
-              </li>
-              <li class="service-item">
-                <div class="service-icon-box">
-                  <img
-                    src="./assets/images/icon-design.svg
-                "
-                    alt="design icon"
-                    width="40"
-                  />
-                </div>
+                <p class="service-item-text">
+                  Professional development of applications for iOS and
+                  Android.
+                </p>
+              </div>
+            </li>
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-design.svg
+                " alt="design icon" width="40" />
+              </div>
 
-                <div class="service-content-box">
-                  <h4 class="h4 service-item-title">Web design</h4>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web design</h4>
 
-                  <p class="service-item-text">
-                    The most modern and high-quality design made at a
-                    professional level.
-                  </p>
-                </div>
-              </li>
+                <p class="service-item-text">
+                  The most modern and high-quality design made at a
+                  professional level.
+                </p>
+              </div>
+            </li>
 
-              <li class="service-item">
-                <div class="service-icon-box">
-                  <img
-                    src="./assets/images/icon-dev.svg"
-                    alt="Web development icon"
-                    width="40"
-                  />
-                </div>
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40" />
+              </div>
 
-                <div class="service-content-box">
-                  <h4 class="h4 service-item-title">Web development</h4>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web development</h4>
 
-                  <p class="service-item-text">
-                    High-quality development of sites at the professional level.
-                  </p>
-                </div>
-              </li>
+                <p class="service-item-text">
+                  High-quality development of sites at the professional level.
+                </p>
+              </div>
+            </li>
 
-              <li
-                class="service-item"
-                 onclick="window.location.href='/pages/health/health.html'"
-              >
-                <div class="service-icon-box">
-                  <img
-                    src="./assets/images/icon-photo.svg"
-                    alt="camera icon"
-                    width="40"
-                  />
-                </div>
+            <li class="service-item" onclick="window.location.href='/pages/health/health.html'">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-photo.svg" alt="camera icon" width="40" />
+              </div>
 
-                <div class="service-content-box">
-                  <h4 class="h4 service-item-title">Health Consultant</h4>
-                  <p class="service-item-text">
-                    I raise awareness to help people understand and take charge
-                    of their health for a healthier, happier life.
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </section>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Health Consultant</h4>
+                <p class="service-item-text">
+                  I raise awareness to help people understand and take charge
+                  of their health for a healthier, happier life.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-          <!--
+        <!--
           - testimonials
         -->
 
-          <!-- <section class="testimonials">
+        <!-- <section class="testimonials">
 
           <h3 class="h3 testimonials-title">Testimonials</h3>
 
@@ -433,55 +432,50 @@
 
         </section> -->
 
-          <!--
+        <!--
           - testimonials modal
         -->
 
-          <div class="modal-container" data-modal-container>
-            <div class="overlay" data-overlay></div>
+        <div class="modal-container" data-modal-container>
+          <div class="overlay" data-overlay></div>
 
-            <section class="testimonials-modal">
-              <button class="modal-close-btn" data-modal-close-btn>
-                <ion-icon name="close-outline"></ion-icon>
-              </button>
+          <section class="testimonials-modal">
+            <button class="modal-close-btn" data-modal-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
 
-              <div class="modal-img-wrapper">
-                <figure class="modal-avatar-box">
-                  <img
-                    src="./assets/images/avatar-1.png"
-                    alt="Daniel lewis"
-                    width="80"
-                    data-modal-img
-                  />
-                </figure>
+            <div class="modal-img-wrapper">
+              <figure class="modal-avatar-box">
+                <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="80" data-modal-img />
+              </figure>
 
-                <img src="./assets/images/icon-quote.svg" alt="quote icon" />
+              <img src="./assets/images/icon-quote.svg" alt="quote icon" />
+            </div>
+
+            <div class="modal-content">
+              <h4 class="h3 modal-title" data-modal-title>Daniel lewis</h4>
+
+              <time datetime="2021-06-14">14 June, 2021</time>
+
+              <div data-modal-text>
+                <p>
+                  Richard was hired to create a corporate identity. We were
+                  very pleased with the work done. She has a lot of experience
+                  and is very concerned about the needs of client. Lorem ipsum
+                  dolor sit amet, ullamcous cididt consectetur adipiscing
+                  elit, seds do et eiusmod tempor incididunt ut laborels
+                  dolore magnarels alia.
+                </p>
               </div>
+            </div>
+          </section>
+        </div>
 
-              <div class="modal-content">
-                <h4 class="h3 modal-title" data-modal-title>Daniel lewis</h4>
-
-                <time datetime="2021-06-14">14 June, 2021</time>
-
-                <div data-modal-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were
-                    very pleased with the work done. She has a lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum
-                    dolor sit amet, ullamcous cididt consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels
-                    dolore magnarels alia.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <!--
+        <!--
           - clients
         -->
 
-          <!-- <section class="clients">
+        <!-- <section class="clients">
 
           <h3 class="h3 clients-title">Clients</h3>
 
@@ -526,683 +520,623 @@
           </ul>
 
         </section> -->
-        </article>
+      </article>
 
-        <!--
+      <!--
         - #RESUME
       -->
 
-        <article class="resume" data-page="resume">
-          <header>
-            <h2 class="h2 article-title">Resume</h2>
-          </header>
+      <article class="resume" data-page="resume">
+        <header>
+          <h2 class="h2 article-title">Resume</h2>
+        </header>
 
-          <section class="timeline">
-            <div class="title-wrapper">
-              <div class="icon-box">
-                <ion-icon name="book-outline"></ion-icon>
-              </div>
-
-              <h3 class="h3">Education</h3>
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
             </div>
 
-            <ol class="timeline-list">
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">
-                  Dr. A. P. J. Abdul Kalam Technical University
-                </h4>
+            <h3 class="h3">Education</h3>
+          </div>
 
-                <span>2023 — 2026</span>
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">
+                Dr. A. P. J. Abdul Kalam Technical University
+              </h4>
 
-                <p class="timeline-text">
-                  Pursuing a Bachelor of Technology (B.Tech) in Computer Science
-                  and Engineering, focusing on core subjects such as Data
-                  Structures, Algorithms, Operating Systems, Computer Networks,
-                  and Artificial Intelligence. Gaining practical experience
-                  through hands-on projects, coding assignments, and
-                  participation in technical events and hackathons. Developing
-                  strong analytical and problem-solving skills to build
-                  innovative software solutions.
-                </p>
-              </li>
+              <span>2023 — 2026</span>
 
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">
-                  Government Polytechnic Preamdhar Patti Pratapgarh
-                </h4>
+              <p class="timeline-text">
+                Pursuing a Bachelor of Technology (B.Tech) in Computer Science
+                and Engineering, focusing on core subjects such as Data
+                Structures, Algorithms, Operating Systems, Computer Networks,
+                and Artificial Intelligence. Gaining practical experience
+                through hands-on projects, coding assignments, and
+                participation in technical events and hackathons. Developing
+                strong analytical and problem-solving skills to build
+                innovative software solutions.
+              </p>
+            </li>
 
-                <span>2019 — 2022</span>
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">
+                Government Polytechnic Preamdhar Patti Pratapgarh
+              </h4>
 
-                <p class="timeline-text">
-                  Completed a Diploma in Computer Science and Engineering,
-                  covering key areas such as Programming Fundamentals, Computer
-                  Hardware, Database Management Systems, Web Development, and
-                  Networking. Gained practical knowledge through lab sessions,
-                  projects, and technical workshops, laying a strong foundation
-                  for further studies and a career in technology.
-                </p>
-              </li>
+              <span>2019 — 2022</span>
 
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">High School Examination</h4>
+              <p class="timeline-text">
+                Completed a Diploma in Computer Science and Engineering,
+                covering key areas such as Programming Fundamentals, Computer
+                Hardware, Database Management Systems, Web Development, and
+                Networking. Gained practical knowledge through lab sessions,
+                projects, and technical workshops, laying a strong foundation
+                for further studies and a career in technology.
+              </p>
+            </li>
 
-                <span>2015 — 2017</span>
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">High School Examination</h4>
 
-                <p class="timeline-text">
-                  Completed High School (10th Grade) under the U.P. Board from
-                  Islamia I.C. Rampur Bhawa, Pratapgarh. Passed with strong
-                  performance in core subjects such as Hindi, English, Science,
-                  and Social Science. Earned grades ranging from A2 to B2 in key
-                  subjects, with successful completion of both theory and
-                  practical components.
-                </p>
-              </li>
+              <span>2015 — 2017</span>
 
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">Intermediate Examination</h4>
+              <p class="timeline-text">
+                Completed High School (10th Grade) under the U.P. Board from
+                Islamia I.C. Rampur Bhawa, Pratapgarh. Passed with strong
+                performance in core subjects such as Hindi, English, Science,
+                and Social Science. Earned grades ranging from A2 to B2 in key
+                subjects, with successful completion of both theory and
+                practical components.
+              </p>
+            </li>
 
-                <span>2017 — 2019</span>
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Intermediate Examination</h4>
 
-                <p class="timeline-text">
-                  Completed Intermediate (12th Grade) with a focus on Science
-                  stream, including subjects like Mathematics, Physics, and
-                  Chemistry. Achieved First Division with a total of 329 out of
-                  500 marks. Demonstrated strong academic performance and
-                  dedication to studies.
-                </p>
-              </li>
-            </ol>
-          </section>
+              <span>2017 — 2019</span>
 
-          <section class="timeline">
-            <div class="title-wrapper">
-              <div class="icon-box">
-                <ion-icon name="book-outline"></ion-icon>
-              </div>
+              <p class="timeline-text">
+                Completed Intermediate (12th Grade) with a focus on Science
+                stream, including subjects like Mathematics, Physics, and
+                Chemistry. Achieved First Division with a total of 329 out of
+                500 marks. Demonstrated strong academic performance and
+                dedication to studies.
+              </p>
+            </li>
+          </ol>
+        </section>
 
-              <h3 class="h3">Experience</h3>
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
             </div>
 
-            <ol class="timeline-list">
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">
-                  Android Developer – Technosys Technologies Pvt Ltd
-                </h4>
+            <h3 class="h3">Experience</h3>
+          </div>
 
-                <span>2023 — Present</span>
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">
+                Android Developer – Technosys Technologies Pvt Ltd
+              </h4>
 
-                <p class="timeline-text">
-                  Developing Android apps using Java and Kotlin, enhancing
-                  features, fixing bugs, and collaborating with teams for smooth
-                  user experience.
-                </p>
-              </li>
+              <span>2023 — Present</span>
 
-              <li class="timeline-item">
-                <h4 class="h4 timeline-item-title">
-                  Apprenticeship Trainee – Softpro India Computer Technologies
-                  (P) Ltd.
-                </h4>
+              <p class="timeline-text">
+                Developing Android apps using Java and Kotlin, enhancing
+                features, fixing bugs, and collaborating with teams for smooth
+                user experience.
+              </p>
+            </li>
 
-                <span>Aug 2022 — Mar 2023</span>
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">
+                Apprenticeship Trainee – Softpro India Computer Technologies
+                (P) Ltd.
+              </h4>
 
-                <p class="timeline-text">
-                  Trained in Android and web development, core Java, C
-                  programming, and Oracle Database. Gained hands-on experience
-                  and improved communication skills.
-                </p>
-              </li>
-            </ol>
-          </section>
+              <span>Aug 2022 — Mar 2023</span>
 
-          <section class="skill">
-            <h3 class="h3 skills-title">My skills</h3>
+              <p class="timeline-text">
+                Trained in Android and web development, core Java, C
+                programming, and Oracle Database. Gained hands-on experience
+                and improved communication skills.
+              </p>
+            </li>
+          </ol>
+        </section>
 
-            <ul class="skills-list content-card">
-              <li class="skills-item">
-                <div class="title-wrapper">
-                  <h5 class="h5">Android Development</h5>
-                  <data value="80">80%</data>
-                </div>
+        <section class="skill">
+          <h3 class="h3 skills-title">My skills</h3>
 
-                <div class="skill-progress-bg">
-                  <div class="skill-progress-fill" style="width: 80%"></div>
-                </div>
-              </li>
+          <ul class="skills-list content-card">
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Android Development</h5>
+                <data value="80">80%</data>
+              </div>
 
-              <li class="skills-item">
-                <div class="title-wrapper">
-                  <h5 class="h5">Java</h5>
-                  <data value="70">70%</data>
-                </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 80%"></div>
+              </div>
+            </li>
 
-                <div class="skill-progress-bg">
-                  <div class="skill-progress-fill" style="width: 70%"></div>
-                </div>
-              </li>
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Java</h5>
+                <data value="70">70%</data>
+              </div>
 
-              <li class="skills-item">
-                <div class="title-wrapper">
-                  <h5 class="h5">Presentation Skills</h5>
-                  <data value="90">90%</data>
-                </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%"></div>
+              </div>
+            </li>
 
-                <div class="skill-progress-bg">
-                  <div class="skill-progress-fill" style="width: 90%"></div>
-                </div>
-              </li>
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Presentation Skills</h5>
+                <data value="90">90%</data>
+              </div>
 
-              <li class="skills-item">
-                <div class="title-wrapper">
-                  <h5 class="h5">WordPress</h5>
-                  <data value="50">50%</data>
-                </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%"></div>
+              </div>
+            </li>
 
-                <div class="skill-progress-bg">
-                  <div class="skill-progress-fill" style="width: 50%"></div>
-                </div>
-              </li>
-              <li class="skills-item">
-                <div class="title-wrapper">
-                  <h5 class="h5">Kotlin</h5>
-                  <data value="50">50%</data>
-                </div>
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">WordPress</h5>
+                <data value="50">50%</data>
+              </div>
 
-                <div class="skill-progress-bg">
-                  <div class="skill-progress-fill" style="width: 50%"></div>
-                </div>
-              </li>
-            </ul>
-          </section>
-        </article>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 50%"></div>
+              </div>
+            </li>
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Kotlin</h5>
+                <data value="50">50%</data>
+              </div>
 
-        <!--
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 50%"></div>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </article>
+
+      <!--
         - #PORTFOLIO
       -->
 
-        <article class="portfolio" data-page="portfolio">
-          <header>
-            <h2 class="h2 article-title">Portfolio</h2>
-          </header>
+      <article class="portfolio" data-page="portfolio">
+        <header>
+          <h2 class="h2 article-title">Portfolio</h2>
+        </header>
 
-          <section class="projects">
-            <ul class="filter-list">
-              <li class="filter-item">
-                <button class="active" data-filter-btn>All</button>
+        <section class="projects">
+          <ul class="filter-list">
+            <li class="filter-item">
+              <button class="active" data-filter-btn>All</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Web design</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Applications</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Web development</button>
+            </li>
+          </ul>
+          <ul class="project-list" id="portfolioList"></ul>
+          <div class="filter-select-box">
+            <button class="filter-select" data-select>
+              <div class="select-value" data-selecct-value>
+                Select category
+              </div>
+
+              <div class="select-icon">
+                <ion-icon name="chevron-down"></ion-icon>
+              </div>
+            </button>
+
+            <ul class="select-list">
+              <li class="select-item">
+                <button data-select-item>All</button>
               </li>
 
-              <li class="filter-item">
-                <button data-filter-btn>Web design</button>
+              <li class="select-item">
+                <button data-select-item>Web design</button>
               </li>
 
-              <li class="filter-item">
-                <button data-filter-btn>Applications</button>
+              <li class="select-item">
+                <button data-select-item>Applications</button>
               </li>
 
-              <li class="filter-item">
-                <button data-filter-btn>Web development</button>
-              </li>
-            </ul>
-
-            <div class="filter-select-box">
-              <button class="filter-select" data-select>
-                <div class="select-value" data-selecct-value>
-                  Select category
-                </div>
-
-                <div class="select-icon">
-                  <ion-icon name="chevron-down"></ion-icon>
-                </div>
-              </button>
-
-              <ul class="select-list">
-                <li class="select-item">
-                  <button data-select-item>All</button>
-                </li>
-
-                <li class="select-item">
-                  <button data-select-item>Web design</button>
-                </li>
-
-                <li class="select-item">
-                  <button data-select-item>Applications</button>
-                </li>
-
-                <li class="select-item">
-                  <button data-select-item>Web development</button>
-                </li>
-              </ul>
-            </div>
-
-            <ul class="project-list">
-              <li
-                class="project-item active"
-                data-filter-item
-                data-category="applications"
-              >
-                <a href="#">
-                  <figure class="project-img">
-                    <div class="project-item-icon-box">
-                      <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-
-                    <img
-                      src="./assets/images/total_expense.jpg"
-                      alt="task manager"
-                      loading="lazy"
-                    />
-                  </figure>
-
-                  <h3 class="project-title">Total Monthly Expenses</h3>
-
-                  <p class="project-category">Applications</p>
-                </a>
+              <li class="select-item">
+                <button data-select-item>Web development</button>
               </li>
             </ul>
-          </section>
-        </article>
+          </div>
 
-        <!--
+          <ul class="project-list">
+            <li class="project-item active" data-filter-item data-category="applications">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+
+                  <img src="./assets/images/total_expense.jpg" alt="task manager" loading="lazy" />
+                </figure>
+
+                <h3 class="project-title">Total Monthly Expenses</h3>
+
+                <p class="project-category">Applications</p>
+              </a>
+            </li>
+          </ul>
+
+
+        </section>
+      </article>
+
+      <!--
         - #BLOG
       -->
 
-        <article class="blog" data-page="blog">
-          <header>
-            <h2 class="h2 article-title">Blog</h2>
-          </header>
+      <article class="blog" data-page="blog">
+        <header>
+          <h2 class="h2 article-title">Blog</h2>
+        </header>
 
-          <section class="blog-posts">
-            <ul class="blog-posts-list">
-              <!-- First -->
-              <li class="blog-post-item">
-                <a href="#">
-                  <!-- Example Usage -->
-                  <script src="https://www.youtube.com/iframe_api"></script>
-                  <figure
-                    class="blog-banner-box"
-                    data-video-id="5XrsRPOh4rI"
-                    onclick="loadYouTubeVideo2(this)"
-                    style="position: relative; cursor: pointer"
-                  >
-                    <div class="youtube-thumbnail">
-                      <img
-                        src="./assets/images/skin_formula_skin_care.jpg"
-                        alt="YouTube video thumbnail"
-                        style="width: 100%; display: block"
-                      />
-                      <div
-                        style="
+        <section class="blog-posts">
+          <ul class="blog-posts-list">
+            <!-- First -->
+            <li class="blog-post-item">
+              <a href="#">
+                <!-- Example Usage -->
+                <script src="https://www.youtube.com/iframe_api"></script>
+                <figure class="blog-banner-box" data-video-id="5XrsRPOh4rI" onclick="loadYouTubeVideo2(this)"
+                  style="position: relative; cursor: pointer">
+                  <div class="youtube-thumbnail">
+                    <img src="./assets/images/skin_formula_skin_care.jpg" alt="YouTube video thumbnail"
+                      style="width: 100%; display: block" />
+                    <div style="
                           position: absolute;
                           top: 50%;
                           left: 50%;
                           transform: translate(-50%, -50%);
-                        "
-                      >
-                        <img
-                          src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png"
-                          alt="Play Button"
-                          style="width: 50px; height: 50px; opacity: 0.8"
-                        />
-                      </div>
+                        ">
+                      <img src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png" alt="Play Button"
+                        style="width: 50px; height: 50px; opacity: 0.8" />
                     </div>
-                  </figure>
+                  </div>
+                </figure>
 
-                  <div class="blog-content">
-                    <div class="blog-meta">
-                      <p class="blog-category">Skincare</p>
+                <div class="blog-content">
+                  <div class="blog-meta">
+                    <p class="blog-category">Skincare</p>
 
-                      <span class="dot"></span>
+                    <span class="dot"></span>
 
-                      <time datetime="2022-02-23">Jun 2, 2025</time>
-                    </div>
+                    <time datetime="2022-02-23">Jun 2, 2025</time>
+                  </div>
 
-                    <h4
-                      class="h3 blog-item-title"
-                      onclick="showProductModal(
+                  <h4 class="h3 blog-item-title" onclick="showProductModal(
       'Vestige SF9 Blemish Gel',
       '✨ Say goodbye to pimples, blemishes, and dark spots with Vestige Skin Formula 9 Blemish Gel! I used this acne-fighting gel for 7 days—did it really work? Let\'s find out!',
       './assets/images/skin_formula_skin_care.jpg'
-    )"
-                    >
-                      7-Day Review: Vestige SF9 Blemish Gel for Acne & Dark
-                      Spots
-                    </h4>
+    )">
+                    7-Day Review: Vestige SF9 Blemish Gel for Acne & Dark
+                    Spots
+                  </h4>
 
-                    <p class="blog-text">
-                      ✨ Say goodbye to pimples, blemishes, and dark spots with
-                      <strong>Vestige Skin Formula 9 Blemish Gel</strong>! I
-                      used this acne-fighting gel for 7 days—did it really work?
-                      Let's find out!
-                    </p>
-                  </div>
-                </a>
-              </li>
-              <!-- Second -->
-              <li class="blog-post-item">
-                <a href="#">
-                  <!-- Example Usage -->
-                  <script src="https://www.youtube.com/iframe_api"></script>
-                  <figure
-                    class="blog-banner-box"
-                    data-video-id="5AHL-i7xsWo"
-                    onclick="loadYouTubeVideo2(this)"
-                    style="position: relative; cursor: pointer"
-                  >
-                    <div class="youtube-thumbnail">
-                      <img
-                        src="./assets/images/joints_pain_thumbnail.jpg"
-                        alt="YouTube video thumbnail"
-                        style="width: 100%; display: block"
-                      />
-                      <div
-                        style="
+                  <p class="blog-text">
+                    ✨ Say goodbye to pimples, blemishes, and dark spots with
+                    <strong>Vestige Skin Formula 9 Blemish Gel</strong>! I
+                    used this acne-fighting gel for 7 days—did it really work?
+                    Let's find out!
+                  </p>
+                </div>
+              </a>
+            </li>
+            <!-- Second -->
+            <li class="blog-post-item">
+              <a href="#">
+                <!-- Example Usage -->
+                <script src="https://www.youtube.com/iframe_api"></script>
+                <figure class="blog-banner-box" data-video-id="5AHL-i7xsWo" onclick="loadYouTubeVideo2(this)"
+                  style="position: relative; cursor: pointer">
+                  <div class="youtube-thumbnail">
+                    <img src="./assets/images/joints_pain_thumbnail.jpg" alt="YouTube video thumbnail"
+                      style="width: 100%; display: block" />
+                    <div style="
                           position: absolute;
                           top: 50%;
                           left: 50%;
                           transform: translate(-50%, -50%);
-                        "
-                      >
-                        <img
-                          src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png"
-                          alt="Play Button"
-                          style="width: 50px; height: 50px; opacity: 0.8"
-                        />
-                      </div>
+                        ">
+                      <img src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png" alt="Play Button"
+                        style="width: 50px; height: 50px; opacity: 0.8" />
                     </div>
-                  </figure>
+                  </div>
+                </figure>
 
-                  <div class="blog-content">
-                    <div class="blog-meta">
-                      <p class="blog-category">Bones Health Supplements</p>
+                <div class="blog-content">
+                  <div class="blog-meta">
+                    <p class="blog-category">Bones Health Supplements</p>
 
-                      <span class="dot"></span>
+                    <span class="dot"></span>
 
-                      <time datetime="2022-02-23">Jun 07, 2025</time>
-                    </div>
+                    <time datetime="2022-02-23">Jun 07, 2025</time>
+                  </div>
 
-                    <h4
-                      class="h3 blog-item-title"
-                      onclick="showProductModal(
+                  <h4 class="h3 blog-item-title" onclick="showProductModal(
       'Joints & Bones Supplements',
       '  🦴 After using <strong>Vestige Calcium, Glucosamine & Collagen supplements</strong> for 3 months, here\'s my honest experience on how they improved my <strong>joint flexibility</strong>, <strong>bone strength</strong>, and <strong>daily mobility</strong>. Real results you don\'t want to miss—let\'s dive in! 💪',
       './assets/images/joints_pain_thumbnail.jpg'
-    )"
-                    >
-                      🦴 3-Month Review: Vestige Calcium, Glucosamine & Collagen
-                      Supplements | Real Results! 💪
-                    </h4>
+    )">
+                    🦴 3-Month Review: Vestige Calcium, Glucosamine & Collagen
+                    Supplements | Real Results! 💪
+                  </h4>
 
-                    <p class="blog-text">
-                      🦴 After using
-                      <strong
-                        >Vestige Calcium, Glucosamine & Collagen
-                        supplements</strong
-                      >
-                      for 3 months, here's my honest experience on how they
-                      improved my <strong>joint flexibility</strong>,
-                      <strong>bone strength</strong>, and
-                      <strong>daily mobility</strong>. Real results you don't
-                      want to miss—let's dive in! 💪
-                    </p>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </section>
-        </article>
+                  <p class="blog-text">
+                    🦴 After using
+                    <strong>Vestige Calcium, Glucosamine & Collagen
+                      supplements</strong>
+                    for 3 months, here's my honest experience on how they
+                    improved my <strong>joint flexibility</strong>,
+                    <strong>bone strength</strong>, and
+                    <strong>daily mobility</strong>. Real results you don't
+                    want to miss—let's dive in! 💪
+                  </p>
+                </div>
+              </a>
+            </li>
+          </ul>
 
-        <!--
+          <ul class="blog-posts-list" id="blogList"></ul>
+
+        </section>
+      </article>
+
+      <!--
         - #CONTACT
       -->
 
-        <article class="contact" data-page="contact">
-          <header>
-            <h2 class="h2 article-title">Contact</h2>
-          </header>
+      <article class="contact" data-page="contact">
+        <header>
+          <h2 class="h2 article-title">Contact</h2>
+        </header>
 
-          <section class="mapbox" data-mapbox>
-            <figure>
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113911.07571650848!2d80.8599396521534!3d26.84882118787766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd991f32b16b%3A0x93ccba8909978be7!2sLucknow%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1747417549264!5m2!1sen!2sin"
-                width="600"
-                height="450"
-                style="border: 0"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </figure>
-          </section>
+        <section class="mapbox" data-mapbox>
+          <figure>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113911.07571650848!2d80.8599396521534!3d26.84882118787766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd991f32b16b%3A0x93ccba8909978be7!2sLucknow%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1747417549264!5m2!1sen!2sin"
+              width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </figure>
+        </section>
 
-          <section class="contact-form">
-            <h3 class="h3 form-title">Contact Form</h3>
+        <section class="contact-form">
+          <h3 class="h3 form-title">Contact Form</h3>
 
-            <form action="#" class="form" data-form>
-              <div class="input-wrapper">
-                <input
-                  type="text"
-                  name="fullname"
-                  class="form-input"
-                  placeholder="Full name"
-                  required
-                  data-form-input
-                />
+          <form id="contactForm" action="#" class="form" data-form>
+            <div class="input-wrapper">
+              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input />
 
-                <input
-                  type="email"
-                  name="email"
-                  class="form-input"
-                  placeholder="Email address"
-                  required
-                  data-form-input
-                />
-              </div>
+              <input type="email" name="email" class="form-input" placeholder="Email address" required
+                data-form-input />
+            </div>
 
-              <textarea
-                name="message"
-                class="form-input"
-                placeholder="Your Message"
-                required
-                data-form-input
-              ></textarea>
+            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
 
-              <button class="form-btn" type="submit" disabled data-form-btn>
-                <ion-icon name="paper-plane"></ion-icon>
-                <span>Send Message</span>
-              </button>
-            </form>
-          </section>
-        </article>
+            <button class="form-btn" type="submit" disabled data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Message</span>
+            </button>
+          </form>
+        </section>
+      </article>
 
-        <!-- Product Modal -->
-        <div id="productModal" class="modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeProductModal()">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <img
-              id="modalImage"
-              src=""
-              alt="Product"
-              style="width: 100%; max-height: 200px; object-fit: cover"
-            />
-            <p id="modalDescription"></p>
-          </div>
+      <!-- Product Modal -->
+      <div id="productModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeProductModal()">&times;</span>
+          <h2 id="modalTitle"></h2>
+          <img id="modalImage" src="" alt="Product" style="width: 100%; max-height: 200px; object-fit: cover" />
+          <p id="modalDescription"></p>
         </div>
       </div>
-    </main>
+    </div>
+    <!-- Success Dialog -->
+    <div id="successDialog" class="custom-dialog">
+      <div class="dialog-content">
+        <ion-icon name="checkmark-circle-outline" class="dialog-icon"></ion-icon>
+        <h3>Message Sent Successfully!</h3>
+        <p>Thank you for reaching out. I'll review your message and get back to you as soon as possible.</p>
+        <button onclick="closeSuccessDialog()" class="dialog-btn">Got it!</button>
+      </div>
+    </div>
 
-    <!--
+  </main>
+
+  <!--
     - custom js link
   -->
-    <script src="./assets/js/script.js"></script>
+  <script src="./assets/js/script.js"></script>
 
-    <!--
+  <!--
     - ionicon link
   -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
-    ></script>
-    
-    <!-- Particles.js library for background animation -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    
-    <script>
-      // Initialize particle background animation
-      document.addEventListener('DOMContentLoaded', function() {
-        // Initialize particles.js
-        if (document.getElementById('particles-js')) {
-          particlesJS('particles-js', {
-            particles: {
-              number: {
-                value: 80,
-                density: {
-                  enable: true,
-                  value_area: 800
-                }
-              },
-              color: {
-                value: "#ffffff"
-              },
-              shape: {
-                type: "circle",
-                stroke: {
-                  width: 0,
-                  color: "#000000"
-                }
-              },
-              opacity: {
-                value: 0.3,
-                random: true,
-                anim: {
-                  enable: true,
-                  speed: 1,
-                  opacity_min: 0.1,
-                  sync: false
-                }
-              },
-              size: {
-                value: 3,
-                random: true,
-                anim: {
-                  enable: true,
-                  speed: 2,
-                  size_min: 0.1,
-                  sync: false
-                }
-              },
-              line_linked: {
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  <!-- Particles.js library for background animation -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <script>
+    // Initialize particle background animation
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize particles.js
+      if (document.getElementById('particles-js')) {
+        particlesJS('particles-js', {
+          particles: {
+            number: {
+              value: 80,
+              density: {
                 enable: true,
-                distance: 150,
-                color: "#ffffff",
-                opacity: 0.2,
-                width: 1
-              },
-              move: {
+                value_area: 800
+              }
+            },
+            color: {
+              value: "#ffffff"
+            },
+            shape: {
+              type: "circle",
+              stroke: {
+                width: 0,
+                color: "#000000"
+              }
+            },
+            opacity: {
+              value: 0.3,
+              random: true,
+              anim: {
                 enable: true,
                 speed: 1,
-                direction: "none",
-                random: true,
-                straight: false,
-                out_mode: "out",
-                bounce: false,
-                attract: {
-                  enable: false,
-                  rotateX: 600,
-                  rotateY: 1200
-                }
+                opacity_min: 0.1,
+                sync: false
               }
             },
-            interactivity: {
-              detect_on: "canvas",
-              events: {
-                onhover: {
-                  enable: true,
-                  mode: "repulse"
-                },
-                onclick: {
-                  enable: true,
-                  mode: "push"
-                },
-                resize: true
-              },
-              modes: {
-                grab: {
-                  distance: 400,
-                  line_linked: {
-                    opacity: 1
-                  }
-                },
-                bubble: {
-                  distance: 400,
-                  size: 40,
-                  duration: 2,
-                  opacity: 8,
-                  speed: 3
-                },
-                repulse: {
-                  distance: 100,
-                  duration: 0.4
-                },
-                push: {
-                  particles_nb: 4
-                },
-                remove: {
-                  particles_nb: 2
-                }
+            size: {
+              value: 3,
+              random: true,
+              anim: {
+                enable: true,
+                speed: 2,
+                size_min: 0.1,
+                sync: false
               }
             },
-            retina_detect: true
-          });
-        }
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('backToTop');
-        
-        window.addEventListener('scroll', function() {
-          if (window.pageYOffset > 300) {
-            backToTopButton.classList.add('active');
-          } else {
-            backToTopButton.classList.remove('active');
-          }
-        });
-
-        backToTopButton.addEventListener('click', function() {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
-
-        // Add fade-in animation to page sections when they come into view
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+            line_linked: {
+              enable: true,
+              distance: 150,
+              color: "#ffffff",
+              opacity: 0.2,
+              width: 1
+            },
+            move: {
+              enable: true,
+              speed: 1,
+              direction: "none",
+              random: true,
+              straight: false,
+              out_mode: "out",
+              bounce: false,
+              attract: {
+                enable: false,
+                rotateX: 600,
+                rotateY: 1200
+              }
             }
-          });
-        }, observerOptions);
+          },
+          interactivity: {
+            detect_on: "canvas",
+            events: {
+              onhover: {
+                enable: true,
+                mode: "repulse"
+              },
+              onclick: {
+                enable: true,
+                mode: "push"
+              },
+              resize: true
+            },
+            modes: {
+              grab: {
+                distance: 400,
+                line_linked: {
+                  opacity: 1
+                }
+              },
+              bubble: {
+                distance: 400,
+                size: 40,
+                duration: 2,
+                opacity: 8,
+                speed: 3
+              },
+              repulse: {
+                distance: 100,
+                duration: 0.4
+              },
+              push: {
+                particles_nb: 4
+              },
+              remove: {
+                particles_nb: 2
+              }
+            }
+          },
+          retina_detect: true
+        });
+      }
 
-        // Observe timeline items and project items for animation
-        document.querySelectorAll('.timeline-item, .project-item, .blog-post-item').forEach(el => {
-          observer.observe(el);
+      // Back to top button functionality
+      const backToTopButton = document.getElementById('backToTop');
+
+      window.addEventListener('scroll', function () {
+        if (window.pageYOffset > 300) {
+          backToTopButton.classList.add('active');
+        } else {
+          backToTopButton.classList.remove('active');
+        }
+      });
+
+      backToTopButton.addEventListener('click', function () {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
         });
       });
 
-      // Existing functions from your original code
-      function loadYouTubeVideo2(element) {
-        const videoId = element.getAttribute('data-video-id');
-        if (videoId) {
-          element.innerHTML = `
+      // Add fade-in animation to page sections when they come into view
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+          }
+        });
+      }, observerOptions);
+
+      // Observe timeline items and project items for animation
+      document.querySelectorAll('.timeline-item, .project-item, .blog-post-item').forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // Existing functions from your original code
+    function loadYouTubeVideo2(element) {
+      const videoId = element.getAttribute('data-video-id');
+      if (videoId) {
+        element.innerHTML = `
             <iframe
               width="100%"
               height="100%"
@@ -1212,27 +1146,278 @@
               allowfullscreen
             ></iframe>
           `;
+      }
+    }
+
+    function showProductModal(title, description, imageSrc) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDescription').innerHTML = description;
+      document.getElementById('modalImage').src = imageSrc;
+      document.getElementById('productModal').style.display = 'block';
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+      const modal = document.getElementById('productModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+    const inputs = document.querySelectorAll("[data-form-input]");
+    const submitBtn = document.querySelector("[data-form-btn]");
+
+    inputs.forEach(input => {
+      input.addEventListener("input", () => {
+        const allFilled = [...inputs].every(i => i.value.trim() !== "");
+        submitBtn.disabled = !allFilled;
+      });
+    });
+
+    const contactForm = document.getElementById("contactForm");
+
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = contactForm.fullname.value.trim();
+      const email = contactForm.email.value.trim();
+      const message = contactForm.message.value.trim();
+
+      try {
+        await window.firestoreAddDoc(
+          window.firestoreCollection(window.db, "contacts"),
+          {
+            fullName,
+            email,
+            message,
+            createdAt: new Date(),
+          }
+        );
+
+        showSuccessDialog();
+        contactForm.reset();
+        submitBtn.disabled = true;
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    function showSuccessDialog() {
+      const dialog = document.getElementById("successDialog");
+      dialog.classList.add("active");
+
+      // Create confetti effect
+      createConfetti();
+    }
+
+    function closeSuccessDialog() {
+      const dialog = document.getElementById("successDialog");
+      dialog.classList.remove("active");
+
+      // Remove any remaining confetti
+      removeConfetti();
+    }
+
+    // Confetti functions
+    function createConfetti() {
+      const dialog = document.getElementById("successDialog");
+      const colors = ['#4caf50', '#2e7d32', '#8bc34a', '#66bb6a', '#a5d6a7', '#c8e6c9'];
+
+      // Create 15-25 pieces of confetti
+      const confettiCount = Math.floor(Math.random() * 10) + 15;
+
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // Random animation duration and delay
+        const duration = Math.random() * 2 + 2; // 2-4 seconds
+        const delay = Math.random() * 0.5; // 0-0.5 seconds delay
+        confetti.style.animation = `confettiFall ${duration}s ease-in ${delay}s forwards`;
+
+        // Random size and shape
+        const size = Math.random() * 8 + 4; // 4-12px
+        const isCircle = Math.random() > 0.5;
+        confetti.style.width = `${size}px`;
+        confetti.style.height = `${size}px`;
+        confetti.style.borderRadius = isCircle ? '50%' : '2px';
+
+        // Random rotation
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+        // Store reference for cleanup
+        confetti.dataset.confetti = 'true';
+
+        dialog.appendChild(confetti);
+
+        // Auto-remove after animation completes
+        setTimeout(() => {
+          if (confetti.parentNode) {
+            confetti.remove();
+          }
+        }, (duration + delay) * 1000 + 1000); // Extra second buffer
+      }
+    }
+
+    function removeConfetti() {
+      const dialog = document.getElementById("successDialog");
+      const confettiElements = dialog.querySelectorAll('[data-confetti="true"]');
+
+      confettiElements.forEach(confetti => {
+        // Add fade-out animation before removing
+        confetti.style.transition = 'opacity 0.3s ease';
+        confetti.style.opacity = '0';
+
+        setTimeout(() => {
+          if (confetti.parentNode) {
+            confetti.remove();
+          }
+        }, 300);
+      });
+    }
+
+    // Optional: Add keyboard support (ESC key to close dialog)
+    document.addEventListener('keydown', function (event) {
+      const dialog = document.getElementById("successDialog");
+      if (event.key === 'Escape' && dialog.classList.contains('active')) {
+        closeSuccessDialog();
+      }
+    });
+
+    // Optional: Close dialog when clicking outside content
+    document.addEventListener('click', function (event) {
+      const dialog = document.getElementById("successDialog");
+      const dialogContent = document.querySelector('.dialog-content');
+
+      if (dialog.classList.contains('active') &&
+        !dialogContent.contains(event.target) &&
+        dialog.contains(event.target)) {
+        closeSuccessDialog();
+      }
+    });
+
+    async function loadPortfolio() {
+      const list = document.getElementById("portfolioList");
+      list.innerHTML = "";
+
+      const q = window.firestoreQuery(
+        window.firestoreCollection(window.db, "portfolio"),
+        window.firestoreOrderBy("createdAt", "desc")
+      );
+
+      const snapshot = await window.firestoreGetDocs(q);
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const li = document.createElement("li");
+        li.className = "project-item active";
+        li.setAttribute("data-filter-item", "");
+        li.setAttribute("data-category", data.category.toLowerCase());
+
+        li.innerHTML = `
+      <a href="#">
+        <figure class="project-img">
+          <div class="project-item-icon-box">
+            <ion-icon name="eye-outline"></ion-icon>
+          </div>
+          <img src="${data.image}" alt="${data.title}" loading="lazy" />
+        </figure>
+        <h3 class="project-title">${data.title}</h3>
+        <p class="project-category">${data.category}</p>
+      </a>
+    `;
+
+        list.appendChild(li);
+      });
+    }
+    async function loadBlogs() {
+      const list = document.getElementById("blogList");
+      list.innerHTML = "";
+
+      const q = window.firestoreQuery(
+        window.firestoreCollection(window.db, "blogs"),
+        window.firestoreOrderBy("createdAt", "desc")
+      );
+
+      const snapshot = await window.firestoreGetDocs(q);
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const li = document.createElement("li");
+        li.className = "blog-post-item";
+
+        li.innerHTML = `
+      <a href="#">
+        <figure class="blog-banner-box"
+          data-video-id="${data.videoId}"
+          onclick="loadYouTubeVideo2(this)"
+          style="position:relative;cursor:pointer">
+          <img src="${data.image}" alt="${data.title}" />
+        </figure>
+
+        <div class="blog-content">
+          <div class="blog-meta">
+            <p class="blog-category">${data.category}</p>
+            <span class="dot"></span>
+            <time>${data.date}</time>
+          </div>
+
+          <h4 class="h3 blog-item-title">${data.title}</h4>
+          <p class="blog-text">${data.description}</p>
+        </div>
+      </a>
+    `;
+
+        list.appendChild(li);
+      });
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      loadPortfolio();
+      loadBlogs();
+    });
+
+
+  </script>
+
+
+  <script>
+    // ===== SECRET ADMIN ACCESS (FIXED) =====
+    const ADMIN_PASSWORD = "Akash@Admin2026";
+    let shiftCount = 0;
+    let shiftTimer = null;
+
+    document.addEventListener("keydown", function (e) {
+      // Detect double Shift
+      if (e.key === "Shift") {
+        shiftCount++;
+
+        if (shiftCount === 2) {
+          const pass = prompt("Admin Access");
+
+          if (pass === ADMIN_PASSWORD) {
+            window.location.href = "/pages/adminPage/admin_page.html";
+          } else {
+            alert("Access denied");
+          }
+
+          shiftCount = 0;
+          clearTimeout(shiftTimer);
         }
-      }
 
-      function showProductModal(title, description, imageSrc) {
-        document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalDescription').innerHTML = description;
-        document.getElementById('modalImage').src = imageSrc;
-        document.getElementById('productModal').style.display = 'block';
+        // Reset if not pressed quickly
+        shiftTimer = setTimeout(() => {
+          shiftCount = 0;
+        }, 600);
       }
+    });
+  </script>
 
-      function closeProductModal() {
-        document.getElementById('productModal').style.display = 'none';
-      }
+</body>
 
-      // Close modal when clicking outside
-      window.onclick = function(event) {
-        const modal = document.getElementById('productModal');
-        if (event.target == modal) {
-          modal.style.display = 'none';
-        }
-      };
-    </script>
-  </body>
 </html>
