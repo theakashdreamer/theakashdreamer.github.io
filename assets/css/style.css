@@ -2136,3 +2136,77 @@ textarea.form-input::-webkit-resizer { display: none; }
   object-fit: cover;
   border-radius: 16px;
 }
+
+.empty-state {
+  list-style: none;
+  width: 100%;
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+
+.empty-state h4 {
+  margin: 12px 0 6px;
+  font-size: 16px;
+  color: #e5e7eb;
+}
+
+.empty-state p {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.empty-icon {
+  font-size: 42px;
+  color: #6b7280;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Fade-in effect */
+.animated {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Center portfolio empty state ONLY when empty */
+#portfolioList:has(.empty-state) {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* Center content inside */
+#portfolioList .empty-state {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+/* Center blog empty state ONLY when empty */
+#blogList:has(.empty-state) {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* Inner alignment */
+#blogList .empty-state {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}

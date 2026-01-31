@@ -768,25 +768,6 @@
             </ul>
           </div>
 
-          <ul class="project-list">
-            <li class="project-item active" data-filter-item data-category="applications">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/total_expense.jpg" alt="task manager" loading="lazy" />
-                </figure>
-
-                <h3 class="project-title">Total Monthly Expenses</h3>
-
-                <p class="project-category">Applications</p>
-              </a>
-            </li>
-          </ul>
-
-
         </section>
       </article>
 
@@ -800,113 +781,7 @@
         </header>
 
         <section class="blog-posts">
-          <ul class="blog-posts-list">
-            <!-- First -->
-            <li class="blog-post-item">
-              <a href="#">
-                <!-- Example Usage -->
-                <script src="https://www.youtube.com/iframe_api"></script>
-                <figure class="blog-banner-box" data-video-id="5XrsRPOh4rI" onclick="loadYouTubeVideo2(this)"
-                  style="position: relative; cursor: pointer">
-                  <div class="youtube-thumbnail">
-                    <img src="./assets/images/skin_formula_skin_care.jpg" alt="YouTube video thumbnail"
-                      style="width: 100%; display: block" />
-                    <div style="
-                          position: absolute;
-                          top: 50%;
-                          left: 50%;
-                          transform: translate(-50%, -50%);
-                        ">
-                      <img src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png" alt="Play Button"
-                        style="width: 50px; height: 50px; opacity: 0.8" />
-                    </div>
-                  </div>
-                </figure>
-
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Skincare</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Jun 2, 2025</time>
-                  </div>
-
-                  <h4 class="h3 blog-item-title" onclick="showProductModal(
-      'Vestige SF9 Blemish Gel',
-      '✨ Say goodbye to pimples, blemishes, and dark spots with Vestige Skin Formula 9 Blemish Gel! I used this acne-fighting gel for 7 days—did it really work? Let\'s find out!',
-      './assets/images/skin_formula_skin_care.jpg'
-    )">
-                    7-Day Review: Vestige SF9 Blemish Gel for Acne & Dark
-                    Spots
-                  </h4>
-
-                  <p class="blog-text">
-                    ✨ Say goodbye to pimples, blemishes, and dark spots with
-                    <strong>Vestige Skin Formula 9 Blemish Gel</strong>! I
-                    used this acne-fighting gel for 7 days—did it really work?
-                    Let's find out!
-                  </p>
-                </div>
-              </a>
-            </li>
-            <!-- Second -->
-            <li class="blog-post-item">
-              <a href="#">
-                <!-- Example Usage -->
-                <script src="https://www.youtube.com/iframe_api"></script>
-                <figure class="blog-banner-box" data-video-id="5AHL-i7xsWo" onclick="loadYouTubeVideo2(this)"
-                  style="position: relative; cursor: pointer">
-                  <div class="youtube-thumbnail">
-                    <img src="./assets/images/joints_pain_thumbnail.jpg" alt="YouTube video thumbnail"
-                      style="width: 100%; display: block" />
-                    <div style="
-                          position: absolute;
-                          top: 50%;
-                          left: 50%;
-                          transform: translate(-50%, -50%);
-                        ">
-                      <img src="https://img.icons8.com/ios-filled/100/ffffff/play--v1.png" alt="Play Button"
-                        style="width: 50px; height: 50px; opacity: 0.8" />
-                    </div>
-                  </div>
-                </figure>
-
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Bones Health Supplements</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Jun 07, 2025</time>
-                  </div>
-
-                  <h4 class="h3 blog-item-title" onclick="showProductModal(
-      'Joints & Bones Supplements',
-      '  🦴 After using <strong>Vestige Calcium, Glucosamine & Collagen supplements</strong> for 3 months, here\'s my honest experience on how they improved my <strong>joint flexibility</strong>, <strong>bone strength</strong>, and <strong>daily mobility</strong>. Real results you don\'t want to miss—let\'s dive in! 💪',
-      './assets/images/joints_pain_thumbnail.jpg'
-    )">
-                    🦴 3-Month Review: Vestige Calcium, Glucosamine & Collagen
-                    Supplements | Real Results! 💪
-                  </h4>
-
-                  <p class="blog-text">
-                    🦴 After using
-                    <strong>Vestige Calcium, Glucosamine & Collagen
-                      supplements</strong>
-                    for 3 months, here's my honest experience on how they
-                    improved my <strong>joint flexibility</strong>,
-                    <strong>bone strength</strong>, and
-                    <strong>daily mobility</strong>. Real results you don't
-                    want to miss—let's dive in! 💪
-                  </p>
-                </div>
-              </a>
-            </li>
-          </ul>
-
           <ul class="blog-posts-list" id="blogList"></ul>
-
         </section>
       </article>
 
@@ -1299,7 +1174,6 @@
         closeSuccessDialog();
       }
     });
-
     async function loadPortfolio() {
       const list = document.getElementById("portfolioList");
       list.innerHTML = "";
@@ -1310,6 +1184,19 @@
       );
 
       const snapshot = await window.firestoreGetDocs(q);
+      if (snapshot.empty) {
+        list.innerHTML = `
+    <li class="empty-state animated">
+      <div class="empty-icon">
+        <ion-icon name="briefcase-outline"></ion-icon>
+      </div>
+      <h4>No projects yet</h4>
+      <p>Your portfolio items will appear here.</p>
+    </li>
+  `;
+        return;
+      }
+
 
       snapshot.forEach(doc => {
         const data = doc.data();
@@ -1334,9 +1221,10 @@
 
         list.appendChild(li);
       });
-      // 🔥 THIS IS THE KEY
+
       setupPortfolioFilters();
     }
+
     async function loadBlogs() {
       const list = document.getElementById("blogList");
       list.innerHTML = "";
@@ -1347,6 +1235,20 @@
       );
 
       const snapshot = await window.firestoreGetDocs(q);
+
+      if (snapshot.empty) {
+        list.innerHTML = `
+    <li class="empty-state animated">
+      <div class="empty-icon">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+      <h4>No blog posts yet</h4>
+      <p>New articles will be published here.</p>
+    </li>
+  `;
+        return;
+      }
+
 
       snapshot.forEach(doc => {
         const data = doc.data();
@@ -1379,11 +1281,16 @@
         list.appendChild(li);
       });
     }
+
+
+
+
     document.addEventListener("DOMContentLoaded", () => {
       loadPortfolio();
       loadBlogs();
     });
- function setupPortfolioFilters() {
+
+    function setupPortfolioFilters() {
       const filterButtons = document.querySelectorAll("[data-filter-btn]");
       const projects = document.querySelectorAll("#portfolioList .project-item");
 
@@ -1440,7 +1347,7 @@
         }, 600);
       }
     });
-   
+
   </script>
 
 </body>
