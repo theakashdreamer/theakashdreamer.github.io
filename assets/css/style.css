@@ -2130,3 +2130,9 @@ textarea.form-input::-webkit-resizer { display: none; }
     opacity: 0;
   }
 }
+.project-img img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+}
