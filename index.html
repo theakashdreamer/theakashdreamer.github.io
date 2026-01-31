@@ -89,7 +89,7 @@
 
     <aside class="sidebar" data-sidebar>
       <div class="sidebar-info">
-        <figure class="avatar-box">
+        <figure class="avatar-box" id="adminTrigger">
           <img src="./assets/images/akash_profile_pic.png" alt="Akash Singh" width="80" height="80" />
         </figure>
 
@@ -1318,6 +1318,31 @@
 
 
   <script>
+      // ===== MOBILE ADMIN ACCESS (LONG PRESS) =====
+  const adminTrigger = document.getElementById("adminTrigger");
+  let pressTimer = null;
+
+  if (adminTrigger && window.matchMedia("(pointer: coarse)").matches) {
+    adminTrigger.addEventListener("touchstart", () => {
+      pressTimer = setTimeout(() => {
+        const pass = prompt("Admin Access");
+
+        if (pass === "Akash@Admin2026") {
+          window.location.href = "/pages/adminPage/admin_page.html";
+        } else {
+          alert("Access denied");
+        }
+      }, 4000); // 4 seconds long press
+    });
+
+    adminTrigger.addEventListener("touchend", () => {
+      clearTimeout(pressTimer);
+    });
+
+    adminTrigger.addEventListener("touchmove", () => {
+      clearTimeout(pressTimer);
+    });
+  }
     // ===== SECRET ADMIN ACCESS (FIXED) =====
     const ADMIN_PASSWORD = "Akash@Admin2026";
     let shiftCount = 0;
