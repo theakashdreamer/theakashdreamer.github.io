@@ -1334,6 +1334,8 @@
 
         list.appendChild(li);
       });
+      // 🔥 THIS IS THE KEY
+      setupPortfolioFilters();
     }
     async function loadBlogs() {
       const list = document.getElementById("blogList");
@@ -1381,7 +1383,29 @@
       loadPortfolio();
       loadBlogs();
     });
+ function setupPortfolioFilters() {
+      const filterButtons = document.querySelectorAll("[data-filter-btn]");
+      const projects = document.querySelectorAll("#portfolioList .project-item");
 
+      filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const filter = btn.innerText.toLowerCase();
+
+          filterButtons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          projects.forEach(item => {
+            const category = item.dataset.category;
+
+            if (filter === "all" || category === filter) {
+              item.classList.add("active");
+            } else {
+              item.classList.remove("active");
+            }
+          });
+        });
+      });
+    }
 
   </script>
 
@@ -1416,6 +1440,7 @@
         }, 600);
       }
     });
+   
   </script>
 
 </body>
