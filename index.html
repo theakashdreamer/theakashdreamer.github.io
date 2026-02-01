@@ -306,19 +306,6 @@
               </div>
             </li>
 
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40" />
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web development</h4>
-
-                <p class="service-item-text">
-                  High-quality development of sites at the professional level.
-                </p>
-              </div>
-            </li>
 
             <li class="service-item" onclick="window.location.href='/pages/health/health.html'">
               <div class="service-icon-box">
@@ -495,7 +482,7 @@
 
             <h3 class="h3">Education</h3>
           </div>
-          <ol class="timeline-list" id="educationList"></ol>  
+          <ol class="timeline-list" id="educationList"></ol>
         </section>
 
         <section class="timeline">
@@ -1077,10 +1064,69 @@
             <time>${data.date}</time>
           </div>
 
-          <h4 class="h3 blog-item-title">${data.title}</h4>
+          <h4 class="h3 blog-item-title" onclick="showProductModal('${data.title.replace(/'/g, "\\'")}', \`${data.description}\`, '${data.image}')">${data.title}</h4>
           <p class="blog-text">${data.description}</p>
         </div>
       </a>
+    `;
+
+        list.appendChild(li);
+      });
+    }
+    async function loadBlogs1() {
+      const list = document.getElementById("blogList");
+      list.innerHTML = "";
+
+      const q = window.firestoreQuery(
+        window.firestoreCollection(window.db, "blogs"),
+        window.firestoreOrderBy("createdAt", "desc")
+      );
+
+      const snapshot = await window.firestoreGetDocs(q);
+
+      if (snapshot.empty) {
+        list.innerHTML = `
+      <li class="empty-state animated">
+        <div class="empty-icon">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <h4>No blog posts yet</h4>
+        <p>New articles will be published here.</p>
+      </li>
+    `;
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const li = document.createElement("li");
+        li.className = "blog-post-item";
+
+        li.innerHTML = `
+      <div class="blog-click"
+        style="cursor:pointer"
+        onclick="showProductModal(
+          '${data.title.replace(/'/g, "\\'")}',
+          \`${data.description}\`,
+          '${data.image}'
+        )">
+
+        <figure class="blog-banner-box">
+          <img src="${data.image}" alt="${data.title}" loading="lazy" />
+        </figure>
+
+        <div class="blog-content">
+          <div class="blog-meta">
+            <p class="blog-category">${data.category}</p>
+            <span class="dot"></span>
+            <time>${data.date}</time>
+          </div>
+
+          <h4 class="h3 blog-item-title">${data.title}</h4>
+          <p class="blog-text">${data.description}</p>
+        </div>
+      </div>
     `;
 
         list.appendChild(li);
@@ -1103,8 +1149,7 @@
 
         const d = snap.data();
 
-        document.querySelector("#adminTrigger img").src =
-          d.avatar || "./assets/images/akash_profile_pic.png";
+        document.querySelector("#adminTrigger img").src = d.avatar || "./assets/images/akash_profile_pic.png";
 
         document.getElementById("profileName").textContent = d.name || "";
         document.getElementById("profileTitle").textContent = d.title || "";
@@ -1164,7 +1209,7 @@
     async function loadResume() {
       // EDUCATION
       const eduSnap = await getDoc(doc(db, "resume", "education"));
-      if (eduSnap.exists()) { 
+      if (eduSnap.exists()) {
         document.getElementById("educationList").innerHTML = eduSnap.data().items.map(item => `
       <li class="timeline-item">
         <h4 class="h4 timeline-item-title">${item.title}</h4>
