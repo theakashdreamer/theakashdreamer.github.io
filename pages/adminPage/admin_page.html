@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  
-  <!-- Quill.js for rich text editor -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Quill.js -->
   <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-  
-  <!-- Font Awesome for icons -->
+
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!--
-    - custom css link
-  -->
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/adminpage.css" />
+
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -22,7 +23,10 @@
       collection,
       addDoc,
       serverTimestamp,
-      getDocs
+      getDocs,
+      doc,
+      getDoc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -38,34 +42,35 @@
     const db = getFirestore(app);
 
     window.db = db;
-    window.addDoc = addDoc;
     window.collection = collection;
+    window.addDoc = addDoc;
     window.serverTimestamp = serverTimestamp;
     window.getDocs = getDocs;
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.setDoc = setDoc;
   </script>
 </head>
 
 <body>
   <div class="container">
-    <!-- Header -->
+
+    <!-- HEADER -->
     <header>
       <div class="logo">
-        <div class="logo-icon">
-          <i class="fas fa-cogs"></i>
-        </div>
+        <div class="logo-icon"><i class="fas fa-cogs"></i></div>
         <h1>Admin Dashboard</h1>
       </div>
-      
       <div class="admin-info">
         <i class="fas fa-user-circle"></i>
         <span>Administrator</span>
       </div>
     </header>
-    
-    <!-- Stats -->
+
+    <!-- STATS -->
     <div class="stats-container">
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #3b82f6);">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">
           <i class="fas fa-chart-line"></i>
         </div>
         <div class="stat-info">
@@ -73,9 +78,9 @@
           <p>Portfolio Items</p>
         </div>
       </div>
-      
+
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #f97316);">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
           <i class="fas fa-newspaper"></i>
         </div>
         <div class="stat-info">
@@ -84,265 +89,162 @@
         </div>
       </div>
     </div>
-    
-    <!-- Dashboard Grid -->
+
+    <!-- DASHBOARD GRID -->
     <div class="dashboard-grid">
-      
-      <!-- Portfolio Card -->
+
+      <!-- PROFILE CARD -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
-            <div class="card-icon portfolio-icon">
-              <i class="fas fa-briefcase"></i>
-            </div>
+            <div class="card-icon portfolio-icon"><i class="fas fa-user-edit"></i></div>
+            <span>Edit Profile</span>
+          </div>
+        </div>
+
+        <form id="profileForm">
+          <input id="prName" placeholder="Name" required />
+          <input id="prTitle" placeholder="Title" required />
+          <input id="prAvatar" placeholder="Avatar URL" required />
+          <input id="prEmail" placeholder="Email" required />
+          <input id="prPhone" placeholder="Phone" required />
+          <input id="prBirthday" placeholder="Birthday" />
+          <input id="prLocation" placeholder="Location" />
+          <input id="prFacebook" placeholder="Facebook" />
+          <input id="prLinkedin" placeholder="LinkedIn" />
+          <input id="prInstagram" placeholder="Instagram" />
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Profile
+          </button>
+
+          <div class="success-message" id="profileSuccess">
+            <i class="fas fa-check-circle"></i>
+            Profile updated successfully!
+          </div>
+        </form>
+      </div>
+
+      <!-- PORTFOLIO CARD -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon portfolio-icon"><i class="fas fa-briefcase"></i></div>
             <span>Add Portfolio</span>
           </div>
-          <div class="card-badge">
-            <i class="fas fa-plus-circle"></i>
-          </div>
         </div>
-        
+
         <form id="portfolioForm">
-          <div class="form-group">
-            <label class="form-label" for="pTitle">Project Title</label>
-            <input type="text" placeholder="Enter project title" required id="pTitle">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="pImage">Image URL</label>
-            <input type="text" placeholder="https://example.com/image.jpg" required id="pImage">
-            <span class="helper-text">Paste the direct URL to your project image</span>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="pCategory">Category</label>
-            <select id="pCategory" required>
-              <option value="">Select Category</option>
-              <option value="Applications">Applications</option>
-              <option value="Web design">Web Design</option>
-              <option value="Web development">Web Development</option>
-              <option value="Mobile Apps">Mobile Apps</option>
-              <option value="UI/UX Design">UI/UX Design</option>
-            </select>
-          </div>
-          
-          <button type="submit" class="btn btn-primary" id="portfolioBtn">
-            <i class="fas fa-plus"></i> Add Portfolio Item
+          <input id="pTitle" placeholder="Project Title" required />
+          <input id="pImage" placeholder="Image URL" required />
+          <select id="pCategory" required>
+            <option value="">Select Category</option>
+            <option>Applications</option>
+            <option>Web design</option>
+            <option>Web development</option>
+          </select>
+
+          <button id="portfolioBtn" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Portfolio
           </button>
-          
-          <div class="success-message" id="pSuccess">
-            <i class="fas fa-check-circle"></i>
-            <span>Portfolio added successfully!</span>
-          </div>
+
+          <div class="success-message" id="pSuccess">Portfolio added!</div>
         </form>
       </div>
-      
-      <!-- Blog Card -->
+
+      <!-- BLOG CARD -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
-            <div class="card-icon blog-icon">
-              <i class="fas fa-blog"></i>
-            </div>
-            <span>Add Blog Post</span>
-          </div>
-          <div class="card-badge">
-            <i class="fas fa-edit"></i>
+            <div class="card-icon blog-icon"><i class="fas fa-blog"></i></div>
+            <span>Add Blog</span>
           </div>
         </div>
-        
+
         <form id="blogForm">
-          <div class="form-group">
-            <label class="form-label" for="bTitle">Blog Title</label>
-            <input type="text" placeholder="Enter blog title" required id="bTitle">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="bImage">Featured Image URL</label>
-            <input type="text" placeholder="https://example.com/featured-image.jpg" required id="bImage">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="bVideo">YouTube Video ID</label>
-            <input type="text" placeholder="dQw4w9WgXcQ" id="bVideo">
-            <span class="helper-text">Optional: Only the video ID after "v=" in YouTube URL</span>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="bCategory">Category</label>
-            <input type="text" placeholder="Technology, Design, Business, etc." required id="bCategory">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="bDate">Publication Date</label>
-            <input type="date" required id="bDate">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Blog Content</label>
-            <div id="editor-container"></div>
-            <input type="hidden" id="bContent" required>
-          </div>
-          
-          <button type="submit" class="btn btn-secondary" id="blogBtn">
-            <i class="fas fa-paper-plane"></i> Publish Blog Post
+          <input id="bTitle" placeholder="Blog Title" required />
+          <input id="bImage" placeholder="Image URL" required />
+          <input id="bVideo" placeholder="YouTube Video ID" />
+          <input id="bCategory" placeholder="Category" required />
+          <input id="bDate" type="date" required />
+          <div id="editor-container"></div>
+          <input type="hidden" id="bContent" required />
+
+          <button id="blogBtn" class="btn btn-secondary">
+            <i class="fas fa-paper-plane"></i> Publish Blog
           </button>
-          
-          <div class="success-message" id="bSuccess">
-            <i class="fas fa-check-circle"></i>
-            <span>Blog published successfully!</span>
-          </div>
+
+          <div class="success-message" id="bSuccess">Blog published!</div>
         </form>
       </div>
+
     </div>
   </div>
 
-  <!-- Quill.js Library -->
+  <!-- QUILL -->
   <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
-  
-  <!-- Main Script -->
+
+  <!-- MAIN SCRIPT -->
   <script>
-    // Initialize Quill Editor
-    const quill = new Quill('#editor-container', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'indent': '-1'}, { 'indent': '+1' }],
-          [{ 'color': [] }, { 'background': [] }],
-          ['link', 'image', 'video'],
-          ['clean']
-        ]
-      },
-      placeholder: 'Write your blog content here...'
-    });
-    
-    // Update hidden input with Quill content
-    quill.on('text-change', function() {
-      document.getElementById('bContent').value = quill.root.innerHTML;
-    });
-    
-    // Set default date to today
-    document.getElementById('bDate').valueAsDate = new Date();
-    
-    // Fetch and update stats
+    const quill = new Quill('#editor-container', { theme: 'snow' });
+    quill.on('text-change', () => bContent.value = quill.root.innerHTML);
+    bDate.valueAsDate = new Date();
+
     async function updateStats() {
-      try {
-        // Get portfolio count
-        const portfolioSnapshot = await window.getDocs(window.collection(window.db, "portfolio"));
-        document.getElementById('portfolioCount').textContent = portfolioSnapshot.size;
-        
-        // Get blog count
-        const blogSnapshot = await window.getDocs(window.collection(window.db, "blogs"));
-        document.getElementById('blogCount').textContent = blogSnapshot.size;
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      }
+      portfolioCount.textContent = (await getDocs(collection(db,"portfolio"))).size;
+      blogCount.textContent = (await getDocs(collection(db,"blogs"))).size;
     }
-    
-    // Portfolio form submission
-    document.getElementById("portfolioForm").addEventListener("submit", async (e) => {
+
+    async function loadProfileAdmin() {
+      const snap = await getDoc(doc(db,"profile","main"));
+      if (!snap.exists()) return;
+      const d = snap.data();
+      prName.value=d.name||""; prTitle.value=d.title||""; prAvatar.value=d.avatar||"";
+      prEmail.value=d.email||""; prPhone.value=d.phone||"";
+      prBirthday.value=d.birthday||""; prLocation.value=d.location||"";
+      prFacebook.value=d.socials?.facebook||"";
+      prLinkedin.value=d.socials?.linkedin||"";
+      prInstagram.value=d.socials?.instagram||"";
+    }
+
+    profileForm.onsubmit = async e => {
       e.preventDefault();
-      
-      const btn = document.getElementById("portfolioBtn");
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<div class="spinner"></div> Adding...';
-      btn.disabled = true;
-      
-      try {
-        await window.addDoc(
-          window.collection(window.db, "portfolio"),
-          {
-            title: document.getElementById("pTitle").value,
-            image: document.getElementById("pImage").value,
-            category: document.getElementById("pCategory").value,
-            createdAt: window.serverTimestamp()
-          }
-        );
-        
-        // Show success message
-        const successMsg = document.getElementById("pSuccess");
-        successMsg.classList.add("show");
-        
-        // Reset form
-        e.target.reset();
-        
-        // Update stats
-        await updateStats();
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          successMsg.classList.remove("show");
-        }, 5000);
-        
-      } catch (error) {
-        console.error("Error adding portfolio:", error);
-        alert("Error adding portfolio. Check console for details.");
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }
-    });
-    
-    // Blog form submission
-    document.getElementById("blogForm").addEventListener("submit", async (e) => {
+      await setDoc(doc(db,"profile","main"),{
+        name:prName.value,title:prTitle.value,avatar:prAvatar.value,
+        email:prEmail.value,phone:prPhone.value,birthday:prBirthday.value,
+        location:prLocation.value,
+        socials:{facebook:prFacebook.value,linkedin:prLinkedin.value,instagram:prInstagram.value}
+      });
+      profileSuccess.classList.add("show");
+      setTimeout(()=>profileSuccess.classList.remove("show"),4000);
+    };
+
+    portfolioForm.onsubmit = async e => {
       e.preventDefault();
-      
-      // Validate that Quill editor has content
-      if (!quill.getText().trim()) {
-        alert("Please add some content to your blog post.");
-        return;
-      }
-      
-      const btn = document.getElementById("blogBtn");
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<div class="spinner"></div> Publishing...';
-      btn.disabled = true;
-      
-      try {
-        await window.addDoc(
-          window.collection(window.db, "blogs"),
-          {
-            title: document.getElementById("bTitle").value,
-            image: document.getElementById("bImage").value,
-            videoId: document.getElementById("bVideo").value || "",
-            category: document.getElementById("bCategory").value,
-            description: document.getElementById("bContent").value,
-            date: document.getElementById("bDate").value,
-            createdAt: window.serverTimestamp()
-          }
-        );
-        
-        // Show success message
-        const successMsg = document.getElementById("bSuccess");
-        successMsg.classList.add("show");
-        
-        // Reset form
-        e.target.reset();
-        quill.setContents([]);
-        document.getElementById('bDate').valueAsDate = new Date();
-        
-        // Update stats
-        await updateStats();
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          successMsg.classList.remove("show");
-        }, 5000);
-        
-      } catch (error) {
-        console.error("Error adding blog:", error);
-        alert("Error adding blog. Check console for details.");
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }
+      await addDoc(collection(db,"portfolio"),{
+        title:pTitle.value,image:pImage.value,category:pCategory.value,
+        createdAt:serverTimestamp()
+      });
+      pSuccess.classList.add("show");
+      updateStats();
+    };
+
+    blogForm.onsubmit = async e => {
+      e.preventDefault();
+      if(!quill.getText().trim()) return alert("Add blog content");
+      await addDoc(collection(db,"blogs"),{
+        title:bTitle.value,image:bImage.value,videoId:bVideo.value,
+        category:bCategory.value,description:bContent.value,
+        date:bDate.value,createdAt:serverTimestamp()
+      });
+      bSuccess.classList.add("show");
+      updateStats();
+    };
+
+    document.addEventListener("DOMContentLoaded",()=>{
+      updateStats();
+      loadProfileAdmin();
     });
-    
-    // Initialize stats on page load
-    document.addEventListener('DOMContentLoaded', updateStats);
   </script>
 </body>
 </html>

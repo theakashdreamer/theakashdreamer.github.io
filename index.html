@@ -36,7 +36,9 @@
       addDoc,
       getDocs,
       query,
-      orderBy
+      orderBy,
+      doc,
+      getDoc
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // Firebase config
@@ -60,7 +62,9 @@
     window.firestoreGetDocs = getDocs;
     window.firestoreQuery = query;
     window.firestoreOrderBy = orderBy;
-
+    // 🔥 REQUIRED FOR PROFILE LOAD
+    window.doc = doc;
+    window.getDoc = getDoc;
     console.log("Firebase initialized successfully!");
   </script>
 
@@ -86,17 +90,22 @@
     <!--
       - #SIDEBAR
     -->
-
     <aside class="sidebar" data-sidebar>
       <div class="sidebar-info">
+        <!-- PROFILE LOADING -->
+        <div id="profileLoading" class="profile-loading">
+          <div class="skeleton avatar"></div>
+          <div class="skeleton line"></div>
+          <div class="skeleton line short"></div>
+        </div>
+
         <figure class="avatar-box" id="adminTrigger">
           <img src="./assets/images/akash_profile_pic.png" alt="Akash Singh" width="80" height="80" />
         </figure>
 
         <div class="info-content">
-          <h1 class="name" title="Akash Singh">Akash Singh</h1>
-
-          <p class="title">Android developer</p>
+          <h1 class="name" id="profileName"></h1>
+          <p class="title" id="profileTitle"></p>
         </div>
 
         <button class="info_more-btn" data-sidebar-btn>
@@ -117,8 +126,7 @@
 
             <div class="contact-info">
               <p class="contact-title">Email</p>
-
-              <a href="mailto:theakashdreamer@gmail.com" class="contact-link">theakashdreamer@gmail.com</a>
+              <a id="profileEmail" class="contact-link"></a>
             </div>
           </li>
 
@@ -129,8 +137,7 @@
 
             <div class="contact-info">
               <p class="contact-title">Phone</p>
-
-              <a href="tel:+12133522795" class="contact-link">+91 7880335787</a>
+              <a id="profilePhone" class="contact-link"></a>
             </div>
           </li>
 
@@ -142,7 +149,8 @@
             <div class="contact-info">
               <p class="contact-title">Birthday</p>
 
-              <time datetime="1982-06-23">May 27, 2002</time>
+
+              <time id="profileBirthday"></time>
             </div>
           </li>
 
@@ -154,30 +162,32 @@
             <div class="contact-info">
               <p class="contact-title">Location</p>
 
-              <address>Pratapgarh,Uttar Pradesh,India</address>
+              <address id="profileLocation"></address>
             </div>
           </li>
+
+
+
+
+
         </ul>
 
         <div class="separator"></div>
 
+
+
+
         <ul class="social-list">
           <li class="social-item">
-            <a href="https://www.facebook.com/somvansiakash.singh.3/" class="social-link">
-              <ion-icon name="logo-facebook"></ion-icon>
-            </a>
+            <a id="facebookLink" class="social-link"><ion-icon name="logo-facebook"></ion-icon></a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.linkedin.com/in/akash-singh-270b62365/" class="social-link">
-              <ion-icon name="logo-linkedin"></ion-icon>
-            </a>
+            <a id="linkedinLink" class="social-link"><ion-icon name="logo-linkedin"></ion-icon></a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.instagram.com/the_akashdreamer/" class="social-link">
-              <ion-icon name="logo-instagram"></ion-icon>
-            </a>
+            <a id="instagramLink" class="social-link"><ion-icon name="logo-instagram"></ion-icon></a>
           </li>
         </ul>
       </div>
@@ -1282,8 +1292,54 @@
       });
     }
 
+    // Load profile into form
+    async function loadProfileAdmin() {
+      const loader = document.getElementById("profileLoading");
+      const content = document.getElementById("profileContent");
 
+      try {
+        const ref = window.doc(window.db, "profile", "main");
+        const snap = await window.getDoc(ref);
 
+        if (!snap.exists()) {
+          loader.style.display = "none";
+          return;
+        }
+
+        const d = snap.data();
+
+        document.querySelector("#adminTrigger img").src =
+          d.avatar || "./assets/images/akash_profile_pic.png";
+
+        document.getElementById("profileName").textContent = d.name || "";
+        document.getElementById("profileTitle").textContent = d.title || "";
+
+        document.getElementById("profileEmail").textContent = d.email || "";
+        document.getElementById("profileEmail").href = `mailto:${d.email}`;
+
+        document.getElementById("profilePhone").textContent = d.phone || "";
+        document.getElementById("profilePhone").href = `tel:${d.phone}`;
+
+        document.getElementById("profileBirthday").textContent = d.birthday || "";
+        document.getElementById("profileLocation").textContent = d.location || "";
+
+        document.getElementById("facebookLink").href = d.socials?.facebook || "#";
+        document.getElementById("linkedinLink").href = d.socials?.linkedin || "#";
+        document.getElementById("instagramLink").href = d.socials?.instagram || "#";
+
+        // ✅ SWITCH UI
+        loader.style.display = "none";
+        content.style.display = "block";
+
+      } catch (err) {
+        console.error("Profile load failed:", err);
+        loader.style.display = "none";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfileAdmin();
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
       loadPortfolio();
@@ -1318,31 +1374,31 @@
 
 
   <script>
-      // ===== MOBILE ADMIN ACCESS (LONG PRESS) =====
-  const adminTrigger = document.getElementById("adminTrigger");
-  let pressTimer = null;
+    // ===== MOBILE ADMIN ACCESS (LONG PRESS) =====
+    const adminTrigger = document.getElementById("adminTrigger");
+    let pressTimer = null;
 
-  if (adminTrigger && window.matchMedia("(pointer: coarse)").matches) {
-    adminTrigger.addEventListener("touchstart", () => {
-      pressTimer = setTimeout(() => {
-        const pass = prompt("Admin Access");
+    if (adminTrigger && window.matchMedia("(pointer: coarse)").matches) {
+      adminTrigger.addEventListener("touchstart", () => {
+        pressTimer = setTimeout(() => {
+          const pass = prompt("Admin Access");
 
-        if (pass === "Akash@Admin2026") {
-          window.location.href = "/pages/adminPage/admin_page.html";
-        } else {
-          alert("Access denied");
-        }
-      }, 4000); // 4 seconds long press
-    });
+          if (pass === "Akash@Admin2026") {
+            window.location.href = "/pages/adminPage/admin_page.html";
+          } else {
+            alert("Access denied");
+          }
+        }, 4000); // 4 seconds long press
+      });
 
-    adminTrigger.addEventListener("touchend", () => {
-      clearTimeout(pressTimer);
-    });
+      adminTrigger.addEventListener("touchend", () => {
+        clearTimeout(pressTimer);
+      });
 
-    adminTrigger.addEventListener("touchmove", () => {
-      clearTimeout(pressTimer);
-    });
-  }
+      adminTrigger.addEventListener("touchmove", () => {
+        clearTimeout(pressTimer);
+      });
+    }
     // ===== SECRET ADMIN ACCESS (FIXED) =====
     const ADMIN_PASSWORD = "Akash@Admin2026";
     let shiftCount = 0;
