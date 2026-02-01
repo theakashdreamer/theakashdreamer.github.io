@@ -67,10 +67,6 @@
     window.getDoc = getDoc;
     console.log("Firebase initialized successfully!");
   </script>
-
-
-
-
 </head>
 
 <body>
@@ -480,56 +476,6 @@
             </div>
           </section>
         </div>
-
-        <!--
-          - clients
-        -->
-
-        <!-- <section class="clients">
-
-          <h3 class="h3 clients-title">Clients</h3>
-
-          <ul class="clients-list has-scrollbar">
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-1-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-2-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-3-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-4-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-5-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-6-color.png" alt="client logo">
-              </a>
-            </li>
-
-          </ul>
-
-        </section> -->
       </article>
 
       <!--
@@ -549,6 +495,8 @@
 
             <h3 class="h3">Education</h3>
           </div>
+          <ol class="timeline-list" id="educationList"></ol>
+<!-- 
 
           <ol class="timeline-list">
             <li class="timeline-item">
@@ -615,7 +563,7 @@
                 dedication to studies.
               </p>
             </li>
-          </ol>
+          </ol> -->
         </section>
 
         <section class="timeline">
@@ -626,6 +574,7 @@
 
             <h3 class="h3">Experience</h3>
           </div>
+          <ol class="timeline-list" id="experienceList"></ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
@@ -661,7 +610,7 @@
 
         <section class="skill">
           <h3 class="h3 skills-title">My skills</h3>
-
+          <ul class="skills-list content-card" id="skillsList"></ul>
           <ul class="skills-list content-card">
             <li class="skills-item">
               <div class="title-wrapper">
@@ -1337,9 +1286,6 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadProfileAdmin();
-    });
 
     document.addEventListener("DOMContentLoaded", () => {
       loadPortfolio();
@@ -1369,6 +1315,55 @@
         });
       });
     }
+    async function loadResume() {
+      // EDUCATION
+      const eduSnap = await getDoc(doc(db, "resume", "education"));
+      if (eduSnap.exists()) { 
+        document.getElementById("educationList").innerHTML = eduSnap.data().items.map(item => `
+      <li class="timeline-item">
+        <h4 class="h4 timeline-item-title">${item.title}</h4>
+        <span>${item.duration}</span>
+        <p class="timeline-text">${item.description}</p>
+      </li>
+    `).join("");
+      }
+
+      // EXPERIENCE
+      const expSnap = await getDoc(doc(db, "resume", "experience"));
+      if (expSnap.exists()) {
+        document.getElementById("experienceList").innerHTML = expSnap.data().items.map(item => `
+      <li class="timeline-item">
+        <h4 class="h4 timeline-item-title">${item.title}</h4>
+        <span>${item.duration}</span>
+        <p class="timeline-text">${item.description}</p>
+      </li>
+    `).join("");
+      }
+
+      // SKILLS
+      const skillSnap = await getDoc(doc(db, "resume", "skills"));
+      if (skillSnap.exists()) {
+        document.getElementById("skillsList").innerHTML = skillSnap.data().items.map(skill => `
+      <li class="skills-item">
+        <div class="title-wrapper">
+          <h5 class="h5">${skill.name}</h5>
+          <data value="${skill.percent}">${skill.percent}%</data>
+        </div>
+        <div class="skill-progress-bg">
+          <div class="skill-progress-fill" style="width:${skill.percent}%"></div>
+        </div>
+      </li>
+    `).join("");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfileAdmin();
+      loadResume();
+    });
+
+
+
 
   </script>
 
@@ -1428,6 +1423,7 @@
         }, 600);
       }
     });
+
 
   </script>
 

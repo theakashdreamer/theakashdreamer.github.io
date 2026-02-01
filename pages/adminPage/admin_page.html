@@ -92,6 +92,35 @@
 
     <!-- DASHBOARD GRID -->
     <div class="dashboard-grid">
+      <!-- RESUME CARD -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon portfolio-icon"><i class="fas fa-graduation-cap"></i></div>
+            <span>Resume Manager</span>
+          </div>
+        </div>
+
+        <form id="resumeForm">
+          <select id="resumeType" required>
+            <option value="">Select Section</option>
+            <option value="education">Education</option>
+            <option value="experience">Experience</option>
+            <option value="skills">Skills</option>
+          </select>
+
+          <input id="rTitle" placeholder="Title / Skill Name" required />
+          <input id="rDuration" placeholder="Duration (optional)" />
+          <input id="rPercent" type="number" placeholder="Skill % (only for skills)" />
+          <textarea id="rDescription" placeholder="Description"></textarea>
+
+          <button class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Item
+          </button>
+
+          <div class="success-message" id="rSuccess">Resume updated!</div>
+        </form>
+      </div>
 
       <!-- PROFILE CARD -->
       <div class="card">
@@ -191,39 +220,39 @@
     bDate.valueAsDate = new Date();
 
     async function updateStats() {
-      portfolioCount.textContent = (await getDocs(collection(db,"portfolio"))).size;
-      blogCount.textContent = (await getDocs(collection(db,"blogs"))).size;
+      portfolioCount.textContent = (await getDocs(collection(db, "portfolio"))).size;
+      blogCount.textContent = (await getDocs(collection(db, "blogs"))).size;
     }
 
     async function loadProfileAdmin() {
-      const snap = await getDoc(doc(db,"profile","main"));
+      const snap = await getDoc(doc(db, "profile", "main"));
       if (!snap.exists()) return;
       const d = snap.data();
-      prName.value=d.name||""; prTitle.value=d.title||""; prAvatar.value=d.avatar||"";
-      prEmail.value=d.email||""; prPhone.value=d.phone||"";
-      prBirthday.value=d.birthday||""; prLocation.value=d.location||"";
-      prFacebook.value=d.socials?.facebook||"";
-      prLinkedin.value=d.socials?.linkedin||"";
-      prInstagram.value=d.socials?.instagram||"";
+      prName.value = d.name || ""; prTitle.value = d.title || ""; prAvatar.value = d.avatar || "";
+      prEmail.value = d.email || ""; prPhone.value = d.phone || "";
+      prBirthday.value = d.birthday || ""; prLocation.value = d.location || "";
+      prFacebook.value = d.socials?.facebook || "";
+      prLinkedin.value = d.socials?.linkedin || "";
+      prInstagram.value = d.socials?.instagram || "";
     }
 
     profileForm.onsubmit = async e => {
       e.preventDefault();
-      await setDoc(doc(db,"profile","main"),{
-        name:prName.value,title:prTitle.value,avatar:prAvatar.value,
-        email:prEmail.value,phone:prPhone.value,birthday:prBirthday.value,
-        location:prLocation.value,
-        socials:{facebook:prFacebook.value,linkedin:prLinkedin.value,instagram:prInstagram.value}
+      await setDoc(doc(db, "profile", "main"), {
+        name: prName.value, title: prTitle.value, avatar: prAvatar.value,
+        email: prEmail.value, phone: prPhone.value, birthday: prBirthday.value,
+        location: prLocation.value,
+        socials: { facebook: prFacebook.value, linkedin: prLinkedin.value, instagram: prInstagram.value }
       });
       profileSuccess.classList.add("show");
-      setTimeout(()=>profileSuccess.classList.remove("show"),4000);
+      setTimeout(() => profileSuccess.classList.remove("show"), 4000);
     };
 
     portfolioForm.onsubmit = async e => {
       e.preventDefault();
-      await addDoc(collection(db,"portfolio"),{
-        title:pTitle.value,image:pImage.value,category:pCategory.value,
-        createdAt:serverTimestamp()
+      await addDoc(collection(db, "portfolio"), {
+        title: pTitle.value, image: pImage.value, category: pCategory.value,
+        createdAt: serverTimestamp()
       });
       pSuccess.classList.add("show");
       updateStats();
@@ -231,20 +260,54 @@
 
     blogForm.onsubmit = async e => {
       e.preventDefault();
-      if(!quill.getText().trim()) return alert("Add blog content");
-      await addDoc(collection(db,"blogs"),{
-        title:bTitle.value,image:bImage.value,videoId:bVideo.value,
-        category:bCategory.value,description:bContent.value,
-        date:bDate.value,createdAt:serverTimestamp()
+      if (!quill.getText().trim()) return alert("Add blog content");
+      await addDoc(collection(db, "blogs"), {
+        title: bTitle.value, image: bImage.value, videoId: bVideo.value,
+        category: bCategory.value, description: bContent.value,
+        date: bDate.value, createdAt: serverTimestamp()
       });
       bSuccess.classList.add("show");
       updateStats();
     };
 
-    document.addEventListener("DOMContentLoaded",()=>{
+    document.addEventListener("DOMContentLoaded", () => {
       updateStats();
       loadProfileAdmin();
     });
+
+
+    
+    resumeForm.onsubmit = async (e) => {
+      e.preventDefault();
+
+      const type = resumeType.value;
+      const ref = doc(db, "resume", type);
+      const snap = await getDoc(ref);
+
+      let items = snap.exists() ? snap.data().items : [];
+
+      if (type === "skills") {
+        items.push({
+          name: rTitle.value,
+          percent: Number(rPercent.value || 0)
+        });
+      } else {
+        items.push({
+          title: rTitle.value,
+          duration: rDuration.value,
+          description: rDescription.value
+        });
+      }
+
+      await setDoc(ref, { items });
+
+      rSuccess.classList.add("show");
+      setTimeout(() => rSuccess.classList.remove("show"), 3000);
+
+      resumeForm.reset();
+    };
+
   </script>
 </body>
+
 </html>
