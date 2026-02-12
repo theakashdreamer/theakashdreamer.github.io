@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Project Requirement Form | विस्तृत प्रोजेक्ट आवश्यकता फॉर्म</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .lang-switch-active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        [lang="hi"] {
+            display: none;
+        }
+
+        body.hindi-mode [lang="en"] {
+            display: none;
+        }
+
+        body.hindi-mode [lang="hi"] {
+            display: block;
+        }
+
+        .custom-checkbox:checked+label {
+            border-color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+            authDomain: "registration-93e51.firebaseapp.com",
+            projectId: "registration-93e51",
+            storageBucket: "registration-93e51.firebasestorage.app",
+            messagingSenderId: "509440941274",
+            appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3",
+            measurementId: "G-S8YQNKQWB6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.firebaseApp = app;
+        window.db = db;
+        window.firestoreCollection = collection;
+        window.firestoreAddDoc = addDoc;
+
+        console.log("Firebase initialized successfully!");
+    </script>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-invoice text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900 tracking-tight">
+                        <span lang="en">RequirementsPortal</span>
+                        <span lang="hi">आवश्यकता पोर्टल</span>
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-full">
+                    <button onclick="toggleLanguage('en')" id="btn-en"
+                        class="px-4 py-1.5 rounded-full text-sm font-medium lang-switch-active transition-all">English</button>
+                    <button onclick="toggleLanguage('hi')" id="btn-hi"
+                        class="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 transition-all">हिन्दी</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-2">
+                <span lang="en">Project Requirement Gathering Form</span>
+                <span lang="hi">प्रोजेक्ट आवश्यकता संग्रहण फॉर्म</span>
+            </h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                <span lang="en">Please fill this form to help us understand your mobile app and website development
+                    requirements.</span>
+                <span lang="hi">अपने मोबाइल ऐप और वेबसाइट विकास की आवश्यकताओं को समझने में हमारी सहायता के लिए कृपया इस
+                    फॉर्म को भरें।</span>
+            </p>
+        </header>
+
+        <div id="form-container" class="glass-morphism rounded-2xl shadow-xl overflow-hidden mb-12">
+            <!-- Progress Bar -->
+            <div class="bg-gray-100 h-2 w-full flex">
+                <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-500" style="width: 6.66%">
+                </div>
+            </div>
+
+            <div class="px-6 py-3 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">
+                    <span lang="en">Step</span> <span lang="hi">चरण</span> <span id="step-count">1</span> / 15
+                </span>
+                <span id="section-title" class="text-sm font-semibold text-gray-700"></span>
+            </div>
+
+            <form id="requirementForm" class="p-8">
+
+                <!-- SECTION 1: Client Information -->
+                <section id="step-1" class="step-transition">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-user-circle text-indigo-500"></i>
+                        <span lang="en">SECTION 1: Client Information</span>
+                        <span lang="hi">अनुभाग 1: क्लाइंट जानकारी</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Full Name</span><span
+                                    lang="hi">पूरा नाम</span></label>
+                            <input type="text" name="client_name" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input"
+                                placeholder="e.g. Rahul Sharma">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Company / Business
+                                    Name</span><span lang="hi">कंपनी / व्यवसाय का नाम</span></label>
+                            <input type="text" name="company_name"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Email
+                                    Address</span><span lang="hi">ईमेल पता</span></label>
+                            <input type="email" name="email" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Mobile
+                                    Number</span><span lang="hi">मोबाइल नंबर</span></label>
+                            <input type="tel" name="mobile" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">City /
+                                    Country</span><span lang="hi">शहर / देश</span></label>
+                            <input type="text" name="location"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Preferred
+                                    Communication Mode</span><span lang="hi">पसंदीदा संचार माध्यम</span></label>
+                            <select name="comm_mode"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="Call">Call</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Email">Email</option>
+                                <option value="Video meeting">Video meeting</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: Project Overview -->
+                <section id="step-2" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-indigo-500"></i>
+                        <span lang="en">SECTION 2: Project Overview</span>
+                        <span lang="hi">अनुभाग 2: प्रोजेक्ट अवलोकन</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Project Name
+                                    (App/Website name)</span><span lang="hi">प्रोजेक्ट का नाम (ऐप/वेबसाइट का
+                                    नाम)</span></label>
+                            <input type="text" name="project_name" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-3"><span lang="en">Project
+                                    Type</span><span lang="hi">प्रोजेक्ट का प्रकार</span></label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="proj_type" value="Android"> Android App</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="proj_type" value="iOS"> iOS App</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="proj_type" value="Website"> Website</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="proj_type" value="Admin Panel"> Admin Panel</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="proj_type" value="Vendor Panel"> Vendor Panel</label>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Business
+                                    Model</span><span lang="hi">बिजनेस मॉडल</span></label>
+                            <select name="biz_model"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="Product selling">Product selling</option>
+                                <option value="Service booking">Service booking</option>
+                                <option value="Subscription">Subscription</option>
+                                <option value="Commission marketplace">Commission marketplace</option>
+                                <option value="Spirtual">Spirtual</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: User Roles -->
+                <section id="step-3" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-users-cog text-indigo-500"></i>
+                        <span lang="en">SECTION 3: User Roles</span>
+                        <span lang="hi">अनुभाग 3: उपयोगकर्ता भूमिकाएं</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-3"><span lang="en">User types
+                                    required</span><span lang="hi">आवश्यक उपयोगकर्ता प्रकार</span></label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="user_types" value="Customers"> Customers</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="user_types" value="Users"> Users</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="user_types" value="Vendors"> Vendors/Sellers</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="user_types" value="Delivery"> Delivery partners</label>
+                                <label
+                                    class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                        type="checkbox" name="user_types" value="Admin"> Admin</label>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Role-based access
+                                    required?</span><span lang="hi">क्या भूमिका-आधारित एक्सेस की आवश्यकता
+                                    है?</span></label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2"><input type="radio" name="rbac" value="Yes">
+                                    Yes</label>
+                                <label class="flex items-center gap-2"><input type="radio" name="rbac" value="No">
+                                    No</label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: Registration & Login -->
+                <section id="step-4" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-sign-in-alt text-indigo-500"></i>
+                        <span lang="en">SECTION 4: Registration & Login</span>
+                        <span lang="hi">अनुभाग 4: पंजीकरण और लॉगिन</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2"><span lang="en">Login methods
+                                required</span><span lang="hi">आवश्यक लॉगिन विधियाँ</span></label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="login_methods" value="Email"> Email & Password</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="login_methods" value="OTP"> Mobile OTP</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="login_methods" value="Google"> Google Login</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="login_methods" value="Apple"> Apple Login</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: Core Features -->
+                <section id="step-5" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-star text-indigo-500"></i>
+                        <span lang="en">SECTION 5: Core Features</span>
+                        <span lang="hi">अनुभाग 5: मुख्य विशेषताएं</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Listing">
+                            Product/Service Listing
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Search">
+                            Search & Filters
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Cart">
+                            Cart System
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Booking">
+                            Instant Booking
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Reviews">
+                            Reviews & Ratings
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Wallet">
+                            Wallet System
+                        </label>
+
+                        <!-- NEW FEATURES ADDED -->
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Push Notifications">
+                            Push Notifications
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="SMS Notifications">
+                            SMS Notifications
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Email Notifications">
+                            Email Notifications
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Spiritual Content">
+                            Spiritual Content (Articles/Blogs)
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Puja Booking">
+                            Puja / Ritual Booking
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Astrology Services">
+                            Astrology / Horoscope Services
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Live Darshan">
+                            Live Darshan / Streaming
+                        </label>
+
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" name="features" value="Donation System">
+                            Donation System
+                        </label>
+
+                    </div>
+
+                </section>
+
+                <!-- SECTION 6: Payment Requirements -->
+                <section id="step-6" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-credit-card text-indigo-500"></i>
+                        <span lang="en">SECTION 6: Payment Requirements</span>
+                        <span lang="hi">अनुभाग 6: भुगतान आवश्यकताएं</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-3">
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="payments" value="UPI"> UPI</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="payments" value="Cards"> Cards</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="payments" value="Wallets"> Wallets</label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                    type="checkbox" name="payments" value="COD"> Cash on Delivery</label>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <label class="flex items-center gap-3"><span lang="en">International payments?</span><span
+                                    lang="hi">अंतर्राष्ट्रीय भुगतान?</span> <input type="checkbox"
+                                    name="intl_pay"></label>
+                            <label class="flex items-center gap-3"><span lang="en">Auto refund required?</span><span
+                                    lang="hi">ऑटो रिफंड आवश्यक?</span> <input type="checkbox"
+                                    name="auto_refund"></label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 7: Admin Panel -->
+                <section id="step-7" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-indigo-500"></i>
+                        <span lang="en">SECTION 7: Admin Panel</span>
+                        <span lang="hi">अनुभाग 7: एडमिन पैनल</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="admin_feat" value="Analytics"> Dashboard Analytics</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="admin_feat" value="Users"> User Management</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="admin_feat" value="Orders"> Order Management</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="admin_feat" value="CMS"> Content Management (CMS)</label>
+                    </div>
+                </section>
+
+                <!-- SECTION 8: Vendor Module -->
+                <section id="step-8" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-store text-indigo-500"></i>
+                        <span lang="en">SECTION 8: Vendor Module</span>
+                        <span lang="hi">अनुभाग 8: वेंडर मॉड्यूल</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3"><span lang="en">Vendor registration required?</span><span
+                                lang="hi">वेंडर पंजीकरण आवश्यक?</span> <input type="checkbox" name="vendor_reg"></label>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Commission model
+                                    details</span><span lang="hi">कमीशन मॉडल विवरण</span></label>
+                            <input type="text" name="commission"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input"
+                                placeholder="e.g. 10% per sale">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 9: Integrations -->
+                <section id="step-9" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-plug text-indigo-500"></i>
+                        <span lang="en">SECTION 9: Integrations</span>
+                        <span lang="hi">अनुभाग 9: एकीकरण</span>
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="integrations" value="Payment Gateway"> Payment Gateway</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="integrations" value="SMS API"> SMS API</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="integrations" value="Maps"> Maps/GPS</label>
+                        <label
+                            class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"><input
+                                type="checkbox" name="integrations" value="WhatsApp"> WhatsApp API</label>
+                    </div>
+                </section>
+
+                <!-- SECTION 10: Design & Branding -->
+                <section id="step-10" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-paint-brush text-indigo-500"></i>
+                        <span lang="en">SECTION 10: Design & Branding</span>
+                        <span lang="hi">अनुभाग 10: डिजाइन और ब्रांडिंग</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <label class="flex items-center gap-3"><span lang="en">Do you have logo & brand
+                                assets?</span><span lang="hi">क्या आपके पास लोगो और ब्रांड संपत्ति है?</span> <input
+                                type="checkbox" name="has_assets"></label>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Design
+                                    Preference</span><span lang="hi">डिजाइन प्राथमिकता</span></label>
+                            <select name="design_pref"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="Custom UI">Custom UI (Unique Design)</option>
+                                <option value="Template based">Template based</option>
+                                <option value="Not sure">Not sure</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 11: Technical & Hosting -->
+                <section id="step-11" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-server text-indigo-500"></i>
+                        <span lang="en">SECTION 11: Technical & Hosting</span>
+                        <span lang="hi">अनुभाग 11: तकनीकी और होस्टिंग</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Platform
+                                    requirement</span><span lang="hi">प्लेटफॉर्म की आवश्यकता</span></label>
+                            <select name="platform"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="Android only">Android only</option>
+                                <option value="Android + iOS">Android + iOS</option>
+                                <option value="Web only">Web only</option>
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Hosting
+                                    preference</span><span lang="hi">होस्टिंग प्राथमिकता</span></label>
+                            <select name="hosting"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="AWS">AWS</option>
+                                <option value="DigitalOcean">DigitalOcean</option>
+                                <option value="Shared">Shared Hosting</option>
+                                <option value="Not sure">Not sure</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 12: Traffic & Scaling -->
+                <section id="step-12" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-indigo-500"></i>
+                        <span lang="en">SECTION 12: Traffic & Scaling</span>
+                        <span lang="hi">अनुभाग 12: ट्रैफिक और स्केलिंग</span>
+                    </h3>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700"><span lang="en">Expected users at
+                                launch</span><span lang="hi">लॉन्च के समय अपेक्षित उपयोगकर्ता</span></label>
+                        <select name="launch_users"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                            <option value="< 1,000">&lt; 1,000</option>
+                            <option value="1K - 10K">1K – 10K</option>
+                            <option value="10K - 50K">10K – 50K</option>
+                            <option value="50K+">50K+</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- SECTION 13: Timeline & Budget -->
+                <section id="step-13" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-wallet text-indigo-500"></i>
+                        <span lang="en">SECTION 13: Timeline & Budget</span>
+                        <span lang="hi">अनुभाग 13: समयरेखा और बजट</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Project start
+                                    timeline</span><span lang="hi">प्रोजेक्ट शुरू करने की समयरेखा</span></label>
+                            <select name="timeline"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="Immediate">Immediate</option>
+                                <option value="1-2 months">1–2 months</option>
+                                <option value="3-6 months">3–6 months</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Budget
+                                    range</span><span lang="hi">बजट रेंज</span></label>
+                            <select name="budget_range"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input bg-white">
+                                <option value="< ₹20K">&lt; ₹20K</option>
+                                <option value="₹20K - ₹50K">₹20K – ₹50K</option>
+                                <option value="₹50K - ₹1L">₹50K – ₹1L</option>
+                                <option value="₹1L - ₹3L">₹1L – ₹3L</option>
+                                <option value="₹3L - ₹5L">₹3L – ₹5L</option>
+                                <option value="₹5L+">₹5L+</option>
+
+                            </select>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 14: Maintenance & Support -->
+                <section id="step-14" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-tools text-indigo-500"></i>
+                        <span lang="en">SECTION 14: Maintenance & Support</span>
+                        <span lang="hi">अनुभाग 14: रखरखाव और समर्थन</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <label class="flex items-center gap-3"><span lang="en">Post-launch maintenance
+                                required?</span><span lang="hi">क्या लॉन्च के बाद रखरखाव आवश्यक है?</span> <input
+                                type="checkbox" name="maintenance"></label>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Monthly maintenance
+                                    budget (INR)</span><span lang="hi">मासिक रखरखाव बजट (INR)</span></label>
+                            <input type="text" name="maint_budget"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 15: Additional Notes -->
+                <section id="step-15" class="step-transition hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-sticky-note text-indigo-500"></i>
+                        <span lang="en">SECTION 15: Additional Notes</span>
+                        <span lang="hi">अनुभाग 15: अतिरिक्त नोट्स</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700"><span lang="en">Any special
+                                    requirements?</span><span lang="hi">कोई विशेष आवश्यकताएं?</span></label>
+                            <textarea name="notes" rows="4"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 form-input"></textarea>
+                        </div>
+                        <div class="p-4 border-2 border-dashed border-gray-300 rounded-xl text-center bg-gray-50">
+                            <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-2"></i>
+                            <p class="text-sm text-gray-500"><span lang="en">Upload documents or logo
+                                    (Mock-up)</span><span lang="hi">दस्तावेज़ या लोगो अपलोड करें</span></p>
+                            <input type="file" class="hidden" id="fileInput">
+                            <button type="button" onclick="document.getElementById('fileInput').click()"
+                                class="mt-2 text-xs text-indigo-600 font-bold uppercase tracking-wider">Browse
+                                Files</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Success State -->
+                <div id="success-message" class="hidden text-center py-12">
+                    <div
+                        class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                        <span lang="en">Thank You!</span>
+                        <span lang="hi">धन्यवाद!</span>
+                    </h3>
+                    <p class="text-gray-600">
+                        <span lang="en">Your requirements have been submitted successfully. We'll get back to you
+                            soon.</span>
+                        <span lang="hi">आपकी आवश्यकताएं सफलतापूर्वक जमा कर दी गई हैं। हम जल्द ही आपसे संपर्क
+                            करेंगे।</span>
+                    </p>
+                    <button type="button" onclick="location.reload()"
+                        class="mt-8 px-6 py-2 bg-indigo-600 text-white rounded-lg">New Form</button>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div id="form-footer" class="flex justify-between items-center pt-8 mt-8 border-t border-gray-100">
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)"
+                        class="invisible flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-semibold transition-all">
+                        <i class="fas fa-chevron-left"></i>
+                        <span lang="en">Previous</span><span lang="hi">पिछला</span>
+                    </button>
+
+                    <button type="button" id="nextBtn" onclick="changeStep(1)"
+                        class="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-all">
+                        <span id="nextText">
+                            <span lang="en">Next Step</span><span lang="hi">अगला चरण</span>
+                        </span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="toast"
+            class="fixed bottom-8 left-1/2 -translate-x-1/2 glass-morphism px-6 py-3 rounded-full shadow-2xl text-sm font-medium opacity-0 pointer-events-none transition-all duration-300">
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-gray-400 text-sm">
+        <p>© 2024 ProjectNexus Development Agency</p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 15;
+
+        const sectionTitles = {
+            en: [
+                "Client Information", "Project Overview", "User Roles", "Login & Security",
+                "Core Features", "Payments", "Admin Control", "Vendor Module",
+                "Integrations", "Branding", "Technical Specs", "Scaling",
+                "Budget & Timeline", "Support", "Final Notes"
+            ],
+            hi: [
+                "क्लाइंट जानकारी", "प्रोजेक्ट अवलोकन", "उपयोगकर्ता भूमिकाएं", "लॉगिन और सुरक्षा",
+                "मुख्य विशेषताएं", "भुगतान", "एडमिन कंट्रोल", "वेंडर मॉड्यूल",
+                "एकीकरण", "ब्रांडिंग", "तकनीकी विवरण", "स्केलिंग",
+                "बजट और समयरेखा", "समर्थन", "अंतिम नोट्स"
+            ]
+        };
+
+        function toggleLanguage(lang) {
+            const body = document.body;
+            const btnEn = document.getElementById('btn-en');
+            const btnHi = document.getElementById('btn-hi');
+
+            if (lang === 'hi') {
+                body.classList.add('hindi-mode');
+                btnHi.classList.add('lang-switch-active');
+                btnEn.classList.remove('lang-switch-active');
+            } else {
+                body.classList.remove('hindi-mode');
+                btnEn.classList.add('lang-switch-active');
+                btnHi.classList.remove('lang-switch-active');
+            }
+            updateUI();
+            showToast(lang === 'hi' ? 'भाषा बदली गई' : 'Language Switched');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('opacity-100', '-translate-y-2');
+            setTimeout(() => toast.classList.remove('opacity-100', '-translate-y-2'), 2500);
+        }
+
+        function changeStep(n) {
+            if (n === 1 && !validateStep()) return;
+
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            currentStep += n;
+
+            if (currentStep > totalSteps) {
+                submitForm();
+                return;
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+            updateUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateStep() {
+            const section = document.getElementById(`step-${currentStep}`);
+            const required = section.querySelectorAll('[required]');
+            let valid = true;
+            required.forEach(el => {
+                if (!el.value.trim()) {
+                    el.classList.add('border-red-500');
+                    valid = false;
+                } else {
+                    el.classList.remove('border-red-500');
+                }
+            });
+            return valid;
+        }
+
+        function updateUI() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('step-count').textContent = currentStep;
+            document.getElementById('prevBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+
+            // Update section title
+            const isHindi = document.body.classList.contains('hindi-mode');
+            const titleList = isHindi ? sectionTitles.hi : sectionTitles.en;
+            document.getElementById('section-title').textContent = titleList[currentStep - 1];
+
+            // Submit text change
+            const nextBtnTextEn = document.querySelector('#nextText [lang="en"]');
+            const nextBtnTextHi = document.querySelector('#nextText [lang="hi"]');
+            if (currentStep === totalSteps) {
+                nextBtnTextEn.textContent = "Finish & Submit";
+                nextBtnTextHi.textContent = "पूरा करें और भेजें";
+            } else {
+                nextBtnTextEn.textContent = "Next Step";
+                nextBtnTextHi.textContent = "अगला चरण";
+            }
+        }
+
+        async function submitForm() {
+
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const form = document.getElementById('requirementForm');
+            const formData = new FormData(form);
+            const entry = Object.fromEntries(formData.entries());
+
+            // Multi-select checkbox handling
+            const multiSelects = [
+                'proj_type',
+                'user_types',
+                'login_methods',
+                'features',
+                'payments',
+                'admin_feat',
+                'integrations'
+            ];
+
+            multiSelects.forEach(name => {
+                const values = Array.from(
+                    form.querySelectorAll(`input[name="${name}"]:checked`)
+                ).map(cb => cb.value);
+
+                entry[name] = values;
+            });
+
+            try {
+
+                // Firestore path
+                const collectionRef =
+                    window.firestoreCollection(
+                        window.db,
+                        "requirements"
+                    );
+
+                await window.firestoreAddDoc(collectionRef, {
+                    ...entry,
+                    submittedAt: new Date(),
+                    formVersion: "2.0"
+                });
+
+                document.getElementById('form-footer').classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+
+                const pBar = document.getElementById('progress-bar');
+                pBar.classList.replace('bg-indigo-600', 'bg-green-500');
+                pBar.style.width = '100%';
+
+            } catch (error) {
+                console.error("Submission Error:", error);
+                showToast("Error saving data. Please try again.");
+                nextBtn.disabled = false;
+                updateUI();
+            }
+        }
+
+        // Init UI
+        updateUI();
+    </script>
+</body>
+
+</html>
