@@ -1,373 +1,1067 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Om Sai Ki Rasoi | Luxury Stay & Dining</title>
-    <!-- Tailwind + Fonts -->
+    <title>Om Sai Ki Rasoi | Luxury Dining & Online Ordering</title>
+    <meta name="description" content="Om Sai Ki Rasoi - Experience luxury dining with authentic flavors. Book a table or order online today.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        osr: {
+                            gold: '#D4AF37',
+                            goldlight: '#F4CF57',
+                            maroon: '#5A0F1C',
+                            maroonlight: '#7A1F2C',
+                            cream: '#FFF8F0', // Slightly lighter cream
+                            black: '#0a0a0a',
+                            gray: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Playfair Display', 'serif'],
+                        body: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'glow': '0 0 20px rgba(212, 175, 55, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* base refinement */
-        body { font-family: 'Inter', sans-serif; background: #fcf9f3; }
-        h1, h2, h3, .serif-display { font-family: 'Playfair Display', serif; }
-        .text-amber-deep { color: #b85e00; }
-        .bg-amber-deep { background-color: #b85e00; }
-        .border-amber-deep { border-color: #b85e00; }
-        .bg-soft-cream { background-color: #fefaf0; }
-        .bg-charcoal-soft { background-color: #1e1b18; }
+        /* Modern Base Styles */
+        body {
+            background-color: #FFF8F0;
+            color: #333;
+        }
         
-        /* smoothness & scroll */
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #ece5d9; }
-        ::-webkit-scrollbar-thumb { background: #b85e00; border-radius: 12px; }
-
-        /* glassmorphic header */
-        .header-glass {
-            background: rgba(255, 252, 242, 0.75);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-bottom: 1px solid rgba(184, 94, 0, 0.15);
-            box-shadow: 0 12px 30px -10px rgba(0,0,0,0.1);
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* nav pill style */
-        .nav-pill {
-            padding: 0.65rem 1.8rem;
-            border-radius: 60px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            color: #3a3530;
-            transition: all 0.2s ease;
-            background: transparent;
+        .glass-dark {
+            background: rgba(90, 15, 28, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
-        .nav-pill:hover { background: rgba(184, 94, 0, 0.06); color: #b85e00; }
-        .nav-pill.active {
-            background: #b85e00;
-            color: white;
-            box-shadow: 0 6px 16px rgba(184,94,0,0.25);
+        
+        /* Gradients */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #D4AF37, #F4CF57, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
         }
 
-        /* hero overlay + fade carousel */
-        .hero-slide {
-            position: absolute; inset: 0;
-            opacity: 0;
-            transition: opacity 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            background-size: cover; background-position: center;
-        }
-        .hero-slide.active { opacity: 1; z-index: 5; }
-        .hero-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(115deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%);
-            z-index: 10;
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
         }
 
-        /* card hover effects */
-        .room-card { transition: transform 0.3s ease, box-shadow 0.4s; }
-        .room-card:hover { transform: translateY(-8px); box-shadow: 0 32px 48px -16px rgba(0,0,0,0.2); }
-        .menu-card { transition: all 0.25s; }
-        .menu-card:hover { background-color: white; box-shadow: 0 18px 30px -12px rgba(184,94,0,0.25); border-color: #b85e00; }
-
-        /* offer shine */
-        .offer-shine {
-            position: relative; overflow: hidden;
+        /* Modern Buttons */
+        .btn-gold {
+            background: linear-gradient(135deg, #D4AF37, #C59D25);
+            color: #FFF;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
         }
-        .offer-shine::after {
+        
+        .btn-gold::after {
             content: '';
-            position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,240,210,0.25), transparent);
-            transition: left 0.7s;
-        }
-        .offer-shine:hover::after { left: 120%; }
-
-        /* whatsapp pulse refined */
-        .wa-pulse {
-            animation: wa-pulse 2.4s infinite;
-            box-shadow: 0 8px 22px rgba(34,197,94,0.4);
-        }
-        @keyframes wa-pulse { 0% { box-shadow: 0 0 0 0 #22c55e80; } 70% { box-shadow: 0 0 0 18px #22c55e00; } }
-
-        /* cart counter badge */
-        .cart-badge {
-            position: absolute; top: -4px; right: -6px;
-            background: #b85e00; color: white;
-            font-size: 0.7rem; font-weight: 700;
-            width: 20px; height: 20px; border-radius: 999px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 8px #b85e0050;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #F4CF57, #D4AF37);
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            opacity: 0;
         }
 
-        /* modal overlay */
-        .modal-overlay { background: rgba(20, 15, 10, 0.7); backdrop-filter: blur(3px); }
+        .btn-gold:hover::after {
+            opacity: 1;
+        }
 
-        /* testimonial fade */
-        .testimonial-fade { transition: opacity 0.7s ease, transform 0.7s; }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
 
-        /* dot navigation */
-        .hero-dot { width: 10px; height: 10px; border-radius: 20px; background: rgba(255,255,255,0.5); border: 1px solid transparent; transition: 0.25s; }
-        .hero-dot.active { background: #b85e00; width: 32px; border: none; box-shadow: 0 0 10px #ffb347; }
+        .btn-outline {
+            background: transparent;
+            color: #FFF;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            transition: all 0.3s ease;
+        }
 
-        /* classic border radius */
-        .rounded-3xl { border-radius: 1.8rem; }
+        .btn-outline:hover {
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF8F0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5A0F1C;
+            border-radius: 4px;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #D4AF37;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Cart Drawer */
+        .cart-drawer { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .cart-open { transform: translateX(0); }
+        .cart-closed { transform: translateX(100%); }
+
+        /* Badge styling */
+        .badge-type {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        .badge-veg { border: 2px solid #166534; }
+        .badge-veg-dot { width: 8px; height: 8px; background-color: #166534; border-radius: 50%; }
+        .badge-nonveg { border: 2px solid #991b1b; }
+        .badge-nonveg-dot { width: 8px; height: 8px; background-color: #991b1b; border-radius: 50%; }
     </style>
 </head>
-<body class="antialiased text-stone-800">
+<body class="font-body overflow-x-hidden relative selection:bg-osr-gold selection:text-white">
 
-    <!-- WhatsApp fixed -->
-    <a href="https://wa.me/919876543210?text=I'm%20interested%20in%20booking%20at%20Om%20Sai%20Ki%20Rasoi" target="_blank"
-        class="fixed bottom-8 right-8 z-[200] wa-pulse bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform border-4 border-white/30">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M12 17a5 5 0 0 0 4-2.5"/></svg>
-    </a>
-
-    <!-- HEADER enhanced with glass & pill active -->
-    <header class="fixed top-0 w-full z-50 header-glass px-4 md:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-amber-700 to-amber-900 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-900/20">
-                    <span class="serif-display text-white text-xl font-black tracking-tight">OSR</span>
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 border-b border-white/5">
+        <div class="absolute inset-0 bg-osr-maroon/90 backdrop-blur-md -z-10 transition-opacity duration-300" id="nav-bg"></div>
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="relative w-12 h-12 flex items-center justify-center">
+                    <div class="absolute inset-0 border border-osr-gold/30 rounded-full scale-100 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="absolute inset-0 border border-osr-gold/30 rounded-full scale-110 group-hover:scale-125 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                    <span class="font-heading font-bold text-osr-gold text-xl relative z-10">OSR</span>
                 </div>
-                <span class="serif-display hidden sm:block text-2xl font-semibold tracking-tight text-stone-800">Om Sai <span class="text-amber-deep italic">Ki Rasoi</span></span>
+                <div class="hidden sm:block">
+                    <h1 class="font-heading font-bold text-xl text-white tracking-widest">OM SAI KI RASOI</h1>
+                    <p class="text-[10px] text-osr-gold/80 tracking-[0.3em] uppercase">Luxury Dining</p>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#home" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
+                    Home
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#about" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
+                    About
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#menu" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
+                    Menu
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#gallery" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
+                    Gallery
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#booking" class="px-5 py-2 border border-osr-gold/50 text-osr-gold text-xs uppercase tracking-widest font-bold rounded hover:bg-osr-gold hover:text-osr-maroon transition-all duration-300">
+                    Book Table
+                </a>
             </div>
-            <!-- nav pills -->
-            <nav class="hidden md:flex items-center gap-1 bg-white/40 px-2 py-1.5 rounded-full border border-white/40 shadow-inner">
-                <a href="#home" class="nav-pill active" data-nav>Home</a>
-                <a href="#offers" class="nav-pill" data-nav>Offers</a>
-                <a href="#rooms" class="nav-pill" data-nav>Stay</a>
-                <a href="#menu" class="nav-pill" data-nav>Dine</a>
-                <a href="#testimonials" class="nav-pill" data-nav>Stories</a>
-            </nav>
-            <!-- actions -->
-            <div class="flex items-center gap-4">
-                <button onclick="toggleCart()" class="relative w-11 h-11 flex items-center justify-center rounded-xl bg-white shadow-md text-stone-700 hover:text-amber-700 transition border border-stone-200">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m6 2 3 12h10l3-12Z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
-                    <span id="cart-count" class="cart-badge">0</span>
+
+            <!-- Icons -->
+            <div class="flex items-center gap-6">
+                <button onclick="toggleCart()" class="relative text-white hover:text-osr-gold transition-colors group">
+                    <div class="p-2 rounded-full group-hover:bg-white/10 transition-colors">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    </div>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-osr-gold text-osr-maroon text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-300">0</span>
                 </button>
-                <a href="#rooms" class="hidden lg:inline-block bg-stone-900 text-white px-7 py-2.5 rounded-xl text-sm font-semibold tracking-wide hover:bg-amber-deep transition shadow-xl shadow-stone-900/10">Book Room</a>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-osr-gold text-2xl">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
             </div>
         </div>
-    </header>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass-dark border-t border-white/10 absolute w-full">
+            <div class="flex flex-col p-6 gap-6 items-center text-center">
+                <a href="#home" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">About</a>
+                <a href="#menu" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Menu</a>
+                <a href="#booking" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Book Table</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Contact</a>
+            </div>
+        </div>
+    </nav>
 
-    <!-- HERO CAROUSEL with dynamic overlay -->
-    <section id="home" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-        <div id="hero-carousel" class="absolute inset-0"></div>
-        <div class="hero-overlay z-10"></div>
-        <div class="relative z-20 text-center px-6 max-w-5xl mx-auto">
-            <span class="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.3em] uppercase bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30">heritage since 2005</span>
-            <h1 id="hero-title" class="text-5xl md:text-7xl lg:text-8xl text-white serif-display leading-tight drop-shadow-2xl transition-opacity duration-1000 opacity-0">Authentic Taste, <br><span class="italic font-light">Imperial Comfort.</span></h1>
-            <div class="flex flex-col sm:flex-row gap-5 justify-center mt-12">
-                <a href="#rooms" class="group bg-amber-deep text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-stone-900 transition-all shadow-2xl flex items-center justify-center gap-2">Explore Rooms <span class="group-hover:translate-x-1 transition">→</span></a>
-                <a href="#offers" class="bg-transparent backdrop-blur-sm border-2 border-white/50 text-white px-10 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all">Exclusive Offers</a>
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-osr-black/60 z-[60] hidden backdrop-blur-sm transition-opacity duration-300"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-[90%] max-w-[400px] bg-white z-[70] cart-drawer cart-closed shadow-2xl flex flex-col rounded-l-2xl overflow-hidden">
+        <div class="bg-osr-maroon p-6 flex justify-between items-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30"></div>
+            <h2 class="font-heading text-2xl font-bold relative z-10">Your Order</h2>
+            <button onclick="toggleCart()" class="hover:rotate-90 transition-transform duration-300 relative z-10"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+        
+        <!-- Cart Items -->
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50">
+            <!-- Items injected by JS -->
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-basket-shopping text-3xl text-gray-300"></i>
+                </div>
+                <p class="font-medium">Your cart is empty</p>
+                <button onclick="toggleCart(); window.location.href='#menu'" class="mt-4 text-osr-maroon text-sm font-bold hover:underline">Start Ordering</button>
             </div>
         </div>
-        <!-- navigation arrows & dots -->
-        <div class="absolute bottom-12 left-6 z-30 flex gap-3">
-            <button onclick="prevHero()" class="w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-amber-deep/80 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2"/></svg></button>
-            <button onclick="nextHero()" class="w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-amber-deep/80 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2"/></svg></button>
-        </div>
-        <div id="hero-dots" class="absolute bottom-12 right-6 z-30 flex gap-2"></div>
-    </section>
 
-    <!-- OFFERS section (enhanced) -->
-    <section id="offers" class="py-28 px-4 bg-charcoal-soft text-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-                <div>
-                    <p class="text-amber-deep uppercase tracking-[0.3em] text-sm font-semibold mb-3">limited time</p>
-                    <h2 class="text-5xl md:text-6xl serif-display text-white">Exclusive <span class="text-amber-deep italic">Benefits</span></h2>
-                </div>
-                <div class="px-7 py-3 bg-amber-deep/20 border border-amber-deep/40 rounded-full text-amber-deep text-sm font-bold animate-pulse shadow-lg shadow-amber-900/20">🔥 Monsoon Flash Sale</div>
+        <!-- Checkout Section -->
+        <div class="border-t border-gray-100 p-6 bg-white shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-between mb-4 text-xl font-heading font-bold text-osr-maroon">
+                <span>Total</span>
+                <span id="cart-total">₹0</span>
             </div>
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- offer 1 -->
-                <div class="offer-shine bg-stone-800/90 rounded-3xl p-8 border border-stone-700 backdrop-blur-sm flex flex-col md:flex-row gap-6 items-center">
-                    <div class="w-28 h-28 rounded-full bg-amber-deep/30 flex items-center justify-center border-4 border-amber-deep/50"><span class="text-5xl serif-display font-black text-amber-deep">20%</span></div>
-                    <div class="flex-1">
-                        <h3 class="text-3xl serif-display mb-2">First Stay Discount</h3>
-                        <p class="text-stone-400 mb-5">20% off first room booking + complimentary breakfast.</p>
-                        <div class="flex items-center gap-3 bg-stone-900/80 py-3 px-4 rounded-xl border border-stone-600 w-fit">
-                            <span class="font-mono tracking-widest text-amber-deep font-bold">OSR20FIRST</span>
-                            <button onclick="copyCode('OSR20FIRST')" class="text-xs text-stone-400 hover:text-white transition-colors">📋 Copy</button>
-                        </div>
-                    </div>
+            
+            <div id="checkout-form-container" class="hidden space-y-4 animate-fade-in">
+                <div class="space-y-3">
+                    <input type="text" id="checkout-name" placeholder="Full Name" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-osr-gold focus:ring-1 focus:ring-osr-gold outline-none text-sm transition-all">
+                    <input type="tel" id="checkout-phone" placeholder="Mobile Number" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-osr-gold focus:ring-1 focus:ring-osr-gold outline-none text-sm transition-all">
+                    <textarea id="checkout-address" placeholder="Delivery Address" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-osr-gold focus:ring-1 focus:ring-osr-gold outline-none text-sm h-20 transition-all resize-none"></textarea>
                 </div>
-                <!-- offer 2 -->
-                <div class="offer-shine bg-stone-800/90 rounded-3xl p-8 border border-stone-700 flex flex-col md:flex-row gap-6 items-center">
-                    <div class="w-28 h-28 rounded-full bg-emerald-900/40 flex items-center justify-center border-4 border-emerald-600/50"><span class="text-5xl serif-display font-black text-emerald-400">FREE</span></div>
-                    <div class="flex-1">
-                        <h3 class="text-3xl serif-display mb-2">Weekend Feast</h3>
-                        <p class="text-stone-400 mb-5">Main course over ₹2000 → two signature desserts free.</p>
-                        <div class="flex items-center gap-3 bg-stone-900/80 py-3 px-4 rounded-xl border border-stone-600 w-fit">
-                            <span class="font-mono tracking-widest text-emerald-400 font-bold">FREEFEAST</span>
-                            <button onclick="copyCode('FREEFEAST')" class="text-xs text-stone-400 hover:text-white">📋 Copy</button>
-                        </div>
-                    </div>
+                
+                <div class="flex gap-3">
+                    <button type="button" class="flex-1 py-3 border border-osr-gold bg-osr-gold/10 text-osr-maroon text-xs font-bold rounded-lg uppercase tracking-wide">Cash on Delivery</button>
+                    <button type="button" class="flex-1 py-3 border border-gray-200 text-gray-400 text-xs font-bold rounded-lg uppercase tracking-wide cursor-not-allowed">UPI (Coming Soon)</button>
                 </div>
+                <button onclick="processCheckout()" class="w-full btn-gold py-4 rounded-xl font-bold shadow-lg mt-2 uppercase tracking-widest text-sm">Confirm Order</button>
             </div>
-        </div>
-    </section>
 
-    <!-- ROOMS section (enhanced) -->
-    <section id="rooms" class="py-28 px-4 bg-soft-cream">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-amber-deep font-semibold tracking-[0.3em] text-sm">OPULENT STAYS</span>
-                <h2 class="text-5xl md:text-6xl serif-display text-stone-900 mt-3 mb-5">Luxury Accommodations</h2>
-                <div class="w-32 h-1 bg-gradient-to-r from-amber-600 to-amber-800 mx-auto rounded-full"></div>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- room 1 -->
-                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
-                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-center mb-3"><h3 class="text-2xl serif-display">Heritage Deluxe</h3><span class="bg-amber-deep/10 text-amber-deep text-xs px-3 py-1 rounded-full font-bold">Elite</span></div>
-                        <div class="text-3xl font-bold text-stone-900 mb-6">₹4,499<span class="text-base font-normal text-stone-400">/night</span></div>
-                        <button onclick="bookRoom('Heritage Deluxe', 4499)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all shadow-lg">Book Now</button>
-                    </div>
-                </div>
-                <!-- room 2 -->
-                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
-                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1582719478250-c89cae4df85b?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
-                    <div class="p-8">
-                        <h3 class="text-2xl serif-display mb-3">Grand Royal Suite</h3>
-                        <div class="text-3xl font-bold text-stone-900 mb-6">₹8,999<span class="text-base font-normal text-stone-400">/night</span></div>
-                        <button onclick="bookRoom('Grand Royal Suite', 8999)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all">Book Now</button>
-                    </div>
-                </div>
-                <!-- room 3 -->
-                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
-                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
-                    <div class="p-8">
-                        <h3 class="text-2xl serif-display mb-3">Classic Comfort</h3>
-                        <div class="text-3xl font-bold text-stone-900 mb-6">₹2,999<span class="text-base font-normal text-stone-400">/night</span></div>
-                        <button onclick="bookRoom('Classic Comfort', 2999)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all">Book Now</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- DINE section (menu grid enhanced) -->
-    <section id="menu" class="py-28 px-4 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-14">
-                <div><span class="text-amber-deep font-bold tracking-widest text-sm">THE RASOI MENU</span><h2 class="text-5xl md:text-6xl serif-display text-stone-900 mt-3">Freshly Prepared<span class="text-amber-deep italic"> Daily</span></h2></div>
-                <div class="flex gap-2 flex-wrap">
-                    <button onclick="filterMenu('all')" class="category-btn active-filter px-6 py-3 rounded-full border border-stone-300 bg-stone-900 text-white font-medium hover:bg-stone-800 transition">All</button>
-                    <button onclick="filterMenu('starter')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Starters</button>
-                    <button onclick="filterMenu('main')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Main Course</button>
-                    <button onclick="filterMenu('dessert')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Desserts</button>
-                </div>
-            </div>
-            <div id="menu-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-7"></div>
-        </div>
-    </section>
-
-    <!-- TESTIMONIALS (enhanced) -->
-    <section id="testimonials" class="py-28 px-4 bg-stone-900 text-white overflow-hidden relative">
-        <div class="max-w-4xl mx-auto text-center">
-            <p class="text-amber-deep font-bold tracking-[0.3em] mb-4">GUEST LOVE</p>
-            <div id="testimonial-container" class="relative min-h-[240px]"></div>
-            <div class="flex justify-center gap-6 mt-12">
-                <button onclick="prevTestimonial()" class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-amber-deep hover:border-amber-deep transition"><svg width="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2"/></svg></button>
-                <button onclick="nextTestimonial()" class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-amber-deep hover:border-amber-deep transition"><svg width="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2"/></svg></button>
-            </div>
-        </div>
-    </section>
-
-    <!-- CART SIDEBAR (enhanced) -->
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white/95 backdrop-blur-xl z-[150] translate-x-full transition-transform duration-500 shadow-2xl flex flex-col border-l border-stone-200">
-        <div class="p-7 border-b border-stone-200 flex justify-between items-center bg-stone-50">
-            <h3 class="text-2xl serif-display">Your Tray</h3>
-            <button onclick="toggleCart()" class="p-2 hover:bg-stone-200 rounded-full"><svg width="24" height="24" stroke="currentColor"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-        </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-        <div class="p-6 bg-stone-50 border-t border-stone-200">
-            <div class="flex justify-between text-2xl font-bold mb-6"><span>Total</span><span id="cart-total" class="text-amber-deep">₹0</span></div>
-            <button onclick="showCheckout()" class="w-full bg-stone-900 text-white py-4 rounded-xl font-bold hover:bg-amber-deep transition shadow-xl">Proceed to Checkout</button>
+            <button id="btn-proceed-checkout" onclick="showCheckoutForm()" class="w-full bg-osr-maroon text-white hover:bg-osr-maroon/90 py-4 rounded-xl font-bold shadow-lg uppercase tracking-widest text-sm transition-all">Proceed to Checkout</button>
         </div>
     </div>
 
-    <!-- MODALS (booking + success) -->
-    <div id="booking-modal" class="fixed inset-0 z-[200] hidden items-center justify-center px-4 modal-overlay"><div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl"><h3 class="text-2xl serif-display mb-6" id="modal-title">Booking Details</h3><div class="space-y-4"><div><label class="text-xs font-bold text-stone-400 uppercase">Check-in</label><input type="date" class="w-full p-3 border rounded-xl"></div><div><label class="text-xs font-bold text-stone-400 uppercase">Check-out</label><input type="date" class="w-full p-3 border rounded-xl"></div><div class="flex gap-3 pt-6"><button onclick="closeModals()" class="flex-1 py-3 border rounded-xl">Cancel</button><button onclick="confirmBooking()" class="flex-1 py-3 bg-amber-deep text-white rounded-xl font-bold">Add to Tray</button></div></div></div></div>
-    <div id="success-modal" class="fixed inset-0 z-[250] hidden items-center justify-center px-4 modal-overlay"><div class="bg-white w-full max-w-sm rounded-3xl p-12 text-center"><h3 class="text-3xl serif-display mb-2">✨ Reserved!</h3><p class="text-stone-500 mb-8">We'll contact you shortly.</p><button onclick="location.reload()" class="w-full py-3 bg-stone-900 text-white rounded-xl font-bold">Close</button></div></div>
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+        <!-- Background Image with Modern Gradient Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1514362545857-3bc16549766b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Luxury Dining" class="w-full h-full object-cover animate-[scale_20s_infinite_alternate]">
+            <div class="absolute inset-0 bg-gradient-to-b from-osr-black/70 via-osr-black/50 to-osr-black/80"></div>
+        </div>
 
-    <!-- FOOTER -->
-    <footer class="bg-stone-950 text-stone-400 py-20 px-4">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
-            <div><div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 bg-amber-deep rounded-xl flex items-center justify-center text-white font-bold">OSR</div><span class="text-2xl serif-display text-white">Om Sai <span class="text-amber-deep italic">Rasoi</span></span></div><p class="text-stone-500">Tradition & luxury since 2005.</p></div>
-            <div><h4 class="text-white font-bold mb-6">Visit</h4><p class="text-sm">Sai Complex, MG Road, Lucknow</p></div>
-            <div><h4 class="text-white font-bold mb-6">Contact</h4><p class="text-sm">hello@omsaikirasoi.com</p></div>
-            <div><h4 class="text-white font-bold mb-6">Social</h4><div class="flex gap-4">Instagram · Facebook</div></div>
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto pt-20">
+            <div class="mb-6 inline-flex flex-col items-center gap-2 reveal">
+                <span class="w-[1px] h-12 bg-osr-gold mb-2"></span>
+                <span class="text-osr-gold tracking-[0.5em] uppercase text-xs font-bold">Est. 2015</span>
+            </div>
+            <h1 class="font-heading text-5xl md:text-7xl lg:text-9xl text-white font-bold mb-6 leading-none reveal" style="transition-delay: 100ms;">
+                Om Sai <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-osr-gold via-yellow-200 to-osr-gold">Ki Rasoi</span>
+            </h1>
+            <p class="text-white/80 text-lg md:text-xl mb-12 font-light tracking-wide max-w-2xl mx-auto leading-relaxed reveal" style="transition-delay: 200ms;">
+                Where royal tradition meets modern culinary art. Experience the finest Indian and Global cuisines in a luxurious setting.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center reveal" style="transition-delay: 300ms;">
+                <a href="#menu" class="btn-gold px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm shadow-glow">Order Online</a>
+                <a href="#booking" class="btn-outline px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm backdrop-blur-sm">Book a Table</a>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce hidden md:block text-white/50">
+            <i class="fa-solid fa-chevron-down text-xl"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-osr-cream relative overflow-hidden">
+        <!-- Decorative Pattern -->
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="lg:w-1/2 relative reveal">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full object-cover h-[500px] hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
+                    
+                    <!-- Floating Card -->
+                    <div class="absolute -bottom-8 -right-8 glass p-8 rounded-xl shadow-soft hidden md:block max-w-xs animate-[float_4s_ease-in-out_infinite]">
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="w-12 h-12 rounded-full bg-osr-maroon flex items-center justify-center text-osr-gold">
+                                <i class="fa-solid fa-quote-left"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-bold text-osr-maroon">Master Chef</h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-wider">Executive Head</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 italic leading-relaxed">"Cooking is an art, but feeding people is an act of love."</p>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 reveal" style="transition-delay: 200ms;">
+                    <span class="text-osr-gold uppercase tracking-[0.2em] font-bold text-xs mb-4 block">Our Story</span>
+                    <h2 class="font-heading text-5xl md:text-6xl font-bold text-osr-maroon mb-8">A Legacy of <br>Flavor & Luxury</h2>
+                    <p class="text-gray-600 mb-8 leading-loose text-lg font-light">
+                        Founded with a vision to bring authentic royal flavors to the modern palate, Om Sai Ki Rasoi has been a beacon of culinary excellence. Our chefs meticulously craft each dish using traditional spices and modern techniques.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-osr-gold/10 flex items-center justify-center text-osr-gold text-xl shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-osr-maroon mb-1 font-heading text-lg">Fresh Ingredients</h3>
+                                <p class="text-sm text-gray-500">Farm-to-table vegetables and premium spices sourced daily.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-osr-gold/10 flex items-center justify-center text-osr-gold text-xl shrink-0">
+                                <i class="fa-solid fa-medal"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-osr-maroon mb-1 font-heading text-lg">Award Winning</h3>
+                                <p class="text-sm text-gray-500">Recognized for best North Indian cuisine in the city.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="text-osr-maroon font-bold text-sm tracking-widest uppercase border-b border-osr-maroon pb-1 hover:text-osr-gold hover:border-osr-gold transition-all">Read Full Story</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-24 bg-white relative">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-osr-gold font-bold uppercase tracking-[0.2em] text-xs">Delicious Choices</span>
+                <h2 class="font-heading text-5xl font-bold text-osr-maroon mt-4 mb-6">Our Exclusive Menu</h2>
+                <div class="flex justify-center">
+                   <div class="w-16 h-1 bg-osr-gold rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Menu Filters & Search -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 sticky top-[80px] bg-white/90 backdrop-blur-md z-30 py-6 px-6 rounded-2xl shadow-soft border border-gray-100 reveal" style="transition-delay: 100ms;">
+                <div class="flex overflow-x-auto pb-2 md:pb-0 gap-3 w-full md:w-auto hide-scrollbar" id="menu-filters">
+                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-osr-maroon text-white shadow-lg transition-all filter-btn" data-category="all">All</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="veg">Pure Veg</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="chinese">Chinese</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="biryani">Biryani</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="dessert">Desserts</button>
+                </div>
+                
+                <div class="relative w-full md:w-72">
+                    <input type="text" id="menu-search" placeholder="Find your craving..." class="w-full pl-12 pr-6 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-osr-gold/20 focus:border-osr-gold text-sm transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 reveal" style="transition-delay: 200ms;">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section id="booking" class="py-24 relative bg-fixed bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+        <div class="absolute inset-0 bg-osr-black/60 backdrop-blur-[2px]"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="glass max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row reveal">
+                <!-- Info Side -->
+                <div class="md:w-5/12 bg-osr-maroon/95 p-12 text-center flex flex-col justify-center items-center text-white relative overflow-hidden">
+                     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20"></div>
+                    <span class="text-osr-gold tracking-[0.2em] uppercase text-xs font-bold mb-4 relative z-10">Reservations</span>
+                    <h3 class="font-heading text-4xl font-bold mb-6 relative z-10">Book A Table</h3>
+                    <p class="text-white/70 text-sm mb-10 leading-relaxed relative z-10">
+                        Secure your spot for an evening of elegance. <br>We recommend booking 24 hours in advance for weekends.
+                    </p>
+                    <div class="w-20 h-20 border border-osr-gold/50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-phone-volume text-3xl text-osr-gold animate-pulse"></i>
+                    </div>
+                    <p class="font-heading text-2xl text-white relative z-10">+91 98765 43210</p>
+                </div>
+                
+                <!-- Form Side -->
+                <div class="md:w-7/12 p-12 bg-white/95">
+                    <form id="booking-form" onsubmit="handleBooking(event)">
+                        <div class="grid grid-cols-1 gap-6 mb-6">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="relative">
+                                    <input type="text" required class="peer w-full border-b border-gray-300 py-3 focus:border-osr-maroon outline-none bg-transparent placeholder-transparent text-gray-800" id="b-name" placeholder="Name">
+                                    <label for="b-name" class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-osr-maroon peer-focus:text-xs font-medium uppercase tracking-wide">Name</label>
+                                </div>
+                                <div class="relative">
+                                    <input type="tel" required pattern="[0-9]{10}" class="peer w-full border-b border-gray-300 py-3 focus:border-osr-maroon outline-none bg-transparent placeholder-transparent text-gray-800" id="b-phone" placeholder="Phone">
+                                    <label for="b-phone" class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-osr-maroon peer-focus:text-xs font-medium uppercase tracking-wide">Phone</label>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Date</label>
+                                    <input type="date" required id="booking-date" class="w-full border border-gray-200 rounded-lg p-3 focus:border-osr-maroon outline-none bg-gray-50 text-gray-600 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Guests</label>
+                                    <select class="w-full border border-gray-200 rounded-lg p-3 focus:border-osr-maroon outline-none bg-gray-50 text-gray-600 text-sm">
+                                        <option>2 Guests</option>
+                                        <option>3 Guests</option>
+                                        <option>4 Guests</option>
+                                        <option>5+ Guests</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-3">Select Time</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" class="time-slot px-4 py-2 text-xs border border-gray-200 rounded-full text-gray-600 hover:border-osr-maroon hover:text-osr-maroon transition-all" onclick="selectTime(this)">12:00 PM</button>
+                                    <button type="button" class="time-slot px-4 py-2 text-xs border border-gray-200 rounded-full text-gray-600 hover:border-osr-maroon hover:text-osr-maroon transition-all" onclick="selectTime(this)">01:00 PM</button>
+                                    <button type="button" class="time-slot px-4 py-2 text-xs border border-gray-200 rounded-full text-gray-600 hover:border-osr-maroon hover:text-osr-maroon transition-all" onclick="selectTime(this)">07:00 PM</button>
+                                    <button type="button" class="time-slot px-4 py-2 text-xs border border-gray-200 rounded-full text-gray-600 hover:border-osr-maroon hover:text-osr-maroon transition-all" onclick="selectTime(this)">08:00 PM</button>
+                                    <button type="button" class="time-slot px-4 py-2 text-xs border border-gray-200 rounded-full text-gray-600 hover:border-osr-maroon hover:text-osr-maroon transition-all" onclick="selectTime(this)">09:00 PM</button>
+                                </div>
+                                <input type="hidden" id="selected-time" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full btn-gold py-4 rounded-xl font-bold uppercase tracking-widest mt-4 shadow-lg text-sm">Confirm Reservation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-24 bg-osr-cream">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <span class="text-osr-gold font-bold uppercase tracking-[0.2em] text-xs">Visual Feast</span>
+                    <h2 class="font-heading text-4xl font-bold text-osr-maroon mt-2">Our Gallery</h2>
+                </div>
+                <p class="text-gray-500 mt-4 md:mt-0 text-sm max-w-sm">Explore the ambiance and the art of plating that makes OSR unique.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px] reveal" style="transition-delay: 200ms;">
+                <div class="row-span-2 col-span-2 relative group overflow-hidden rounded-2xl cursor-pointer shadow-lg" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Dish 1">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                            <i class="fa-solid fa-plus text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative group overflow-hidden rounded-2xl cursor-pointer shadow-lg" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Dish 2">
+                </div>
+                <div class="relative group overflow-hidden rounded-2xl cursor-pointer shadow-lg" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Dish 3">
+                </div>
+                <div class="col-span-2 relative group overflow-hidden rounded-2xl cursor-pointer shadow-lg" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Interior">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-24 bg-white relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-heading text-4xl font-bold text-osr-maroon mb-4">Guest Love</h2>
+                <div class="flex justify-center text-osr-gold gap-1 text-lg">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16" id="reviews-container">
+                <!-- Reviews injected here -->
+            </div>
+
+            <div class="max-w-2xl mx-auto glass p-8 rounded-2xl shadow-soft reveal">
+                <h4 class="font-heading font-bold text-2xl mb-6 text-center text-osr-maroon">Share Your Experience</h4>
+                <form onsubmit="addReview(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <input type="text" id="review-name" required placeholder="Your Name" class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:border-osr-gold outline-none text-sm">
+                         <div class="relative">
+                            <select id="review-rating" class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:border-osr-gold outline-none text-sm appearance-none cursor-pointer">
+                                <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                                <option value="4">⭐⭐⭐⭐ (Good)</option>
+                                <option value="3">⭐⭐⭐ (Average)</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"></i>
+                        </div>
+                    </div>
+                    <textarea id="review-text" required placeholder="How was the food and service?" class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:border-osr-gold outline-none text-sm h-24 resize-none"></textarea>
+                    
+                    <button type="submit" class="w-full bg-osr-gray text-white py-3 rounded-lg text-sm font-bold uppercase tracking-wider hover:bg-osr-black transition-colors">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <footer id="contact" class="bg-osr-black text-white pt-24 pb-10 rounded-t-[3rem] relative overflow-hidden mt-10">
+        <!-- Footer pattern -->
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="md:col-span-1">
+                    <div class="flex items-center gap-3 mb-6">
+                         <div class="w-10 h-10 border-2 border-osr-gold rounded-full flex items-center justify-center">
+                            <span class="font-heading font-bold text-osr-gold text-xs">OSR</span>
+                        </div>
+                        <h3 class="font-heading text-2xl text-white">Om Sai <br>Ki Rasoi</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-8">
+                        Experience the gold standard of dining. <br>Authentic flavors, Luxury ambiance.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-osr-gold hover:text-osr-maroon transition-all"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-osr-gold hover:text-osr-maroon transition-all"><i class="fa-brands fa-instagram text-sm"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-osr-gold hover:text-osr-maroon transition-all"><i class="fa-brands fa-twitter text-sm"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-heading text-lg text-osr-gold mb-6">Explore</h3>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="#about" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-osr-gold rounded-full"></span> About Us</a></li>
+                        <li><a href="#menu" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-osr-gold rounded-full"></span> Online Order</a></li>
+                        <li><a href="#booking" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-osr-gold rounded-full"></span> Reservations</a></li>
+                        <li><a href="#gallery" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-osr-gold rounded-full"></span> Gallery</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-heading text-lg text-osr-gold mb-6">Contact</h3>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li class="flex gap-3 items-start">
+                            <i class="fa-solid fa-location-dot mt-1 text-osr-gold"></i>
+                            <span>Shop No 12, Golden Plaza,<br>Sector 18, Noida, UP, 201301</span>
+                        </li>
+                        <li class="flex gap-3 items-center">
+                            <i class="fa-solid fa-phone text-osr-gold"></i>
+                            <span>+91 98765 43210</span>
+                        </li>
+                        <li class="flex gap-3 items-center">
+                            <i class="fa-solid fa-envelope text-osr-gold"></i>
+                            <span>contact@omsaikirasoi.com</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                 <div>
+                    <h3 class="font-heading text-lg text-osr-gold mb-6">Opening Hours</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex justify-between">
+                            <span>Mon - Fri</span>
+                            <span>11:00 AM - 11:00 PM</span>
+                        </li>
+                         <li class="flex justify-between text-white font-medium">
+                            <span>Sat - Sun</span>
+                            <span>10:00 AM - 11:30 PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-gray-500">© 2024 Om Sai Ki Rasoi. All Rights Reserved.</p>
+                <div class="flex gap-6 text-xs text-gray-500">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Floating Buttons -->
+    <a href="https://wa.me/919876543210" target="_blank" class="fixed bottom-24 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40 hover:scale-110 transition-transform hover:shadow-glow">
+        <i class="fa-brands fa-whatsapp text-3xl"></i>
+    </a>
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-6 bg-osr-maroon text-osr-gold border border-osr-gold/30 w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-40 hover:-translate-y-2 transition-transform glass">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- Modals -->
+    <!-- Lightbox -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeLightbox()">
+        <div class="relative max-w-4xl w-full">
+            <img id="lightbox-img" src="" class="w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+            <button class="absolute -top-12 right-0 text-white text-3xl hover:text-osr-gold transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
+    <!-- Festival Popup -->
+    <div id="offer-popup" class="fixed inset-0 bg-black/80 z-[80] hidden flex items-center justify-center p-4 backdrop-blur-md transition-all duration-500">
+        <div class="bg-osr-cream rounded-2xl p-2 max-w-md w-full relative animate-[bounceIn_0.8s_ease]">
+            <button onclick="closeOffer()" class="absolute -top-4 -right-4 bg-osr-black text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10 hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
+            <div class="border border-osr-gold border-dashed p-8 text-center rounded-xl bg-white relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-osr-gold/10 rounded-full blur-2xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-osr-maroon/10 rounded-full blur-2xl"></div>
+                
+                <span class="text-[10px] font-bold bg-osr-maroon text-white px-3 py-1 rounded-full uppercase tracking-widest">Limited Offer</span>
+                <h3 class="font-heading text-3xl font-bold text-osr-maroon mt-6">Diwali Feast</h3>
+                <div class="my-4 relative">
+                    <p class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-osr-gold to-yellow-600">20%</p>
+                    <p class="text-xl font-heading text-osr-black">OFF</p>
+                </div>
+                <p class="text-gray-500 text-sm mb-6 leading-relaxed">Celebrate with family! Get flat 20% off on all dinner bookings above ₹1500.</p>
+                <button onclick="closeOffer(); window.location.href='#booking'" class="w-full btn-gold py-3 rounded-lg text-sm font-bold shadow-lg uppercase tracking-wider">Book My Table</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const heroSlides = [
-            { image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2000", title: "Authentic Taste, <br> <span class='italic'>Imperial Comfort.</span>" },
-            { image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000", title: "Culinary Heritage, <br> <span class='italic'>Modern Spirit.</span>" },
-            { image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000", title: "Luxury Living, <br> <span class='italic'>Traditional Roots.</span>" }
+        // --- Data ---
+        const menuItems = [
+            { id: 1, name: "Paneer Butter Masala", price: 320, category: "veg", image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600", desc: "Cottage cheese cubes simmered in a rich, creamy tomato gravy.", type: "veg" },
+            { id: 2, name: "Chicken Biryani", price: 450, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", desc: "Aromatic basmati rice layered with spiced chicken and saffron.", type: "nonveg" },
+            { id: 3, name: "Dal Makhani", price: 280, category: "veg", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600", desc: "Slow cooked black lentils with fresh cream and butter.", type: "veg" },
+            { id: 4, name: "Hakka Noodles", price: 220, category: "chinese", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600", desc: "Wok-tossed noodles with crunchy fresh vegetables.", type: "veg" },
+            { id: 5, name: "Butter Chicken", price: 480, category: "nonveg", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600", desc: "Classic tandoori chicken in a velvety tomato butter sauce.", type: "nonveg" },
+            { id: 6, name: "Gulab Jamun", price: 120, category: "dessert", image: "https://images.unsplash.com/photo-1593701478446-43e02686e6fd?w=600", desc: "Soft khoya dumplings soaked in rose-scented sugar syrup.", type: "veg" },
+            { id: 7, name: "Veg Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1642821373181-696a54913e93?w=600", desc: "Flavorful rice cooked with garden fresh mixed vegetables.", type: "veg" },
+            { id: 8, name: "Chilli Chicken", price: 380, category: "chinese", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=600", desc: "Spicy crispy chicken chunks tossed with peppers and onions.", type: "nonveg" },
+             { id: 9, name: "Rasmalai", price: 150, category: "dessert", image: "https://images.unsplash.com/photo-1563148560-f1c5c7d01859?w=600", desc: "Soft cheese patties immersed in chilled sweet saffron milk.", type: "veg" },
         ];
-        const testimonials = [{ text:"Exquisite flavors and regal stay. Truly world-class.", author:"Vikram Malhotra", role:"CEO, Tech Corp"},{ text:"The hospitality is warmer than the food. A true Lucknow treasure.", author:"Priya Sharma", role:"Food Critic"}];
-        const menuData = [
-            { id:1, name:"Afghani Paneer Tikka", category:"starter", price:349, image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80&w=400" },
-            { id:2, name:"Dal Makhani Imperial", category:"main", price:429, image:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80&w=400" },
-            { id:3, name:"शाही Rasoi Thali", category:"main", price:699, image:"https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=400" },
-            { id:4, name:"Gulab Jamun with Rabri", category:"dessert", price:249, image:"https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&q=80&w=400" }
+
+        const initialReviews = [
+            { name: "Rahul Sharma", text: "The Butter Chicken here is absolutely divine. The ambiance feels royal. Best luxury dining in Noida!", rating: 5 },
+            { name: "Priya Singh", text: "Lovely ambiance and great service. The staff is very polite. Highly recommend the Dal Makhani.", rating: 4 },
+            { name: "Amit Verma", text: "Ordered for a family function. Packaging was premium and food was hot. A truly 5-star experience.", rating: 5 }
         ];
-        let currentHeroIdx=0, currentTestimonialIdx=0, cart=[], currentBooking=null;
 
-        function initHero() {
-            const carousel=document.getElementById('hero-carousel'), dots=document.getElementById('hero-dots');
-            heroSlides.forEach((s,i)=>{ carousel.innerHTML+=`<div class="hero-slide ${i==0?'active':''}" style="background-image:url(${s.image})"></div>`; dots.innerHTML+=`<button class="hero-dot ${i==0?'active':''}" onclick="gotoHero(${i})"></button>`; });
-            setTimeout(()=>document.getElementById('hero-title').classList.remove('opacity-0'),500);
-        }
-        function updateHero(){ document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===currentHeroIdx)); document.querySelectorAll('.hero-dot').forEach((d,i)=>{d.classList.toggle('active',i===currentHeroIdx)}); document.getElementById('hero-title').innerHTML=heroSlides[currentHeroIdx].title; }
-        function nextHero(){ currentHeroIdx=(currentHeroIdx+1)%heroSlides.length; updateHero(); }
-        function prevHero(){ currentHeroIdx=(currentHeroIdx-1+heroSlides.length)%heroSlides.length; updateHero(); }
-        function gotoHero(i){ currentHeroIdx=i; updateHero(); }
+        // --- State ---
+        let cart = JSON.parse(localStorage.getItem('osr_cart')) || [];
+        let reviews = JSON.parse(localStorage.getItem('osr_reviews')) || initialReviews;
+        
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu('all');
+            updateCartUI();
+            renderReviews();
+            setupScrollReveal();
+            
+            // Show Offer Popup after 3 seconds
+            setTimeout(() => {
+                if(!sessionStorage.getItem('offerShown')) {
+                    document.getElementById('offer-popup').classList.remove('hidden');
+                    sessionStorage.setItem('offerShown', 'true');
+                }
+            }, 3000);
 
-        function initTestimonials() {
-            const tdiv=document.getElementById('testimonial-container');
-            testimonials.forEach((t,i)=>{ tdiv.innerHTML+=`<div class="testimonial-fade absolute inset-0 ${i==0?'opacity-100':'opacity-0 pointer-events-none'} flex flex-col items-center justify-center"><p class="text-2xl md:text-3xl serif-display italic mb-8">“${t.text}”</p><h5 class="font-bold text-amber-deep">${t.author}</h5><p class="text-xs text-stone-400">${t.role}</p></div>`; });
-        }
-        function rotateTestimonial(delta) {
-            document.querySelectorAll('.testimonial-fade').forEach((el,i)=>{ if(i===currentTestimonialIdx) el.classList.replace('opacity-100','opacity-0'); });
-            currentTestimonialIdx=(currentTestimonialIdx+delta+testimonials.length)%testimonials.length;
-            document.querySelectorAll('.testimonial-fade')[currentTestimonialIdx].classList.replace('opacity-0','opacity-100');
-        }
-        function nextTestimonial(){ rotateTestimonial(1); }
-        function prevTestimonial(){ rotateTestimonial(-1); }
+            // Set Date Input min to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('booking-date').setAttribute('min', today);
+        });
 
-        function renderMenu(cat){
-            const grid=document.getElementById('menu-grid'); grid.innerHTML='';
-            (cat==='all'?menuData:menuData.filter(m=>m.category===cat)).forEach(item=>{ grid.innerHTML+=`<div class="menu-card bg-stone-50 rounded-2xl border border-stone-200 p-5"><div class="h-44 rounded-xl overflow-hidden mb-4"><img src="${item.image}" class="w-full h-full object-cover"></div><h4 class="font-bold text-lg">${item.name}</h4><div class="flex justify-between items-center mt-4"><span class="text-2xl font-bold text-amber-deep">₹${item.price}</span><button onclick="addToCart(${item.id})" class="bg-amber-deep text-white p-3 rounded-xl hover:bg-stone-800 transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7v14"/></svg></button></div></div>`; });
-        }
-        function filterMenu(cat) {
-            document.querySelectorAll('.category-btn').forEach(b=>{b.classList.remove('bg-stone-900','text-white');b.classList.add('bg-transparent','text-stone-800');});
-            event.target.classList.add('bg-stone-900','text-white');
-            renderMenu(cat);
+        // --- Animations ---
+        function setupScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
 
-        function addToCart(id){ cart.push({...menuData.find(m=>m.id===id), type:'Food'}); updateCartUI(); }
-        function bookRoom(n,p){ currentBooking={name:n, price:p, type:'Room'}; document.getElementById('booking-modal').classList.remove('hidden'); }
-        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.add('hidden')); }
-        function confirmBooking(){ cart.push(currentBooking); updateCartUI(); closeModals(); toggleCart(); }
-        function toggleCart(){ document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
+        // --- Menu Logic ---
+        function renderMenu(category, searchTerm = '') {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+            
+            const filtered = menuItems.filter(item => {
+                const matchesCategory = category === 'all' || item.category === category || (category === 'veg' && item.type === 'veg');
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-20 text-gray-400 italic">No dishes found matching your taste.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const badgeClass = item.type === 'veg' ? 'badge-veg' : 'badge-nonveg';
+                const dotClass = item.type === 'veg' ? 'badge-veg-dot' : 'badge-nonveg-dot';
+                
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-soft hover:shadow-2xl transition-all duration-500 overflow-hidden group flex flex-col h-full border border-gray-100 hover:-translate-y-2";
+                card.innerHTML = `
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-1.5 rounded shadow-lg ${badgeClass}">
+                            <div class="${dotClass}"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-heading font-bold text-xl text-osr-maroon group-hover:text-osr-gold transition-colors">${item.name}</h3>
+                            <span class="font-bold text-lg text-osr-maroon">₹${item.price}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-6 line-clamp-2 leading-relaxed flex-1">${item.desc}</p>
+                        <button onclick="addToCart(${item.id})" class="w-full border-2 border-osr-maroon/10 text-osr-maroon hover:bg-osr-maroon hover:text-white hover:border-osr-maroon py-3 rounded-xl transition-all duration-300 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn">
+                            Add to Cart <i class="fa-solid fa-arrow-right opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Buttons Logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-osr-maroon', 'text-white', 'shadow-lg');
+                    b.classList.add('bg-gray-50', 'text-gray-500');
+                });
+                e.target.classList.remove('bg-gray-50', 'text-gray-500');
+                e.target.classList.add('bg-osr-maroon', 'text-white', 'shadow-lg');
+                renderMenu(e.target.dataset.category, document.getElementById('menu-search').value);
+            });
+        });
+
+        // Search Input Logic
+        document.getElementById('menu-search').addEventListener('input', (e) => {
+            const activeCat = document.querySelector('.filter-btn.bg-osr-maroon').dataset.category;
+            renderMenu(activeCat, e.target.value);
+        });
+
+        // --- Cart Logic ---
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            const existing = cart.find(i => i.id === id);
+            
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({...item, qty: 1});
+            }
+            
+            saveCart();
+            updateCartUI();
+            
+            // Visual Feedback on Button
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Added`;
+            btn.classList.add("bg-green-600", "text-white", "border-green-600");
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.classList.remove("bg-green-600", "text-white", "border-green-600");
+            }, 1500);
+
+            if(cart.length === 1 && existing === undefined) {
+                 const drawer = document.getElementById('cart-drawer');
+                 if(drawer.classList.contains('cart-closed')) toggleCart();
+            }
+        }
+
+        function updateCartQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if(item) {
+                item.qty += change;
+                if(item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+                saveCart();
+                updateCartUI();
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('osr_cart', JSON.stringify(cart));
+        }
+
         function updateCartUI() {
-            let t=0, html=''; cart.forEach((i,idx)=>{ t+=i.price; html+=`<div class="flex justify-between items-center bg-stone-100 p-4 rounded-xl"><div><h6 class="font-bold">${i.name}</h6><span class="text-sm text-stone-500">₹${i.price}</span></div><button onclick="removeFromCart(${idx})" class="text-stone-400 hover:text-amber-deep text-xl">✕</button></div>`; });
-            document.getElementById('cart-items').innerHTML=html||'<p class="text-stone-400 text-center">Your tray is empty</p>';
-            document.getElementById('cart-total').innerText=`₹${t}`; document.getElementById('cart-count').innerText=cart.length;
-        }
-        function removeFromCart(i){ cart.splice(i,1); updateCartUI(); }
-        function showCheckout(){ document.getElementById('success-modal').classList.remove('hidden'); cart=[]; updateCartUI(); toggleCart(); }
-        function copyCode(c){ navigator.clipboard?.writeText(c); alert(`✅ Code ${c} copied`); }
+            const container = document.getElementById('cart-items');
+            const countBadge = document.getElementById('cart-count');
+            const totalEl = document.getElementById('cart-total');
+            
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            countBadge.innerText = count;
+            countBadge.style.transform = count > 0 ? 'scale(1)' : 'scale(0)';
 
-        // active nav on scroll (simplified)
-        window.addEventListener('load',()=>{ initHero(); initTestimonials(); renderMenu('all'); updateHero(); setInterval(nextHero,5000); setInterval(()=>nextTestimonial(),7000); });
-        window.addEventListener('scroll',()=>{/* keep active classes simple but not needed for demo*/});
+            const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            totalEl.innerText = `₹${total}`;
+
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-basket-shopping text-3xl text-gray-300"></i>
+                        </div>
+                        <p class="font-medium">Your cart is empty</p>
+                         <button onclick="toggleCart(); window.location.href='#menu'" class="mt-4 text-osr-maroon text-sm font-bold hover:underline">Start Ordering</button>
+                    </div>`;
+                document.getElementById('btn-proceed-checkout').classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                document.getElementById('btn-proceed-checkout').classList.remove('opacity-50', 'pointer-events-none');
+                container.innerHTML = '';
+                cart.forEach(item => {
+                    const badgeClass = item.type === 'veg' ? 'badge-veg' : 'badge-nonveg';
+                    const dotClass = item.type === 'veg' ? 'badge-veg-dot' : 'badge-nonveg-dot';
+                    
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-[fadeIn_0.3s_ease]";
+                    div.innerHTML = `
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="${badgeClass} w-[14px] h-[14px] p-[1px]"><div class="${dotClass} w-[6px] h-[6px]"></div></div>
+                                <h4 class="font-bold text-sm text-osr-maroon line-clamp-1">${item.name}</h4>
+                            </div>
+                            <p class="text-xs text-gray-500 font-medium">₹${item.price} x ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="text-sm font-bold w-4 text-center text-gray-700">${item.qty}</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (drawer.classList.contains('cart-closed')) {
+                drawer.classList.remove('cart-closed');
+                drawer.classList.add('cart-open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                drawer.classList.remove('cart-open');
+                drawer.classList.add('cart-closed');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+                // Hide checkout form if open
+                document.getElementById('checkout-form-container').classList.add('hidden');
+                document.getElementById('btn-proceed-checkout').classList.remove('hidden');
+            }
+        }
+
+        function showCheckoutForm() {
+            document.getElementById('btn-proceed-checkout').classList.add('hidden');
+            document.getElementById('checkout-form-container').classList.remove('hidden');
+        }
+
+        function processCheckout() {
+            const name = document.getElementById('checkout-name').value;
+            const phone = document.getElementById('checkout-phone').value;
+            const address = document.getElementById('checkout-address').value;
+
+            if(!name || !phone || !address) {
+                alert("Please fill in all delivery details.");
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerHTML = `<div class="loader mx-auto border-t-white"></div>`;
+            
+            setTimeout(() => {
+                alert(`Thank you ${name}! Your order has been placed successfully. Order ID: OSR-${Math.floor(Math.random()*10000)}`);
+                cart = [];
+                saveCart();
+                updateCartUI();
+                toggleCart();
+                btn.innerText = "Confirm Order";
+                document.getElementById('checkout-name').value = '';
+                document.getElementById('checkout-phone').value = '';
+                document.getElementById('checkout-address').value = '';
+            }, 1500);
+        }
+
+        // --- Booking Logic ---
+        function selectTime(btn) {
+            document.querySelectorAll('.time-slot').forEach(b => {
+                b.classList.remove('bg-osr-maroon', 'text-white', 'border-osr-maroon');
+                b.classList.add('text-gray-600', 'border-gray-200');
+            });
+            btn.classList.add('bg-osr-maroon', 'text-white', 'border-osr-maroon');
+            btn.classList.remove('text-gray-600', 'border-gray-200');
+            document.getElementById('selected-time').value = btn.innerText;
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            const time = document.getElementById('selected-time').value;
+            if(!time) {
+                alert("Please select a time slot.");
+                return;
+            }
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerHTML = `<div class="loader mx-auto border-t-osr-maroon"></div>`;
+            
+            setTimeout(() => {
+                alert("Table Reserved Successfully! You will receive a confirmation SMS shortly.");
+                e.target.reset();
+                document.querySelectorAll('.time-slot').forEach(b => {
+                    b.classList.remove('bg-osr-maroon', 'text-white');
+                    b.classList.add('text-gray-600');
+                });
+                btn.innerText = originalText;
+                const bookings = JSON.parse(localStorage.getItem('osr_bookings')) || [];
+                bookings.push({date: new Date().toISOString()});
+                localStorage.setItem('osr_bookings', JSON.stringify(bookings));
+            }, 1500);
+        }
+
+        // --- Review Logic ---
+        function renderReviews() {
+            const container = document.getElementById('reviews-container');
+            container.innerHTML = '';
+            
+            const displayReviews = reviews.slice(-3);
+            
+            displayReviews.forEach(r => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-8 rounded-2xl shadow-soft hover:shadow-xl transition-all border border-gray-100 reveal";
+                
+                let stars = '';
+                for(let i=0; i<5; i++) {
+                    if(i < r.rating) stars += '<i class="fa-solid fa-star text-osr-gold text-xs"></i>';
+                    else stars += '<i class="fa-regular fa-star text-gray-200 text-xs"></i>';
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-osr-maroon to-black text-white rounded-full flex items-center justify-center font-bold font-heading text-lg shadow-lg">
+                                ${r.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-gray-800">${r.name}</h5>
+                                <div class="flex gap-1 mt-1">${stars}</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-quote-right text-gray-100 text-5xl"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed italic">"${r.text}"</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('review-name').value;
+            const text = document.getElementById('review-text').value;
+            const rating = parseInt(document.getElementById('review-rating').value);
+            
+            reviews.push({name, text, rating});
+            localStorage.setItem('osr_reviews', JSON.stringify(reviews));
+            renderReviews();
+            e.target.reset();
+            alert("Thank you for your review!");
+        }
+
+        // --- UI Interactions ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function openLightbox(el) {
+            const img = el.querySelector('img').src;
+            document.getElementById('lightbox-img').src = img;
+            document.getElementById('lightbox').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+        }
+
+        function closeOffer() {
+            document.getElementById('offer-popup').classList.add('hidden');
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            const navBg = document.getElementById('nav-bg');
+            
+            if (window.scrollY > 20) {
+                nav.classList.remove('py-4');
+                nav.classList.add('py-3');
+                navBg.classList.remove('opacity-0');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-3');
+                navBg.classList.add('opacity-0');
+            }
+        });
+
     </script>
 </body>
 </html>
