@@ -158,6 +158,16 @@
             background: #5A0F1C;
             border-radius: 4px;
         }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
 
         /* Animations */
         .reveal {
@@ -222,6 +232,38 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Booklet Styles */
+        .book-wrapper {
+            perspective: 1500px;
+        }
+        .book {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .book-page {
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            background-color: #FFF8F0;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+        }
+        .page-shadow-right {
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent 10%);
+        }
+        .page-shadow-left {
+            background: linear-gradient(to left, rgba(0,0,0,0.1), transparent 10%);
+        }
+        /* Binding effect */
+        .book-binding {
+            position: absolute;
+            left: 50%;
+            top: 2%;
+            bottom: 2%;
+            width: 4px;
+            background: linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.2));
+            transform: translateX(-50%);
+            z-index: 20;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body class="font-body overflow-x-hidden relative selection:bg-osr-gold selection:text-white">
@@ -232,10 +274,10 @@
         <div class="container mx-auto px-6 flex justify-between items-center relative z-10">
             <!-- Logo -->
             <a href="#" class="flex items-center gap-3 group">
-                <div class="relative w-12 h-12 flex items-center justify-center">
+                <div class="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
                     <div class="absolute inset-0 border border-osr-gold/50 rounded-full scale-100 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="absolute inset-0 border-2 border-osr-gold rounded-full scale-90 group-hover:scale-100 opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
-                    <span class="font-heading font-bold text-osr-gold text-lg relative z-10 tracking-widest">OSR</span>
+                    <span class="font-heading font-bold text-osr-gold text-base md:text-lg relative z-10 tracking-widest">OSR</span>
                 </div>
                 <div class="hidden sm:block">
                     <h1 class="font-heading font-bold text-xl text-white tracking-[0.15em] group-hover:text-osr-gold transition-colors">OM SAI KI RASOI</h1>
@@ -249,20 +291,16 @@
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center gap-12">
                 <div class="flex gap-8 bg-black/20 backdrop-blur-sm px-8 py-2.5 rounded-full border border-white/5">
-                    <a href="#home" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
-                        Home
+                    <a href="#home" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">Home
                         <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
                     </a>
-                    <a href="#about" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
-                        About
+                    <a href="#about" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">About
                         <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
                     </a>
-                    <a href="#menu" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
-                        Menu
+                    <a href="#menu" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">Menu
                         <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
                     </a>
-                    <a href="#gallery" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
-                        Gallery
+                    <a href="#gallery" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">Gallery
                         <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
                     </a>
                 </div>
@@ -277,7 +315,7 @@
                     <i class="fa-solid fa-cart-shopping text-xl"></i>
                     <span id="cart-count" class="absolute top-0 right-0 bg-osr-maroon border border-white/20 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-300 shadow-lg">0</span>
                 </button>
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-osr-gold text-2xl hover:rotate-90 transition-transform duration-300">
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-osr-gold text-2xl hover:rotate-90 transition-transform duration-300 p-2">
                     <div class="space-y-1.5">
                         <span class="block w-6 h-[2px] bg-osr-gold ml-auto"></span>
                         <span class="block w-8 h-[2px] bg-osr-gold ml-auto"></span>
@@ -288,13 +326,13 @@
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden glass-dark border-t border-white/10 absolute w-full top-full left-0 animate-slide-up origin-top">
+        <div id="mobile-menu" class="hidden lg:hidden glass-dark border-t border-white/10 absolute w-full top-full left-0 animate-slide-up origin-top shadow-2xl">
             <div class="flex flex-col p-8 gap-6 items-center text-center">
-                <a href="#home" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Home</a>
-                <a href="#about" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">About</a>
-                <a href="#menu" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Menu</a>
-                <a href="#booking" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Book Table</a>
-                <a href="#contact" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Contact</a>
+                <a href="#home" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest py-2">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest py-2">About</a>
+                <a href="#menu" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest py-2">Menu</a>
+                <a href="#booking" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest py-2">Book Table</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest py-2">Contact</a>
             </div>
         </div>
     </nav>
@@ -346,7 +384,7 @@
     </div>
 
     <!-- Enhanced Carousel Hero Section -->
-    <section id="home" class="relative h-screen min-h-[700px] overflow-hidden bg-osr-black group">
+    <section id="home" class="relative h-screen min-h-[600px] overflow-hidden bg-osr-black group">
         <!-- Slides Container -->
         <div id="carousel-slides" class="absolute inset-0">
             <!-- JS will inject slides here -->
@@ -377,76 +415,69 @@
     </section>
 
     <!-- Enhanced About Section -->
-    <section id="about" class="py-24 bg-osr-cream relative overflow-hidden">
+    <section id="about" class="py-16 md:py-24 bg-osr-cream relative overflow-hidden">
         <!-- Decorative Elements -->
         <div class="absolute top-0 right-0 w-1/2 h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
         <div class="absolute -left-20 top-40 w-64 h-64 bg-osr-gold/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center gap-20">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                 <!-- Image Side -->
                 <div class="lg:w-1/2 relative reveal group">
-                    <div class="relative rounded-t-[10rem] rounded-b-3xl overflow-hidden shadow-2xl border-4 border-white">
-                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full object-cover h-[600px] transition-transform duration-700 group-hover:scale-105">
+                    <div class="relative rounded-t-[5rem] lg:rounded-t-[10rem] rounded-b-3xl overflow-hidden shadow-2xl border-4 border-white">
+                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full object-cover h-[400px] lg:h-[600px] transition-transform duration-700 group-hover:scale-105">
                         <div class="absolute inset-0 bg-gradient-to-t from-osr-black/60 via-transparent to-transparent"></div>
                     </div>
                     
                     <!-- Decorative Badge -->
-                    <div class="absolute -left-6 top-20 animate-[spin_10s_linear_infinite]">
+                    <div class="absolute -left-4 top-10 lg:-left-6 lg:top-20 animate-[spin_10s_linear_infinite] scale-75 lg:scale-100">
                          <div class="w-24 h-24 border border-dashed border-osr-gold rounded-full"></div>
                     </div>
 
                     <!-- Floating Card -->
-                    <div class="absolute -bottom-10 -right-10 glass p-8 rounded-2xl shadow-soft hidden md:block max-w-xs animate-[float_4s_ease-in-out_infinite] border-l-4 border-osr-gold backdrop-blur-md bg-white/80">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-14 h-14 rounded-full bg-osr-maroon flex items-center justify-center text-osr-gold text-xl shadow-lg">
+                    <div class="absolute -bottom-6 -right-2 lg:-bottom-10 lg:-right-10 glass p-6 lg:p-8 rounded-2xl shadow-soft max-w-[200px] lg:max-w-xs animate-[float_4s_ease-in-out_infinite] border-l-4 border-osr-gold backdrop-blur-md bg-white/80">
+                        <div class="flex items-center gap-3 mb-2 lg:mb-4">
+                            <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-osr-maroon flex items-center justify-center text-osr-gold text-sm lg:text-xl shadow-lg">
                                 <i class="fa-solid fa-quote-left"></i>
                             </div>
                             <div>
-                                <h4 class="font-heading font-bold text-osr-maroon text-lg">Sanjeev K.</h4>
-                                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Master Chef</p>
+                                <h4 class="font-heading font-bold text-osr-maroon text-sm lg:text-lg">Sanjeev K.</h4>
+                                <p class="text-[8px] lg:text-[10px] text-gray-500 uppercase tracking-widest font-bold">Master Chef</p>
                             </div>
                         </div>
-                        <p class="text-sm text-gray-600 italic leading-relaxed font-serif">"Cooking is an art, but feeding people is an act of love. We serve memories, not just food."</p>
-                        <div class="mt-4 flex gap-1">
-                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
-                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
-                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
-                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
-                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
-                        </div>
+                        <p class="text-xs lg:text-sm text-gray-600 italic leading-relaxed font-serif">"Cooking is an art, but feeding people is an act of love."</p>
                     </div>
                 </div>
 
                 <!-- Content Side -->
                 <div class="lg:w-1/2 reveal" style="transition-delay: 200ms;">
-                    <div class="flex items-center gap-4 mb-6">
+                    <div class="flex items-center gap-4 mb-4 lg:mb-6">
                         <span class="h-[1px] w-12 bg-osr-gold"></span>
                         <span class="text-osr-gold uppercase tracking-[0.3em] font-bold text-xs">Since 2015</span>
                     </div>
                     
-                    <h2 class="font-heading text-5xl md:text-6xl font-bold text-osr-maroon mb-8 leading-tight">
+                    <h2 class="font-heading text-4xl lg:text-6xl font-bold text-osr-maroon mb-6 lg:mb-8 leading-tight">
                         A Legacy of <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-osr-gold to-yellow-600">Culinary Excellence</span>
                     </h2>
                     
-                    <p class="text-gray-600 mb-8 leading-loose text-lg font-light">
-                        Founded with a vision to bring authentic royal flavors to the modern palate, <span class="font-heading text-osr-maroon font-bold">Om Sai Ki Rasoi</span> has been a beacon of fine dining. Our chefs meticulously craft each dish using traditional spices and modern techniques, creating a symphony of flavors that dance on your tongue.
+                    <p class="text-gray-600 mb-8 leading-loose text-base lg:text-lg font-light text-justify">
+                        Founded with a vision to bring authentic royal flavors to the modern palate, <span class="font-heading text-osr-maroon font-bold">Om Sai Ki Rasoi</span> has been a beacon of fine dining. Our chefs meticulously craft each dish using traditional spices and modern techniques.
                     </p>
 
                     <!-- Stats Grid -->
-                    <div class="grid grid-cols-3 gap-4 border-y border-osr-gold/20 py-8 mb-10">
+                    <div class="grid grid-cols-3 gap-2 lg:gap-4 border-y border-osr-gold/20 py-6 lg:py-8 mb-8 lg:mb-10">
                         <div class="text-center">
-                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">15+</h4>
-                            <p class="text-xs text-gray-500 uppercase tracking-wider">Years Experience</p>
+                            <h4 class="font-heading text-2xl lg:text-3xl font-bold text-osr-maroon mb-1">15+</h4>
+                            <p class="text-[10px] lg:text-xs text-gray-500 uppercase tracking-wider">Years Experience</p>
                         </div>
                         <div class="text-center border-l border-osr-gold/20">
-                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">50+</h4>
-                            <p class="text-xs text-gray-500 uppercase tracking-wider">Expert Chefs</p>
+                            <h4 class="font-heading text-2xl lg:text-3xl font-bold text-osr-maroon mb-1">50+</h4>
+                            <p class="text-[10px] lg:text-xs text-gray-500 uppercase tracking-wider">Expert Chefs</p>
                         </div>
                         <div class="text-center border-l border-osr-gold/20">
-                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">20k+</h4>
-                            <p class="text-xs text-gray-500 uppercase tracking-wider">Happy Guests</p>
+                            <h4 class="font-heading text-2xl lg:text-3xl font-bold text-osr-maroon mb-1">20k+</h4>
+                            <p class="text-[10px] lg:text-xs text-gray-500 uppercase tracking-wider">Happy Guests</p>
                         </div>
                     </div>
 
@@ -471,7 +502,7 @@
                         </div>
                     </div>
                     
-                    <button class="mt-10 group flex items-center gap-2 text-osr-maroon font-bold text-sm tracking-widest uppercase hover:text-osr-gold transition-colors">
+                    <button class="mt-8 lg:mt-10 group flex items-center gap-2 text-osr-maroon font-bold text-sm tracking-widest uppercase hover:text-osr-gold transition-colors">
                         Read Our Full Journey 
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform"></i>
                     </button>
@@ -481,15 +512,23 @@
     </section>
 
     <!-- Enhanced Menu Section -->
-    <section id="menu" class="py-24 bg-white relative">
+    <section id="menu" class="py-16 md:py-24 bg-white relative">
         <!-- Decorative Background -->
         <div class="absolute inset-0 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.05] pointer-events-none"></div>
         
         <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center mb-16 reveal">
+            <div class="text-center mb-12 lg:mb-16 reveal">
                 <span class="text-osr-gold font-bold uppercase tracking-[0.2em] text-xs">Culinary Masterpieces</span>
-                <h2 class="font-heading text-5xl font-bold text-osr-maroon mt-4 mb-6">Our Exclusive Menu</h2>
-                <div class="flex justify-center items-center gap-4">
+                <h2 class="font-heading text-4xl lg:text-5xl font-bold text-osr-maroon mt-4 mb-6">Our Exclusive Menu</h2>
+                
+                <!-- Open Book Button -->
+                <button onclick="openBooklet()" class="group relative inline-flex items-center gap-3 bg-osr-maroon text-osr-gold px-6 lg:px-8 py-3 rounded-full overflow-hidden shadow-lg transition-all hover:scale-105 hover:shadow-glow mb-4">
+                    <span class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+                    <i class="fa-solid fa-book-open relative z-10"></i>
+                    <span class="font-bold text-xs lg:text-sm uppercase tracking-widest relative z-10">View Digital Menu Book</span>
+                </button>
+
+                <div class="flex justify-center items-center gap-4 mt-6">
                     <span class="h-[1px] w-12 bg-gradient-to-r from-transparent to-osr-gold"></span>
                     <i class="fa-solid fa-utensils text-osr-gold/50 text-sm"></i>
                     <span class="h-[1px] w-12 bg-gradient-to-l from-transparent to-osr-gold"></span>
@@ -497,18 +536,18 @@
             </div>
 
             <!-- Menu Filters & Search -->
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-14 sticky top-[80px] bg-white/80 backdrop-blur-xl z-30 py-4 px-6 rounded-full shadow-soft border border-gray-100 reveal transition-all duration-300" style="transition-delay: 100ms;" id="filter-bar">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-10 lg:mb-14 sticky top-[70px] lg:top-[80px] bg-white/80 backdrop-blur-xl z-30 py-4 px-4 lg:px-6 rounded-2xl lg:rounded-full shadow-soft border border-gray-100 reveal transition-all duration-300" style="transition-delay: 100ms;" id="filter-bar">
                 <div class="flex overflow-x-auto pb-2 lg:pb-0 gap-2 w-full lg:w-auto hide-scrollbar" id="menu-filters">
-                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-osr-maroon text-white shadow-lg transition-all filter-btn hover:-translate-y-1" data-category="all">All Dishes</button>
-                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="veg">Vegetarian</button>
-                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="chinese">Oriental</button>
-                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="biryani">Royal Biryani</button>
-                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="dessert">Desserts</button>
+                    <button class="whitespace-nowrap px-4 lg:px-6 py-2 lg:py-3 rounded-full text-[10px] lg:text-xs font-bold uppercase tracking-wider bg-osr-maroon text-white shadow-lg transition-all filter-btn hover:-translate-y-1" data-category="all">All</button>
+                    <button class="whitespace-nowrap px-4 lg:px-6 py-2 lg:py-3 rounded-full text-[10px] lg:text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="veg">Veg</button>
+                    <button class="whitespace-nowrap px-4 lg:px-6 py-2 lg:py-3 rounded-full text-[10px] lg:text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="chinese">Chinese</button>
+                    <button class="whitespace-nowrap px-4 lg:px-6 py-2 lg:py-3 rounded-full text-[10px] lg:text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="biryani">Biryani</button>
+                    <button class="whitespace-nowrap px-4 lg:px-6 py-2 lg:py-3 rounded-full text-[10px] lg:text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="dessert">Dessert</button>
                 </div>
                 
                 <div class="relative w-full lg:w-80 group">
-                    <input type="text" id="menu-search" placeholder="Search for delicacies..." class="w-full pl-12 pr-6 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-osr-gold/20 focus:border-osr-gold text-sm transition-all group-hover:bg-white group-hover:shadow-md">
-                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-osr-gold transition-colors"></i>
+                    <input type="text" id="menu-search" placeholder="Search delicacies..." class="w-full pl-10 lg:pl-12 pr-6 py-2 lg:py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-osr-gold/20 focus:border-osr-gold text-xs lg:text-sm transition-all group-hover:bg-white group-hover:shadow-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 lg:left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-osr-gold transition-colors"></i>
                 </div>
             </div>
 
@@ -520,29 +559,29 @@
     </section>
 
     <!-- Reservation Section -->
-    <section id="booking" class="py-24 relative bg-fixed bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+    <section id="booking" class="py-16 md:py-24 relative bg-fixed bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
         <div class="absolute inset-0 bg-osr-black/60 backdrop-blur-[2px]"></div>
         <div class="container mx-auto px-6 relative z-10">
             <div class="glass max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row reveal">
                 <!-- Info Side -->
-                <div class="md:w-5/12 bg-osr-maroon/95 p-12 text-center flex flex-col justify-center items-center text-white relative overflow-hidden">
+                <div class="md:w-5/12 bg-osr-maroon/95 p-8 lg:p-12 text-center flex flex-col justify-center items-center text-white relative overflow-hidden">
                      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20"></div>
                     <span class="text-osr-gold tracking-[0.2em] uppercase text-xs font-bold mb-4 relative z-10">Reservations</span>
-                    <h3 class="font-heading text-4xl font-bold mb-6 relative z-10">Book A Table</h3>
-                    <p class="text-white/70 text-sm mb-10 leading-relaxed relative z-10">
+                    <h3 class="font-heading text-3xl lg:text-4xl font-bold mb-6 relative z-10">Book A Table</h3>
+                    <p class="text-white/70 text-sm mb-8 lg:mb-10 leading-relaxed relative z-10">
                         Secure your spot for an evening of elegance. <br>We recommend booking 24 hours in advance for weekends.
                     </p>
-                    <div class="w-20 h-20 border border-osr-gold/50 rounded-full flex items-center justify-center mb-6 relative z-10">
-                        <i class="fa-solid fa-phone-volume text-3xl text-osr-gold animate-pulse"></i>
+                    <div class="w-16 h-16 lg:w-20 lg:h-20 border border-osr-gold/50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-phone-volume text-2xl lg:text-3xl text-osr-gold animate-pulse"></i>
                     </div>
-                    <p class="font-heading text-2xl text-white relative z-10">+91 7880335787</p>
+                    <p class="font-heading text-xl lg:text-2xl text-white relative z-10">+91 98765 43210</p>
                 </div>
                 
                 <!-- Form Side -->
-                <div class="md:w-7/12 p-12 bg-white/95">
+                <div class="md:w-7/12 p-8 lg:p-12 bg-white/95">
                     <form id="booking-form" onsubmit="handleBooking(event)">
                         <div class="grid grid-cols-1 gap-6 mb-6">
-                            <div class="grid grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div class="relative">
                                     <input type="text" required class="peer w-full border-b border-gray-300 py-3 focus:border-osr-maroon outline-none bg-transparent placeholder-transparent text-gray-800" id="b-name" placeholder="Name">
                                     <label for="b-name" class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-osr-maroon peer-focus:text-xs font-medium uppercase tracking-wide">Name</label>
@@ -589,7 +628,7 @@
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="py-24 bg-osr-cream">
+    <section id="gallery" class="py-16 md:py-24 bg-osr-cream">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
                 <div>
@@ -599,7 +638,7 @@
                 <p class="text-gray-500 mt-4 md:mt-0 text-sm max-w-sm">Explore the ambiance and the art of plating that makes OSR unique.</p>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px] reveal" style="transition-delay: 200ms;">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4 auto-rows-[150px] lg:auto-rows-[200px] reveal" style="transition-delay: 200ms;">
                 <div class="row-span-2 col-span-2 relative group overflow-hidden rounded-2xl cursor-pointer shadow-lg" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Dish 1">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -622,9 +661,9 @@
     </section>
 
     <!-- Reviews Section -->
-    <section id="reviews" class="py-24 bg-white relative">
+    <section id="reviews" class="py-16 md:py-24 bg-white relative">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16 reveal">
+            <div class="text-center mb-12 lg:mb-16 reveal">
                 <h2 class="font-heading text-4xl font-bold text-osr-maroon mb-4">Guest Love</h2>
                 <div class="flex justify-center text-osr-gold gap-1 text-lg">
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
@@ -635,7 +674,7 @@
                 <!-- Reviews injected here -->
             </div>
 
-            <div class="max-w-2xl mx-auto glass p-8 rounded-2xl shadow-soft reveal">
+            <div class="max-w-2xl mx-auto glass p-6 lg:p-8 rounded-2xl shadow-soft reveal">
                 <h4 class="font-heading font-bold text-2xl mb-6 text-center text-osr-maroon">Share Your Experience</h4>
                 <form onsubmit="addReview(event)" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -658,12 +697,12 @@
     </section>
 
     <!-- Contact & Footer -->
-    <footer id="contact" class="bg-osr-black text-white pt-24 pb-10 rounded-t-[3rem] relative overflow-hidden mt-10">
+    <footer id="contact" class="bg-osr-black text-white pt-16 md:pt-24 pb-10 rounded-t-[2rem] md:rounded-t-[3rem] relative overflow-hidden mt-10">
         <!-- Footer pattern -->
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
         
         <div class="container mx-auto px-6 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
                 <div class="md:col-span-1">
                     <div class="flex items-center gap-3 mb-6">
                          <div class="w-10 h-10 border-2 border-osr-gold rounded-full flex items-center justify-center">
@@ -700,7 +739,7 @@
                         </li>
                         <li class="flex gap-3 items-center">
                             <i class="fa-solid fa-phone text-osr-gold"></i>
-                            <span>+91 7880335787</span>
+                            <span>+91 98765 43210</span>
                         </li>
                         <li class="flex gap-3 items-center">
                             <i class="fa-solid fa-envelope text-osr-gold"></i>
@@ -735,11 +774,11 @@
     </footer>
 
     <!-- Floating Buttons -->
-    <a href="https://wa.me/919876543210" target="_blank" class="fixed bottom-24 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40 hover:scale-110 transition-transform hover:shadow-glow">
-        <i class="fa-brands fa-whatsapp text-3xl"></i>
+    <a href="https://wa.me/919876543210" target="_blank" class="fixed bottom-24 right-4 lg:right-6 bg-[#25D366] text-white w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shadow-lg z-40 hover:scale-110 transition-transform hover:shadow-glow">
+        <i class="fa-brands fa-whatsapp text-2xl lg:text-3xl"></i>
     </a>
-    <button onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-6 bg-osr-maroon text-osr-gold border border-osr-gold/30 w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-40 hover:-translate-y-2 transition-transform glass">
-        <i class="fa-solid fa-arrow-up"></i>
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-4 lg:right-6 bg-osr-maroon text-osr-gold border border-osr-gold/30 w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shadow-lg z-40 hover:-translate-y-2 transition-transform glass">
+        <i class="fa-solid fa-arrow-up text-sm lg:text-base"></i>
     </button>
 
     <!-- Modals -->
@@ -771,18 +810,143 @@
         </div>
     </div>
 
+    <!-- Booklet Modal -->
+    <div id="booklet-modal" class="fixed inset-0 bg-black/90 z-[90] hidden flex items-center justify-center p-2 lg:p-4 backdrop-blur-md">
+        <button onclick="closeBooklet()" class="absolute top-4 right-4 text-white text-3xl hover:text-osr-gold transition-colors z-[95]"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="book-wrapper w-full max-w-5xl aspect-[3/4] md:aspect-[2/1] relative transition-all">
+            <div class="book w-full h-full relative shadow-2xl rounded-lg overflow-hidden flex bg-osr-cream" id="menu-book">
+                <!-- Binding -->
+                <div class="book-binding hidden md:block"></div>
+                
+                <!-- Left Page (Current) -->
+                <div class="w-full md:w-1/2 h-full absolute md:relative top-0 left-0 book-page page-shadow-right p-6 md:p-12 overflow-y-auto" id="book-page-left">
+                    <!-- Content injected via JS -->
+                </div>
+
+                <!-- Right Page (Next) -->
+                <div class="w-full md:w-1/2 h-full absolute md:relative top-0 right-0 book-page page-shadow-left p-6 md:p-12 overflow-y-auto hidden md:block" id="book-page-right">
+                    <!-- Content injected via JS -->
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <button onclick="prevPage()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 bg-white/10 hover:bg-osr-gold hover:text-osr-black text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all z-[100] border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed" id="btn-prev-page">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button onclick="nextPage()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 bg-white/10 hover:bg-osr-gold hover:text-osr-black text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all z-[100] border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed" id="btn-next-page">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
         // --- Data ---
+        // Enhanced Menu Items with Variants
         const menuItems = [
-            { id: 1, name: "Paneer Butter Masala", price: 320, category: "veg", image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600", desc: "Cottage cheese cubes simmered in a rich, creamy tomato gravy.", type: "veg", rating: 4.8, tag: "Bestseller" },
-            { id: 2, name: "Chicken Biryani", price: 450, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", desc: "Aromatic basmati rice layered with spiced chicken and saffron.", type: "nonveg", rating: 4.9, tag: "Chef's Pick" },
-            { id: 3, name: "Dal Makhani", price: 280, category: "veg", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600", desc: "Slow cooked black lentils with fresh cream and butter.", type: "veg", rating: 4.7 },
-            { id: 4, name: "Hakka Noodles", price: 220, category: "chinese", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600", desc: "Wok-tossed noodles with crunchy fresh vegetables.", type: "veg", rating: 4.5 },
-            { id: 5, name: "Butter Chicken", price: 480, category: "nonveg", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600", desc: "Classic tandoori chicken in a velvety tomato butter sauce.", type: "nonveg", rating: 5.0, tag: "Must Try" },
-            { id: 6, name: "Gulab Jamun", price: 120, category: "dessert", image: "https://images.unsplash.com/photo-1593701478446-43e02686e6fd?w=600", desc: "Soft khoya dumplings soaked in rose-scented sugar syrup.", type: "veg", rating: 4.8 },
-            { id: 7, name: "Veg Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1642821373181-696a54913e93?w=600", desc: "Flavorful rice cooked with garden fresh mixed vegetables.", type: "veg", rating: 4.6 },
-            { id: 8, name: "Chilli Chicken", price: 380, category: "chinese", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=600", desc: "Spicy crispy chicken chunks tossed with peppers and onions.", type: "nonveg", rating: 4.7 },
-             { id: 9, name: "Rasmalai", price: 150, category: "dessert", image: "https://images.unsplash.com/photo-1563148560-f1c5c7d01859?w=600", desc: "Soft cheese patties immersed in chilled sweet saffron milk.", type: "veg", rating: 4.9, tag: "Sweet Tooth" },
+            { 
+                id: 1, 
+                name: "Paneer Butter Masala", 
+                price: 320, 
+                category: "veg", 
+                image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600", 
+                desc: "Cottage cheese cubes simmered in a rich, creamy tomato gravy.", 
+                type: "veg", 
+                rating: 4.8, 
+                tag: "Bestseller",
+                variants: { quarter: 180, half: 320, full: 550 }
+            },
+            { 
+                id: 2, 
+                name: "Chicken Biryani", 
+                price: 450, 
+                category: "biryani", 
+                image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", 
+                desc: "Aromatic basmati rice layered with spiced chicken and saffron.", 
+                type: "nonveg", 
+                rating: 4.9, 
+                tag: "Chef's Pick",
+                variants: { quarter: 240, half: 450, full: 800 }
+            },
+            { 
+                id: 3, 
+                name: "Dal Makhani", 
+                price: 280, 
+                category: "veg", 
+                image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600", 
+                desc: "Slow cooked black lentils with fresh cream and butter.", 
+                type: "veg", 
+                rating: 4.7,
+                variants: { quarter: 160, half: 280, full: 500 }
+            },
+            { 
+                id: 4, 
+                name: "Hakka Noodles", 
+                price: 220, 
+                category: "chinese", 
+                image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600", 
+                desc: "Wok-tossed noodles with crunchy fresh vegetables.", 
+                type: "veg", 
+                rating: 4.5,
+                variants: { half: 220, full: 380 } // Some items may only have Half/Full
+            },
+            { 
+                id: 5, 
+                name: "Butter Chicken", 
+                price: 480, 
+                category: "nonveg", 
+                image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600", 
+                desc: "Classic tandoori chicken in a velvety tomato butter sauce.", 
+                type: "nonveg", 
+                rating: 5.0, 
+                tag: "Must Try",
+                variants: { quarter: 260, half: 480, full: 850 }
+            },
+            { 
+                id: 6, 
+                name: "Gulab Jamun", 
+                price: 120, 
+                category: "dessert", 
+                image: "https://images.unsplash.com/photo-1593701478446-43e02686e6fd?w=600", 
+                desc: "Soft khoya dumplings soaked in rose-scented sugar syrup.", 
+                type: "veg", 
+                rating: 4.8,
+                variants: { half: 120, full: 220 } // per plate
+            },
+            { 
+                id: 7, 
+                name: "Veg Biryani", 
+                price: 350, 
+                category: "biryani", 
+                image: "https://images.unsplash.com/photo-1642821373181-696a54913e93?w=600", 
+                desc: "Flavorful rice cooked with garden fresh mixed vegetables.", 
+                type: "veg", 
+                rating: 4.6,
+                variants: { quarter: 190, half: 350, full: 600 }
+            },
+            { 
+                id: 8, 
+                name: "Chilli Chicken", 
+                price: 380, 
+                category: "chinese", 
+                image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=600", 
+                desc: "Spicy crispy chicken chunks tossed with peppers and onions.", 
+                type: "nonveg", 
+                rating: 4.7,
+                variants: { half: 380, full: 650 }
+            },
+             { 
+                id: 9, 
+                name: "Rasmalai", 
+                price: 150, 
+                category: "dessert", 
+                image: "https://images.unsplash.com/photo-1563148560-f1c5c7d01859?w=600", 
+                desc: "Soft cheese patties immersed in chilled sweet saffron milk.", 
+                type: "veg", 
+                rating: 4.9, 
+                tag: "Sweet Tooth",
+                variants: { half: 150, full: 280 }
+            },
         ];
 
         const initialReviews = [
@@ -817,6 +981,14 @@
         let slideInterval;
         let isPaused = false; // Track hover state
         
+        // Booklet State
+        let currentBookPage = 0;
+        let bookPages = [];
+
+        // Swipe Handling
+        let touchStartX = 0;
+        let touchEndX = 0;
+
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             renderMenu('all');
@@ -824,6 +996,7 @@
             renderReviews();
             setupScrollReveal();
             initCarousel();
+            initBookPages(); // Prepare booklet content
             
             // Show Offer Popup after 3 seconds
             setTimeout(() => {
@@ -865,19 +1038,19 @@
                     <img src="${slide.image}" class="w-full h-full object-cover animate-zoom-slow" alt="Slide ${index + 1}">
                     <div class="absolute inset-0 flex items-center justify-center text-center z-20 pt-20">
                         <div class="max-w-5xl px-6 slide-content">
-                             <div class="mb-6 inline-flex flex-col items-center gap-2">
-                                <span class="w-[1px] h-12 bg-osr-gold mb-2"></span>
-                                <span class="text-osr-gold tracking-[0.5em] uppercase text-xs font-bold">Est. 2015</span>
+                             <div class="mb-4 lg:mb-6 inline-flex flex-col items-center gap-2">
+                                <span class="w-[1px] h-8 lg:h-12 bg-osr-gold mb-1 lg:mb-2"></span>
+                                <span class="text-osr-gold tracking-[0.5em] uppercase text-[10px] lg:text-xs font-bold">Est. 2015</span>
                             </div>
-                            <h1 class="font-heading text-5xl md:text-7xl lg:text-9xl text-white font-bold mb-6 leading-none shadow-black drop-shadow-lg">
+                            <h1 class="font-heading text-4xl md:text-5xl lg:text-9xl text-white font-bold mb-4 lg:mb-6 leading-none shadow-black drop-shadow-lg">
                                 ${slide.title}
                             </h1>
-                            <p class="text-white/90 text-lg md:text-xl mb-12 font-light tracking-wide max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                            <p class="text-white/90 text-sm md:text-lg lg:text-xl mb-8 lg:mb-12 font-light tracking-wide max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                                 ${slide.subtitle}
                             </p>
-                            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                                <a href="#menu" class="btn-gold px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm shadow-glow">Order Online</a>
-                                <a href="#booking" class="btn-outline px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm backdrop-blur-sm">Book a Table</a>
+                            <div class="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center">
+                                <a href="#menu" class="btn-gold px-8 lg:px-10 py-3 lg:py-4 rounded-full font-bold tracking-widest uppercase text-xs lg:text-sm shadow-glow">Order Online</a>
+                                <a href="#booking" class="btn-outline px-8 lg:px-10 py-3 lg:py-4 rounded-full font-bold tracking-widest uppercase text-xs lg:text-sm backdrop-blur-sm">Book a Table</a>
                             </div>
                         </div>
                     </div>
@@ -901,7 +1074,21 @@
                 startSlideTimer();
             });
 
+            // Touch Handling
+            heroSection.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            heroSection.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+
             startSlideTimer();
+        }
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
         }
 
         function updateCarouselUI() {
@@ -955,6 +1142,185 @@
             }
         }
 
+        // --- Booklet Logic ---
+        function initBookPages() {
+            // Group items by category for pages
+            const categories = ['veg', 'nonveg', 'chinese', 'biryani', 'dessert'];
+            bookPages = [];
+            
+            // Cover Page (Index 0)
+            bookPages.push({
+                type: 'cover',
+                content: `
+                    <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg">
+                        <div class="w-16 h-16 lg:w-20 lg:h-20 border-2 border-osr-gold rounded-full flex items-center justify-center mb-6">
+                            <span class="font-heading font-bold text-osr-gold text-2xl">OSR</span>
+                        </div>
+                        <h2 class="font-heading text-3xl lg:text-4xl font-bold text-osr-maroon mb-2">Om Sai Ki Rasoi</h2>
+                        <div class="w-16 h-1 bg-osr-gold mb-6"></div>
+                        <p class="font-heading italic text-lg lg:text-xl text-gray-600">The Royal Menu</p>
+                        <p class="text-[10px] lg:text-xs text-gray-400 mt-auto uppercase tracking-widest">Est. 2015</p>
+                    </div>
+                `
+            });
+
+            // Category Pages
+            categories.forEach(cat => {
+                const items = menuItems.filter(item => {
+                    if (cat === 'veg') return item.category === 'veg' && item.type === 'veg';
+                    if (cat === 'nonveg') return item.type === 'nonveg' && item.category !== 'chinese' && item.category !== 'biryani'; // Simplification for demo
+                    return item.category === cat;
+                });
+
+                if (items.length > 0) {
+                    let pageContent = `
+                        <h3 class="font-heading text-xl lg:text-2xl font-bold text-osr-maroon mb-4 lg:mb-6 border-b border-osr-gold/30 pb-2 uppercase tracking-wide">${cat === 'nonveg' ? 'Main Course' : cat}</h3>
+                        <div class="space-y-4 lg:space-y-6">
+                    `;
+                    
+                    items.forEach(item => {
+                        let variantsHTML = '';
+                        if (item.variants) {
+                            variantsHTML = `<div class="flex gap-2 mt-2 flex-wrap">`;
+                            for (const [key, price] of Object.entries(item.variants)) {
+                                variantsHTML += `
+                                    <button onclick="addVariantToCart(${item.id}, '${key}', ${price})" class="text-[10px] uppercase font-bold px-2 lg:px-3 py-1 border border-osr-gold/50 rounded-full hover:bg-osr-maroon hover:text-white transition-colors text-gray-600">
+                                        ${key.charAt(0).toUpperCase() + key.slice(1)}: ₹${price}
+                                    </button>
+                                `;
+                            }
+                            variantsHTML += `</div>`;
+                        } else {
+                             variantsHTML = `<button onclick="addToCart(${item.id})" class="text-[10px] uppercase font-bold px-3 py-1 border border-osr-gold/50 rounded-full hover:bg-osr-maroon hover:text-white transition-colors text-gray-600 mt-2">Standard: ₹${item.price}</button>`;
+                        }
+
+                        pageContent += `
+                            <div class="relative group">
+                                <div class="flex justify-between items-baseline border-b border-dashed border-gray-300 pb-1 mb-1">
+                                    <h4 class="font-bold text-osr-black text-xs lg:text-sm uppercase">${item.name}</h4>
+                                </div>
+                                <p class="text-[10px] lg:text-xs text-gray-500 italic mb-1">${item.desc}</p>
+                                ${variantsHTML}
+                            </div>
+                        `;
+                    });
+
+                    pageContent += `</div>`;
+                    bookPages.push({ type: 'content', content: pageContent });
+                }
+            });
+            
+             // Back Cover (Last Index)
+            bookPages.push({
+                type: 'cover',
+                content: `
+                    <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg bg-osr-maroon text-white">
+                        <i class="fa-solid fa-wine-glass text-4xl text-osr-gold mb-4"></i>
+                        <h3 class="font-heading text-2xl font-bold mb-4">Thank You</h3>
+                        <p class="text-sm opacity-80 mb-8">We look forward to serving you.</p>
+                        <div class="text-xs space-y-2 opacity-60">
+                            <p>For Reservations:</p>
+                            <p class="font-bold text-osr-gold">+91 98765 43210</p>
+                            <p>www.omsaikirasoi.com</p>
+                        </div>
+                    </div>
+                `
+            });
+        }
+
+        function openBooklet() {
+            document.getElementById('booklet-modal').classList.remove('hidden');
+            currentBookPage = 0;
+            renderBooklet();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBooklet() {
+            document.getElementById('booklet-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function renderBooklet() {
+            const leftContainer = document.getElementById('book-page-left');
+            const rightContainer = document.getElementById('book-page-right');
+            const btnPrev = document.getElementById('btn-prev-page');
+            const btnNext = document.getElementById('btn-next-page');
+
+            // Left Page logic
+            leftContainer.innerHTML = bookPages[currentBookPage].content;
+
+            // Right Page logic (Show next page if available, else empty or specific ending)
+            // On mobile, right page is hidden via CSS, so this logic is fine
+            if (currentBookPage + 1 < bookPages.length) {
+                rightContainer.innerHTML = bookPages[currentBookPage + 1].content;
+            } else {
+                rightContainer.innerHTML = ''; // Empty end paper
+            }
+
+            // Button states
+            btnPrev.disabled = currentBookPage === 0;
+            btnNext.disabled = currentBookPage >= bookPages.length - 1; // Simplify to allow single page turns if needed, but double view is standard for desktop
+            
+            // Adjust for mobile (single view logic could be applied here if we hid the right pane via CSS)
+        }
+
+        function nextPage() {
+            // Move forward by 2 pages for booklet feel on desktop
+            if (window.innerWidth >= 768) {
+                 if (currentBookPage + 2 < bookPages.length) {
+                    currentBookPage += 2;
+                } else if (currentBookPage + 1 < bookPages.length) {
+                     currentBookPage += 1;
+                }
+            } else {
+                if (currentBookPage + 1 < bookPages.length) {
+                    currentBookPage += 1;
+                }
+            }
+            renderBooklet();
+        }
+
+        function prevPage() {
+             if (window.innerWidth >= 768) {
+                if (currentBookPage - 2 >= 0) {
+                    currentBookPage -= 2;
+                } else {
+                    currentBookPage = 0;
+                }
+            } else {
+                 if (currentBookPage > 0) {
+                    currentBookPage -= 1;
+                }
+            }
+            renderBooklet();
+        }
+        
+        function addVariantToCart(id, variantName, price) {
+            const item = menuItems.find(i => i.id === id);
+            // Unique ID for variant
+            const variantId = `${id}-${variantName}`;
+            
+            const existing = cart.find(i => i.variantId === variantId);
+            
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    id: item.id,
+                    variantId: variantId,
+                    name: `${item.name} (${variantName})`,
+                    price: price,
+                    type: item.type,
+                    qty: 1
+                });
+            }
+            
+            saveCart();
+            updateCartUI();
+            
+            alert(`Added ${item.name} (${variantName}) to cart!`);
+        }
+
         // --- Menu Logic ---
         function renderMenu(category, searchTerm = '') {
             const grid = document.getElementById('menu-grid');
@@ -993,6 +1359,15 @@
                     else starsHTML += '<i class="fa-regular fa-star text-gray-300 text-[10px]"></i>';
                 }
 
+                // Variants display for standard card
+                let priceDisplay = `₹${item.price}`;
+                if (item.variants) {
+                    // Show range or "Starts from"
+                    const prices = Object.values(item.variants);
+                    const minPrice = Math.min(...prices);
+                    priceDisplay = `<span class="text-[10px] font-normal mr-1">from</span> ₹${minPrice}`;
+                }
+
                 const card = document.createElement('div');
                 card.className = "group relative bg-white rounded-[2rem] shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-col h-full border border-gray-100 hover:border-osr-gold/30 hover:-translate-y-2 overflow-hidden";
                 card.innerHTML = `
@@ -1009,7 +1384,7 @@
                         <div class="absolute bottom-4 left-6 right-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                              <div class="flex justify-between items-end">
                                 <div>
-                                    <h3 class="font-heading font-bold text-2xl text-white mb-1 drop-shadow-md leading-tight">${item.name}</h3>
+                                    <h3 class="font-heading font-bold text-lg lg:text-2xl text-white mb-1 drop-shadow-md leading-tight">${item.name}</h3>
                                     <div class="flex items-center gap-2 mb-2">
                                         <div class="flex gap-0.5">${starsHTML}</div>
                                         <span class="text-[10px] text-white/80">(${item.rating})</span>
@@ -1022,14 +1397,14 @@
                     <div class="p-6 flex flex-col flex-1 relative bg-white">
                         <!-- Price Tag Floating -->
                         <div class="absolute -top-6 right-6 bg-osr-maroon text-osr-gold px-4 py-2 rounded-xl shadow-lg font-bold text-sm border border-osr-gold/20 transform group-hover:scale-110 transition-transform duration-300">
-                            ₹${item.price}
+                            ${priceDisplay}
                         </div>
 
                         <p class="text-sm text-gray-500 mb-6 line-clamp-3 leading-relaxed flex-1 mt-2">${item.desc}</p>
                         
                         <div class="flex items-center gap-4 mt-auto">
-                            <button onclick="addToCart(${item.id})" class="flex-1 bg-osr-black text-white py-3.5 rounded-xl transition-all duration-300 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn hover:bg-osr-gold hover:text-osr-black shadow-lg">
-                                Add to Order 
+                            <button onclick="${item.variants ? 'openBooklet()' : `addToCart(${item.id})`}" class="flex-1 bg-osr-black text-white py-3.5 rounded-xl transition-all duration-300 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn hover:bg-osr-gold hover:text-osr-black shadow-lg">
+                                ${item.variants ? 'View Options' : 'Add to Order'}
                                 <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover/btn:bg-black/10 transition-colors">
                                     <i class="fa-solid fa-plus text-[10px]"></i>
                                 </span>
@@ -1066,26 +1441,39 @@
         // --- Cart Logic ---
         function addToCart(id) {
             const item = menuItems.find(i => i.id === id);
-            const existing = cart.find(i => i.id === id);
+            // Handle simple addition for standard items (backwards compatibility or no variants)
+             // Unique ID for variant
+            const variantId = `${id}-standard`;
+            
+            const existing = cart.find(i => i.variantId === variantId);
             
             if(existing) {
                 existing.qty++;
             } else {
-                cart.push({...item, qty: 1});
+                cart.push({
+                    id: item.id,
+                    variantId: variantId,
+                    name: item.name,
+                    price: item.price,
+                    type: item.type,
+                    qty: 1
+                });
             }
             
             saveCart();
             updateCartUI();
             
             // Visual Feedback on Button
-            const btn = event.currentTarget;
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Added`;
-            btn.classList.add("bg-green-600", "text-white", "border-green-600");
-            setTimeout(() => {
-                btn.innerHTML = originalContent;
-                btn.classList.remove("bg-green-600", "text-white", "border-green-600");
-            }, 1500);
+            if(event && event.currentTarget) {
+                const btn = event.currentTarget;
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Added`;
+                btn.classList.add("bg-green-600", "text-white", "border-green-600");
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove("bg-green-600", "text-white", "border-green-600");
+                }, 1500);
+            }
 
             if(cart.length === 1 && existing === undefined) {
                  const drawer = document.getElementById('cart-drawer');
@@ -1093,12 +1481,13 @@
             }
         }
 
-        function updateCartQty(id, change) {
-            const item = cart.find(i => i.id === id);
+        function updateCartQty(variantId, change) {
+             // Find by variantId now
+            const item = cart.find(i => i.variantId === variantId || i.id === variantId); // Fallback for old items
             if(item) {
                 item.qty += change;
                 if(item.qty <= 0) {
-                    cart = cart.filter(i => i.id !== id);
+                    cart = cart.filter(i => i.variantId !== variantId);
                 }
                 saveCart();
                 updateCartUI();
@@ -1144,14 +1533,14 @@
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
                                 <div class="${badgeClass} w-[14px] h-[14px] p-[1px]"><div class="${dotClass} w-[6px] h-[6px]"></div></div>
-                                <h4 class="font-bold text-sm text-osr-maroon line-clamp-1">${item.name}</h4>
+                                <h4 class="font-bold text-sm text-osr-maroon line-clamp-1" title="${item.name}">${item.name}</h4>
                             </div>
                             <p class="text-xs text-gray-500 font-medium">₹${item.price} x ${item.qty}</p>
                         </div>
                         <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
-                            <button onclick="updateCartQty(${item.id}, -1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <button onclick="updateCartQty('${item.variantId}', -1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-minus text-xs"></i></button>
                             <span class="text-sm font-bold w-4 text-center text-gray-700">${item.qty}</span>
-                            <button onclick="updateCartQty(${item.id}, 1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-plus text-xs"></i></button>
+                            <button onclick="updateCartQty('${item.variantId}', 1)" class="text-gray-400 px-1 hover:text-osr-maroon transition-colors"><i class="fa-solid fa-plus text-xs"></i></button>
                         </div>
                     `;
                     container.appendChild(div);
