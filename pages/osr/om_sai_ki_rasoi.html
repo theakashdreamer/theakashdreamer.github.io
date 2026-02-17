@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Om Sai Ki Rasoi | Luxury Stay & Dining</title>
+    <!-- Tailwind + Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* base refinement */
+        body { font-family: 'Inter', sans-serif; background: #fcf9f3; }
+        h1, h2, h3, .serif-display { font-family: 'Playfair Display', serif; }
+        .text-amber-deep { color: #b85e00; }
+        .bg-amber-deep { background-color: #b85e00; }
+        .border-amber-deep { border-color: #b85e00; }
+        .bg-soft-cream { background-color: #fefaf0; }
+        .bg-charcoal-soft { background-color: #1e1b18; }
+        
+        /* smoothness & scroll */
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #ece5d9; }
+        ::-webkit-scrollbar-thumb { background: #b85e00; border-radius: 12px; }
+
+        /* glassmorphic header */
+        .header-glass {
+            background: rgba(255, 252, 242, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(184, 94, 0, 0.15);
+            box-shadow: 0 12px 30px -10px rgba(0,0,0,0.1);
+        }
+
+        /* nav pill style */
+        .nav-pill {
+            padding: 0.65rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            color: #3a3530;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+        .nav-pill:hover { background: rgba(184, 94, 0, 0.06); color: #b85e00; }
+        .nav-pill.active {
+            background: #b85e00;
+            color: white;
+            box-shadow: 0 6px 16px rgba(184,94,0,0.25);
+        }
+
+        /* hero overlay + fade carousel */
+        .hero-slide {
+            position: absolute; inset: 0;
+            opacity: 0;
+            transition: opacity 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background-size: cover; background-position: center;
+        }
+        .hero-slide.active { opacity: 1; z-index: 5; }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(115deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%);
+            z-index: 10;
+        }
+
+        /* card hover effects */
+        .room-card { transition: transform 0.3s ease, box-shadow 0.4s; }
+        .room-card:hover { transform: translateY(-8px); box-shadow: 0 32px 48px -16px rgba(0,0,0,0.2); }
+        .menu-card { transition: all 0.25s; }
+        .menu-card:hover { background-color: white; box-shadow: 0 18px 30px -12px rgba(184,94,0,0.25); border-color: #b85e00; }
+
+        /* offer shine */
+        .offer-shine {
+            position: relative; overflow: hidden;
+        }
+        .offer-shine::after {
+            content: '';
+            position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,240,210,0.25), transparent);
+            transition: left 0.7s;
+        }
+        .offer-shine:hover::after { left: 120%; }
+
+        /* whatsapp pulse refined */
+        .wa-pulse {
+            animation: wa-pulse 2.4s infinite;
+            box-shadow: 0 8px 22px rgba(34,197,94,0.4);
+        }
+        @keyframes wa-pulse { 0% { box-shadow: 0 0 0 0 #22c55e80; } 70% { box-shadow: 0 0 0 18px #22c55e00; } }
+
+        /* cart counter badge */
+        .cart-badge {
+            position: absolute; top: -4px; right: -6px;
+            background: #b85e00; color: white;
+            font-size: 0.7rem; font-weight: 700;
+            width: 20px; height: 20px; border-radius: 999px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px #b85e0050;
+        }
+
+        /* modal overlay */
+        .modal-overlay { background: rgba(20, 15, 10, 0.7); backdrop-filter: blur(3px); }
+
+        /* testimonial fade */
+        .testimonial-fade { transition: opacity 0.7s ease, transform 0.7s; }
+
+        /* dot navigation */
+        .hero-dot { width: 10px; height: 10px; border-radius: 20px; background: rgba(255,255,255,0.5); border: 1px solid transparent; transition: 0.25s; }
+        .hero-dot.active { background: #b85e00; width: 32px; border: none; box-shadow: 0 0 10px #ffb347; }
+
+        /* classic border radius */
+        .rounded-3xl { border-radius: 1.8rem; }
+    </style>
+</head>
+<body class="antialiased text-stone-800">
+
+    <!-- WhatsApp fixed -->
+    <a href="https://wa.me/919876543210?text=I'm%20interested%20in%20booking%20at%20Om%20Sai%20Ki%20Rasoi" target="_blank"
+        class="fixed bottom-8 right-8 z-[200] wa-pulse bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform border-4 border-white/30">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M12 17a5 5 0 0 0 4-2.5"/></svg>
+    </a>
+
+    <!-- HEADER enhanced with glass & pill active -->
+    <header class="fixed top-0 w-full z-50 header-glass px-4 md:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-amber-700 to-amber-900 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-900/20">
+                    <span class="serif-display text-white text-xl font-black tracking-tight">OSR</span>
+                </div>
+                <span class="serif-display hidden sm:block text-2xl font-semibold tracking-tight text-stone-800">Om Sai <span class="text-amber-deep italic">Ki Rasoi</span></span>
+            </div>
+            <!-- nav pills -->
+            <nav class="hidden md:flex items-center gap-1 bg-white/40 px-2 py-1.5 rounded-full border border-white/40 shadow-inner">
+                <a href="#home" class="nav-pill active" data-nav>Home</a>
+                <a href="#offers" class="nav-pill" data-nav>Offers</a>
+                <a href="#rooms" class="nav-pill" data-nav>Stay</a>
+                <a href="#menu" class="nav-pill" data-nav>Dine</a>
+                <a href="#testimonials" class="nav-pill" data-nav>Stories</a>
+            </nav>
+            <!-- actions -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative w-11 h-11 flex items-center justify-center rounded-xl bg-white shadow-md text-stone-700 hover:text-amber-700 transition border border-stone-200">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m6 2 3 12h10l3-12Z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </button>
+                <a href="#rooms" class="hidden lg:inline-block bg-stone-900 text-white px-7 py-2.5 rounded-xl text-sm font-semibold tracking-wide hover:bg-amber-deep transition shadow-xl shadow-stone-900/10">Book Room</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO CAROUSEL with dynamic overlay -->
+    <section id="home" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+        <div id="hero-carousel" class="absolute inset-0"></div>
+        <div class="hero-overlay z-10"></div>
+        <div class="relative z-20 text-center px-6 max-w-5xl mx-auto">
+            <span class="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.3em] uppercase bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30">heritage since 2005</span>
+            <h1 id="hero-title" class="text-5xl md:text-7xl lg:text-8xl text-white serif-display leading-tight drop-shadow-2xl transition-opacity duration-1000 opacity-0">Authentic Taste, <br><span class="italic font-light">Imperial Comfort.</span></h1>
+            <div class="flex flex-col sm:flex-row gap-5 justify-center mt-12">
+                <a href="#rooms" class="group bg-amber-deep text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-stone-900 transition-all shadow-2xl flex items-center justify-center gap-2">Explore Rooms <span class="group-hover:translate-x-1 transition">→</span></a>
+                <a href="#offers" class="bg-transparent backdrop-blur-sm border-2 border-white/50 text-white px-10 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all">Exclusive Offers</a>
+            </div>
+        </div>
+        <!-- navigation arrows & dots -->
+        <div class="absolute bottom-12 left-6 z-30 flex gap-3">
+            <button onclick="prevHero()" class="w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-amber-deep/80 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2"/></svg></button>
+            <button onclick="nextHero()" class="w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-amber-deep/80 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2"/></svg></button>
+        </div>
+        <div id="hero-dots" class="absolute bottom-12 right-6 z-30 flex gap-2"></div>
+    </section>
+
+    <!-- OFFERS section (enhanced) -->
+    <section id="offers" class="py-28 px-4 bg-charcoal-soft text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+                <div>
+                    <p class="text-amber-deep uppercase tracking-[0.3em] text-sm font-semibold mb-3">limited time</p>
+                    <h2 class="text-5xl md:text-6xl serif-display text-white">Exclusive <span class="text-amber-deep italic">Benefits</span></h2>
+                </div>
+                <div class="px-7 py-3 bg-amber-deep/20 border border-amber-deep/40 rounded-full text-amber-deep text-sm font-bold animate-pulse shadow-lg shadow-amber-900/20">🔥 Monsoon Flash Sale</div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- offer 1 -->
+                <div class="offer-shine bg-stone-800/90 rounded-3xl p-8 border border-stone-700 backdrop-blur-sm flex flex-col md:flex-row gap-6 items-center">
+                    <div class="w-28 h-28 rounded-full bg-amber-deep/30 flex items-center justify-center border-4 border-amber-deep/50"><span class="text-5xl serif-display font-black text-amber-deep">20%</span></div>
+                    <div class="flex-1">
+                        <h3 class="text-3xl serif-display mb-2">First Stay Discount</h3>
+                        <p class="text-stone-400 mb-5">20% off first room booking + complimentary breakfast.</p>
+                        <div class="flex items-center gap-3 bg-stone-900/80 py-3 px-4 rounded-xl border border-stone-600 w-fit">
+                            <span class="font-mono tracking-widest text-amber-deep font-bold">OSR20FIRST</span>
+                            <button onclick="copyCode('OSR20FIRST')" class="text-xs text-stone-400 hover:text-white transition-colors">📋 Copy</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- offer 2 -->
+                <div class="offer-shine bg-stone-800/90 rounded-3xl p-8 border border-stone-700 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="w-28 h-28 rounded-full bg-emerald-900/40 flex items-center justify-center border-4 border-emerald-600/50"><span class="text-5xl serif-display font-black text-emerald-400">FREE</span></div>
+                    <div class="flex-1">
+                        <h3 class="text-3xl serif-display mb-2">Weekend Feast</h3>
+                        <p class="text-stone-400 mb-5">Main course over ₹2000 → two signature desserts free.</p>
+                        <div class="flex items-center gap-3 bg-stone-900/80 py-3 px-4 rounded-xl border border-stone-600 w-fit">
+                            <span class="font-mono tracking-widest text-emerald-400 font-bold">FREEFEAST</span>
+                            <button onclick="copyCode('FREEFEAST')" class="text-xs text-stone-400 hover:text-white">📋 Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROOMS section (enhanced) -->
+    <section id="rooms" class="py-28 px-4 bg-soft-cream">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-amber-deep font-semibold tracking-[0.3em] text-sm">OPULENT STAYS</span>
+                <h2 class="text-5xl md:text-6xl serif-display text-stone-900 mt-3 mb-5">Luxury Accommodations</h2>
+                <div class="w-32 h-1 bg-gradient-to-r from-amber-600 to-amber-800 mx-auto rounded-full"></div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- room 1 -->
+                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
+                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-center mb-3"><h3 class="text-2xl serif-display">Heritage Deluxe</h3><span class="bg-amber-deep/10 text-amber-deep text-xs px-3 py-1 rounded-full font-bold">Elite</span></div>
+                        <div class="text-3xl font-bold text-stone-900 mb-6">₹4,499<span class="text-base font-normal text-stone-400">/night</span></div>
+                        <button onclick="bookRoom('Heritage Deluxe', 4499)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all shadow-lg">Book Now</button>
+                    </div>
+                </div>
+                <!-- room 2 -->
+                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
+                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1582719478250-c89cae4df85b?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
+                    <div class="p-8">
+                        <h3 class="text-2xl serif-display mb-3">Grand Royal Suite</h3>
+                        <div class="text-3xl font-bold text-stone-900 mb-6">₹8,999<span class="text-base font-normal text-stone-400">/night</span></div>
+                        <button onclick="bookRoom('Grand Royal Suite', 8999)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all">Book Now</button>
+                    </div>
+                </div>
+                <!-- room 3 -->
+                <div class="room-card bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
+                    <div class="h-72 overflow-hidden"><img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition duration-700"></div>
+                    <div class="p-8">
+                        <h3 class="text-2xl serif-display mb-3">Classic Comfort</h3>
+                        <div class="text-3xl font-bold text-stone-900 mb-6">₹2,999<span class="text-base font-normal text-stone-400">/night</span></div>
+                        <button onclick="bookRoom('Classic Comfort', 2999)" class="w-full py-4 bg-stone-900 text-white rounded-xl font-bold hover:bg-amber-deep transition-all">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DINE section (menu grid enhanced) -->
+    <section id="menu" class="py-28 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-14">
+                <div><span class="text-amber-deep font-bold tracking-widest text-sm">THE RASOI MENU</span><h2 class="text-5xl md:text-6xl serif-display text-stone-900 mt-3">Freshly Prepared<span class="text-amber-deep italic"> Daily</span></h2></div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="filterMenu('all')" class="category-btn active-filter px-6 py-3 rounded-full border border-stone-300 bg-stone-900 text-white font-medium hover:bg-stone-800 transition">All</button>
+                    <button onclick="filterMenu('starter')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Starters</button>
+                    <button onclick="filterMenu('main')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Main Course</button>
+                    <button onclick="filterMenu('dessert')" class="category-btn px-6 py-3 rounded-full border border-stone-300 font-medium hover:bg-stone-100 transition">Desserts</button>
+                </div>
+            </div>
+            <div id="menu-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-7"></div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS (enhanced) -->
+    <section id="testimonials" class="py-28 px-4 bg-stone-900 text-white overflow-hidden relative">
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="text-amber-deep font-bold tracking-[0.3em] mb-4">GUEST LOVE</p>
+            <div id="testimonial-container" class="relative min-h-[240px]"></div>
+            <div class="flex justify-center gap-6 mt-12">
+                <button onclick="prevTestimonial()" class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-amber-deep hover:border-amber-deep transition"><svg width="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2"/></svg></button>
+                <button onclick="nextTestimonial()" class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-amber-deep hover:border-amber-deep transition"><svg width="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2"/></svg></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CART SIDEBAR (enhanced) -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white/95 backdrop-blur-xl z-[150] translate-x-full transition-transform duration-500 shadow-2xl flex flex-col border-l border-stone-200">
+        <div class="p-7 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+            <h3 class="text-2xl serif-display">Your Tray</h3>
+            <button onclick="toggleCart()" class="p-2 hover:bg-stone-200 rounded-full"><svg width="24" height="24" stroke="currentColor"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-6 bg-stone-50 border-t border-stone-200">
+            <div class="flex justify-between text-2xl font-bold mb-6"><span>Total</span><span id="cart-total" class="text-amber-deep">₹0</span></div>
+            <button onclick="showCheckout()" class="w-full bg-stone-900 text-white py-4 rounded-xl font-bold hover:bg-amber-deep transition shadow-xl">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- MODALS (booking + success) -->
+    <div id="booking-modal" class="fixed inset-0 z-[200] hidden items-center justify-center px-4 modal-overlay"><div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl"><h3 class="text-2xl serif-display mb-6" id="modal-title">Booking Details</h3><div class="space-y-4"><div><label class="text-xs font-bold text-stone-400 uppercase">Check-in</label><input type="date" class="w-full p-3 border rounded-xl"></div><div><label class="text-xs font-bold text-stone-400 uppercase">Check-out</label><input type="date" class="w-full p-3 border rounded-xl"></div><div class="flex gap-3 pt-6"><button onclick="closeModals()" class="flex-1 py-3 border rounded-xl">Cancel</button><button onclick="confirmBooking()" class="flex-1 py-3 bg-amber-deep text-white rounded-xl font-bold">Add to Tray</button></div></div></div></div>
+    <div id="success-modal" class="fixed inset-0 z-[250] hidden items-center justify-center px-4 modal-overlay"><div class="bg-white w-full max-w-sm rounded-3xl p-12 text-center"><h3 class="text-3xl serif-display mb-2">✨ Reserved!</h3><p class="text-stone-500 mb-8">We'll contact you shortly.</p><button onclick="location.reload()" class="w-full py-3 bg-stone-900 text-white rounded-xl font-bold">Close</button></div></div>
+
+    <!-- FOOTER -->
+    <footer class="bg-stone-950 text-stone-400 py-20 px-4">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div><div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 bg-amber-deep rounded-xl flex items-center justify-center text-white font-bold">OSR</div><span class="text-2xl serif-display text-white">Om Sai <span class="text-amber-deep italic">Rasoi</span></span></div><p class="text-stone-500">Tradition & luxury since 2005.</p></div>
+            <div><h4 class="text-white font-bold mb-6">Visit</h4><p class="text-sm">Sai Complex, MG Road, Lucknow</p></div>
+            <div><h4 class="text-white font-bold mb-6">Contact</h4><p class="text-sm">hello@omsaikirasoi.com</p></div>
+            <div><h4 class="text-white font-bold mb-6">Social</h4><div class="flex gap-4">Instagram · Facebook</div></div>
+        </div>
+    </footer>
+
+    <script>
+        const heroSlides = [
+            { image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2000", title: "Authentic Taste, <br> <span class='italic'>Imperial Comfort.</span>" },
+            { image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000", title: "Culinary Heritage, <br> <span class='italic'>Modern Spirit.</span>" },
+            { image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000", title: "Luxury Living, <br> <span class='italic'>Traditional Roots.</span>" }
+        ];
+        const testimonials = [{ text:"Exquisite flavors and regal stay. Truly world-class.", author:"Vikram Malhotra", role:"CEO, Tech Corp"},{ text:"The hospitality is warmer than the food. A true Lucknow treasure.", author:"Priya Sharma", role:"Food Critic"}];
+        const menuData = [
+            { id:1, name:"Afghani Paneer Tikka", category:"starter", price:349, image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80&w=400" },
+            { id:2, name:"Dal Makhani Imperial", category:"main", price:429, image:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80&w=400" },
+            { id:3, name:"शाही Rasoi Thali", category:"main", price:699, image:"https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=400" },
+            { id:4, name:"Gulab Jamun with Rabri", category:"dessert", price:249, image:"https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&q=80&w=400" }
+        ];
+        let currentHeroIdx=0, currentTestimonialIdx=0, cart=[], currentBooking=null;
+
+        function initHero() {
+            const carousel=document.getElementById('hero-carousel'), dots=document.getElementById('hero-dots');
+            heroSlides.forEach((s,i)=>{ carousel.innerHTML+=`<div class="hero-slide ${i==0?'active':''}" style="background-image:url(${s.image})"></div>`; dots.innerHTML+=`<button class="hero-dot ${i==0?'active':''}" onclick="gotoHero(${i})"></button>`; });
+            setTimeout(()=>document.getElementById('hero-title').classList.remove('opacity-0'),500);
+        }
+        function updateHero(){ document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===currentHeroIdx)); document.querySelectorAll('.hero-dot').forEach((d,i)=>{d.classList.toggle('active',i===currentHeroIdx)}); document.getElementById('hero-title').innerHTML=heroSlides[currentHeroIdx].title; }
+        function nextHero(){ currentHeroIdx=(currentHeroIdx+1)%heroSlides.length; updateHero(); }
+        function prevHero(){ currentHeroIdx=(currentHeroIdx-1+heroSlides.length)%heroSlides.length; updateHero(); }
+        function gotoHero(i){ currentHeroIdx=i; updateHero(); }
+
+        function initTestimonials() {
+            const tdiv=document.getElementById('testimonial-container');
+            testimonials.forEach((t,i)=>{ tdiv.innerHTML+=`<div class="testimonial-fade absolute inset-0 ${i==0?'opacity-100':'opacity-0 pointer-events-none'} flex flex-col items-center justify-center"><p class="text-2xl md:text-3xl serif-display italic mb-8">“${t.text}”</p><h5 class="font-bold text-amber-deep">${t.author}</h5><p class="text-xs text-stone-400">${t.role}</p></div>`; });
+        }
+        function rotateTestimonial(delta) {
+            document.querySelectorAll('.testimonial-fade').forEach((el,i)=>{ if(i===currentTestimonialIdx) el.classList.replace('opacity-100','opacity-0'); });
+            currentTestimonialIdx=(currentTestimonialIdx+delta+testimonials.length)%testimonials.length;
+            document.querySelectorAll('.testimonial-fade')[currentTestimonialIdx].classList.replace('opacity-0','opacity-100');
+        }
+        function nextTestimonial(){ rotateTestimonial(1); }
+        function prevTestimonial(){ rotateTestimonial(-1); }
+
+        function renderMenu(cat){
+            const grid=document.getElementById('menu-grid'); grid.innerHTML='';
+            (cat==='all'?menuData:menuData.filter(m=>m.category===cat)).forEach(item=>{ grid.innerHTML+=`<div class="menu-card bg-stone-50 rounded-2xl border border-stone-200 p-5"><div class="h-44 rounded-xl overflow-hidden mb-4"><img src="${item.image}" class="w-full h-full object-cover"></div><h4 class="font-bold text-lg">${item.name}</h4><div class="flex justify-between items-center mt-4"><span class="text-2xl font-bold text-amber-deep">₹${item.price}</span><button onclick="addToCart(${item.id})" class="bg-amber-deep text-white p-3 rounded-xl hover:bg-stone-800 transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7v14"/></svg></button></div></div>`; });
+        }
+        function filterMenu(cat) {
+            document.querySelectorAll('.category-btn').forEach(b=>{b.classList.remove('bg-stone-900','text-white');b.classList.add('bg-transparent','text-stone-800');});
+            event.target.classList.add('bg-stone-900','text-white');
+            renderMenu(cat);
+        }
+
+        function addToCart(id){ cart.push({...menuData.find(m=>m.id===id), type:'Food'}); updateCartUI(); }
+        function bookRoom(n,p){ currentBooking={name:n, price:p, type:'Room'}; document.getElementById('booking-modal').classList.remove('hidden'); }
+        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.add('hidden')); }
+        function confirmBooking(){ cart.push(currentBooking); updateCartUI(); closeModals(); toggleCart(); }
+        function toggleCart(){ document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
+        function updateCartUI() {
+            let t=0, html=''; cart.forEach((i,idx)=>{ t+=i.price; html+=`<div class="flex justify-between items-center bg-stone-100 p-4 rounded-xl"><div><h6 class="font-bold">${i.name}</h6><span class="text-sm text-stone-500">₹${i.price}</span></div><button onclick="removeFromCart(${idx})" class="text-stone-400 hover:text-amber-deep text-xl">✕</button></div>`; });
+            document.getElementById('cart-items').innerHTML=html||'<p class="text-stone-400 text-center">Your tray is empty</p>';
+            document.getElementById('cart-total').innerText=`₹${t}`; document.getElementById('cart-count').innerText=cart.length;
+        }
+        function removeFromCart(i){ cart.splice(i,1); updateCartUI(); }
+        function showCheckout(){ document.getElementById('success-modal').classList.remove('hidden'); cart=[]; updateCartUI(); toggleCart(); }
+        function copyCode(c){ navigator.clipboard?.writeText(c); alert(`✅ Code ${c} copied`); }
+
+        // active nav on scroll (simplified)
+        window.addEventListener('load',()=>{ initHero(); initTestimonials(); renderMenu('all'); updateHero(); setInterval(nextHero,5000); setInterval(()=>nextTestimonial(),7000); });
+        window.addEventListener('scroll',()=>{/* keep active classes simple but not needed for demo*/});
+    </script>
+</body>
+</html>

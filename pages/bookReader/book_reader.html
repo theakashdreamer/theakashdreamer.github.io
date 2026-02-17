@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Book - Flip Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Quill Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    
+    <!-- PageFlip Library -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;600&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --book-bg: #ffffff;
+            --paper-texture: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc0IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wNCIgLz48L3N2Zz4=');
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #4b4b4b; /* Dark gray like reference background */
+            background-image: radial-gradient(circle at center, #5a5a5a 0%, #3a3a3a 100%);
+            color: #334155;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .book-font { font-family: 'Crimson Pro', serif; }
+
+        /* Book Container Styling */
+        .viewport {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Top Bar like reference */
+        .reader-header {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.3);
+            color: #ccc;
+            font-size: 12px;
+            border-radius: 4px 4px 0 0;
+            backdrop-filter: blur(4px);
+        }
+
+        #flipbook-wrapper {
+            width: 1100px;
+            height: 733px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #flipbook {
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            background-color: #fff;
+        }
+
+        /* Page Styling with Corner Markers */
+        .page {
+            background-color: var(--book-bg);
+            background-image: var(--paper-texture);
+            box-sizing: border-box;
+            padding: 50px;
+            border: 1px solid #eee;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Crop Marks simulation */
+        .page::before, .page::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+        /* Top Left and Bottom Right Marks */
+        .page::before {
+            top: 20px; left: 20px;
+            border-top: 1px solid #bbb; border-left: 1px solid #bbb;
+        }
+        .page::after {
+            bottom: 20px; right: 20px;
+            border-bottom: 1px solid #bbb; border-right: 1px solid #bbb;
+        }
+        /* Top Right and Bottom Left Marks (Inner) */
+        .page-corner-marks::before {
+            content: '';
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 20px; height: 20px;
+            border-top: 1px solid #bbb; border-right: 1px solid #bbb;
+        }
+        .page-corner-marks::after {
+            content: '';
+            position: absolute;
+            bottom: 20px; left: 20px;
+            width: 20px; height: 20px;
+            border-bottom: 1px solid #bbb; border-left: 1px solid #bbb;
+        }
+
+        .page-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Spine shadow effect */
+        .page.--left {
+            box-shadow: inset -15px 0 30px -10px rgba(0,0,0,0.1);
+            border-right: 1px solid #e2e8f0;
+        }
+        .page.--right {
+            box-shadow: inset 15px 0 30px -10px rgba(0,0,0,0.1);
+            border-left: 1px solid #e2e8f0;
+        }
+
+        /* Page Labeling like reference image */
+        .page-footer-tag {
+            position: absolute;
+            bottom: 20px;
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .page.--left .page-footer-tag { right: 40px; }
+        .page.--right .page-footer-tag { left: 40px; }
+
+        .page-number-box {
+            position: absolute;
+            bottom: 20px;
+            background: #d4af37;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .page.--left .page-number-box { left: 450px; transform: translateX(-100%); }
+        .page.--right .page-number-box { left: 50px; }
+
+        /* Quill content styling in Reader */
+        .ql-reader h1 { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #d4af37; padding-bottom: 4px; }
+        .ql-reader h2 { font-size: 1.25rem; font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; color: #334155; text-transform: uppercase; }
+        .ql-reader p { font-size: 1rem; line-height: 1.5; margin-bottom: 1rem; text-align: justify; color: #444; }
+        .ql-reader pre { background: #f8fafc; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 13px; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
+        .ql-reader b, .ql-reader strong { color: #000; }
+
+        /* Navigation */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+            padding: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 4px;
+        }
+        .nav-btn:hover { background: rgba(0,0,0,0.5); }
+        .nav-btn.prev { left: 10px; }
+        .nav-btn.next { right: 10px; }
+
+        /* Admin UI */
+        #editor-container { height: 350px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; }
+        
+        .ai-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 200;
+            display: flex;
+            gap: 10px;
+        }
+        .ai-btn {
+            background: #d4af37;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        .ai-btn:hover { background: #b8962d; transform: scale(1.05); }
+
+        #ai-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Scrollbar styling for pages */
+        .ql-reader::-webkit-scrollbar { width: 4px; }
+        .ql-reader::-webkit-scrollbar-track { background: transparent; }
+        .ql-reader::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- AI Modal -->
+    <div id="ai-modal">
+        <div class="bg-white rounded w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+                <h3 id="ai-modal-title" class="font-bold text-slate-800 text-lg flex items-center gap-2 uppercase tracking-wide">✨ AI Analysis</h3>
+                <button onclick="closeAIModal()" class="text-slate-400 hover:text-slate-600">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div id="ai-modal-content" class="p-8 overflow-y-auto ql-reader book-font leading-relaxed">
+            </div>
+            <div class="p-4 border-t bg-slate-50 flex justify-end">
+                <button onclick="closeAIModal()" class="bg-slate-900 text-white px-6 py-2 rounded text-sm uppercase font-bold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar TOC -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col z-50 shrink-0">
+        <div class="p-6 border-b border-slate-800">
+            <h2 class="text-white font-bold flex items-center gap-2 uppercase text-sm tracking-widest">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Library
+            </h2>
+        </div>
+        <div class="p-4 flex-1 overflow-y-auto space-y-4">
+            <button onclick="switchView('reader')" class="w-full text-left p-3 rounded bg-slate-800 text-white text-xs font-bold hover:bg-slate-700 transition uppercase tracking-wide">
+                Reader View
+            </button>
+            <button onclick="switchView('admin')" class="w-full text-left p-3 rounded border border-slate-700 text-slate-400 text-xs font-bold hover:bg-slate-800 transition uppercase tracking-wide">
+                New Chapter
+            </button>
+            <div class="pt-4">
+                <p class="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] mb-4 px-2">Table of Contents</p>
+                <div id="side-list" class="space-y-1">
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 relative">
+        <div id="reader-ai-tools" class="ai-panel hidden">
+            <button id="ai-summary-btn" onclick="generateAISummary()" class="ai-btn">
+                <span>✨ Summary</span>
+            </button>
+            <button id="ai-quiz-btn" onclick="generateAIQuiz()" class="ai-btn" style="background: #334155;">
+                <span>✨ Quiz</span>
+            </button>
+        </div>
+
+        <!-- READER SECTION -->
+        <section id="reader-view" class="h-full w-full flex flex-col items-center justify-center">
+            
+            <div class="reader-header">
+                <div id="book-title-header">KNOWLEDGE CATALOGUE</div>
+                <div id="page-count-header">PAGE 0 / 0</div>
+            </div>
+
+            <div class="viewport">
+                <div id="flipbook-wrapper">
+                    <div id="flipbook">
+                        <!-- STATIC COVER PAGE -->
+                        <div class="page" data-density="hard">
+                            <div class="page-corner-marks"></div>
+                            <div class="page-content page-cover">
+                                <h2 class="text-xs uppercase tracking-[0.5em] opacity-40 mb-4">Reference Edition</h2>
+                                <h1 class="text-5xl font-bold mb-4 tracking-tighter text-slate-900">KNOWLEDGE<br>VOLUME 12</h1>
+                                <div class="w-24 h-1 bg-amber-500 mx-auto mb-8"></div>
+                                <p class="text-[10px] opacity-40 uppercase tracking-widest">February 2026 Edition</p>
+                            </div>
+                        </div>
+
+                        <!-- TOC PAGE -->
+                        <div class="page" data-density="hard">
+                            <div class="page-corner-marks"></div>
+                            <div class="page-content">
+                                <h2 class="book-font text-2xl font-bold mb-6 border-b pb-2 uppercase tracking-tight text-slate-800">Index</h2>
+                                <ul id="book-toc" class="space-y-3 book-font text-sm text-slate-700">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- DYNAMIC PAGES -->
+                        <div id="dynamic-pages"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <button class="nav-btn prev" onclick="handleFlipPrev()">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="nav-btn next" onclick="handleFlipNext()">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </section>
+
+        <!-- ADMIN SECTION -->
+        <section id="admin-view" class="hidden h-full overflow-y-auto p-12 bg-[#333]">
+            <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Create Chapter</h2>
+                    </div>
+                    <button id="ai-draft-btn" onclick="generateAIDraft()" class="ai-btn">
+                        <span>✨ Magic Draft</span>
+                    </button>
+                </div>
+                <div class="p-8 space-y-6">
+                    <input type="text" id="topic-title" placeholder="ENTER CHAPTER TITLE..." class="w-full text-xl font-bold outline-none border-b border-slate-300 focus:border-amber-500 pb-2 uppercase tracking-wide">
+                    <div id="editor-container"></div>
+                    <div class="flex justify-end gap-4">
+                        <button onclick="switchView('reader')" class="px-6 py-2 text-xs font-bold text-slate-500 uppercase">Discard</button>
+                        <button id="save-btn" onclick="saveToFirebase()" class="bg-amber-600 text-white px-8 py-3 rounded text-xs font-bold hover:bg-amber-700 transition flex items-center gap-2 uppercase">
+                            <span>Publish to Book</span>
+                            <div id="ldr" class="hidden animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot, 
+            serverTimestamp, 
+            doc, 
+            getDoc, 
+            getDocs,
+            setDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Provided Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+            authDomain: "registration-93e51.firebaseapp.com",
+            projectId: "registration-93e51",
+            storageBucket: "registration-93e51.firebasestorage.app",
+            messagingSenderId: "509440941274",
+            appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.serverTimestamp = serverTimestamp;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.setDoc = setDoc;
+
+        const geminiApiKey = ""; // Runtime key
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'flip-knowledge-v12';
+        const libRef = collection(db, 'artifacts', appId, 'public', 'data', 'chapters');
+
+        let flipBookInstance;
+        let quill;
+        let chapters = [];
+        let isFlipbookInit = false;
+        let currentChapterIndex = -1;
+
+        // --- GEMINI ---
+        async function callGemini(prompt, sys) {
+            const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: sys }] } };
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+            const res = await resp.json();
+            return res.candidates?.[0]?.content?.parts?.[0]?.text;
+        }
+
+        window.generateAIDraft = async () => {
+            const title = document.getElementById('topic-title').value.trim();
+            if (!title) return;
+            const btn = document.getElementById('ai-draft-btn');
+            btn.innerHTML = "✨ Writing...";
+            const content = await callGemini(`Write a professional catalogue-style chapter about ${title}. Use bold headers and clean HTML.`, "Expert catalog author.");
+            quill.root.innerHTML = content;
+            btn.innerHTML = "✨ Magic Draft";
+        };
+
+        window.generateAISummary = async () => {
+            if (currentChapterIndex < 0) return;
+            showAIModal("Summarizing...", "Analyzing current chapter...");
+            const summary = await callGemini(`Summarize this: ${chapters[currentChapterIndex].content}`, "Concise assistant.");
+            showAIModal("Quick Summary", summary.replace(/\*/g, '•').replace(/\n/g, '<br>'));
+        };
+
+        window.generateAIQuiz = async () => {
+            if (currentChapterIndex < 0) return;
+            showAIModal("Knowledge Check", "Generating questions...");
+            const quiz = await callGemini(`Create 3 MCQs based on: ${chapters[currentChapterIndex].content}`, "Teacher assistant.");
+            showAIModal("Interactive Quiz", quiz.replace(/\n/g, '<br>'));
+        };
+
+        window.showAIModal = (title, content) => {
+            document.getElementById('ai-modal-title').innerText = title;
+            document.getElementById('ai-modal-content').innerHTML = content;
+            document.getElementById('ai-modal').style.display = 'flex';
+        };
+        window.closeAIModal = () => document.getElementById('ai-modal').style.display = 'none';
+
+        // --- BOOK ENGINE ---
+        function initPageFlip() {
+            const flipbookElement = document.getElementById('flipbook');
+            if (flipBookInstance) { flipBookInstance.destroy(); isFlipbookInit = false; }
+            
+            flipBookInstance = new St.PageFlip(flipbookElement, {
+                width: 550, height: 733, size: "stretch",
+                showCover: true, mobileScrollSupport: false,
+                maxShadowOpacity: 0.3
+            });
+
+            const pages = document.querySelectorAll('.page');
+            if (pages.length > 0) {
+                flipBookInstance.loadFromHTML(pages);
+                isFlipbookInit = true;
+            }
+
+            flipBookInstance.on('flip', (e) => {
+                const pageNum = e.data;
+                document.getElementById('page-count-header').innerText = `PAGE ${pageNum + 1} / ${flipBookInstance.getPageCount()}`;
+                if (pageNum < 2) {
+                    currentChapterIndex = -1;
+                    document.getElementById('reader-ai-tools').classList.add('hidden');
+                } else {
+                    currentChapterIndex = Math.floor((pageNum - 2) / 2);
+                    document.getElementById('reader-ai-tools').classList.remove('hidden');
+                }
+            });
+        }
+
+        window.handleFlipPrev = () => { if (isFlipbookInit) flipBookInstance.flipPrev(); };
+        window.handleFlipNext = () => { if (isFlipbookInit) flipBookInstance.flipNext(); };
+        window.handleFlipTo = (idx) => { if (isFlipbookInit) flipBookInstance.flip(idx); };
+
+        const initQuill = () => {
+            quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: { toolbar: [[{'header': [1, 2, false]}], ['bold', 'italic'], [{'list': 'ordered'}, {'list': 'bullet'}], ['clean']] }
+            });
+        };
+
+        function syncData() {
+            onSnapshot(libRef, snap => {
+                chapters = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                chapters.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                renderBookContent();
+            });
+        }
+
+        function renderBookContent() {
+            const dynamicContainer = document.getElementById('dynamic-pages');
+            const tocList = document.getElementById('book-toc');
+            const sideList = document.getElementById('side-list');
+
+            dynamicContainer.innerHTML = '';
+            tocList.innerHTML = '';
+            sideList.innerHTML = '';
+
+            chapters.forEach((ch, i) => {
+                const sBtn = document.createElement('button');
+                sBtn.className = "w-full text-left px-3 py-2 rounded text-[10px] text-slate-500 hover:bg-slate-800 hover:text-white transition truncate uppercase font-bold";
+                sBtn.innerText = `${i+1}. ${ch.title}`;
+                sBtn.onclick = () => window.handleFlipTo(i * 2 + 2); 
+                sideList.appendChild(sBtn);
+
+                const li = document.createElement('li');
+                li.className = "flex justify-between border-b border-stone-200 py-1 uppercase text-xs font-bold tracking-tighter cursor-pointer hover:bg-stone-50";
+                li.innerHTML = `<span>${ch.title}</span> <span>${i*2 + 3}</span>`;
+                li.onclick = () => window.handleFlipTo(i * 2 + 2);
+                tocList.appendChild(li);
+
+                const p1 = document.createElement('div');
+                p1.className = "page --left";
+                p1.innerHTML = `
+                    <div class="page-corner-marks"></div>
+                    <div class="page-content flex flex-col justify-center items-center text-center">
+                        <span class="text-[9px] uppercase tracking-[0.4em] text-amber-600 font-bold mb-4">Chapter Overview</span>
+                        <h2 class="book-font text-3xl font-bold text-slate-800 mb-6 uppercase tracking-tight">${ch.title}</h2>
+                        <div class="w-6 h-0.5 bg-slate-300"></div>
+                        <div class="page-footer-tag">${ch.title.substring(0, 15)}</div>
+                        <div class="page-number-box">${(i*2)+3}</div>
+                    </div>
+                `;
+                dynamicContainer.appendChild(p1);
+
+                const p2 = document.createElement('div');
+                p2.className = "page --right";
+                p2.innerHTML = `
+                    <div class="page-corner-marks"></div>
+                    <div class="page-content">
+                        <div class="ql-reader overflow-y-auto pr-2 flex-1">${ch.content}</div>
+                        <div class="page-footer-tag">Ref: Vol 12</div>
+                        <div class="page-number-box">${(i*2)+4}</div>
+                    </div>
+                `;
+                dynamicContainer.appendChild(p2);
+            });
+
+            setTimeout(initPageFlip, 250);
+        }
+
+        window.saveToFirebase = async () => {
+            const titleInput = document.getElementById('topic-title');
+            const title = titleInput.value.trim();
+            const content = quill.root.innerHTML;
+            if(!title || quill.getText().trim() === "") return;
+            const btn = document.getElementById('save-btn');
+            btn.disabled = true; document.getElementById('ldr').classList.remove('hidden');
+            try {
+                await addDoc(libRef, { title, content, createdAt: serverTimestamp() });
+                titleInput.value = ''; quill.setContents([]);
+                switchView('reader');
+            } catch (e) { console.error(e); } finally { btn.disabled = false; document.getElementById('ldr').classList.add('hidden'); }
+        };
+
+        window.switchView = (v) => {
+            document.getElementById('reader-view').classList.toggle('hidden', v !== 'reader');
+            document.getElementById('admin-view').classList.toggle('hidden', v !== 'admin');
+            if (v === 'reader') setTimeout(initPageFlip, 200);
+        };
+
+        window.addEventListener('load', () => {
+            initQuill();
+            syncData();
+        });
+    </script>
+</body>
+</html>
