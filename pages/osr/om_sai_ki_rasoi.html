@@ -38,6 +38,25 @@
                     boxShadow: {
                         'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
                         'glow': '0 0 20px rgba(212, 175, 55, 0.3)'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'zoom-slow': 'zoomSlow 20s infinite alternate',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        zoomSlow: {
+                            '0%': { transform: 'scale(1)' },
+                            '100%': { transform: 'scale(1.1)' },
+                        }
                     }
                 }
             }
@@ -60,9 +79,10 @@
         }
 
         .glass-dark {
-            background: rgba(90, 15, 28, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
         }
         
         /* Gradients */
@@ -116,13 +136,14 @@
         .btn-outline {
             background: transparent;
             color: #FFF;
-            border: 1px solid rgba(212, 175, 55, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             transition: all 0.3s ease;
         }
 
         .btn-outline:hover {
             border-color: #D4AF37;
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
             transform: translateY(-2px);
         }
 
@@ -179,72 +200,101 @@
         .badge-veg-dot { width: 8px; height: 8px; background-color: #166534; border-radius: 50%; }
         .badge-nonveg { border: 2px solid #991b1b; }
         .badge-nonveg-dot { width: 8px; height: 8px; background-color: #991b1b; border-radius: 50%; }
+
+        /* Carousel Styles */
+        .carousel-slide {
+            position: absolute;
+            inset: 0;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+            z-index: 0;
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        .slide-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out 0.5s;
+        }
+        .carousel-slide.active .slide-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="font-body overflow-x-hidden relative selection:bg-osr-gold selection:text-white">
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 border-b border-white/5">
-        <div class="absolute inset-0 bg-osr-maroon/90 backdrop-blur-md -z-10 transition-opacity duration-300" id="nav-bg"></div>
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4">
+        <div class="absolute inset-0 bg-transparent transition-all duration-500" id="nav-bg"></div>
+        <div class="container mx-auto px-6 flex justify-between items-center relative z-10">
             <!-- Logo -->
             <a href="#" class="flex items-center gap-3 group">
                 <div class="relative w-12 h-12 flex items-center justify-center">
-                    <div class="absolute inset-0 border border-osr-gold/30 rounded-full scale-100 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="absolute inset-0 border border-osr-gold/30 rounded-full scale-110 group-hover:scale-125 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                    <span class="font-heading font-bold text-osr-gold text-xl relative z-10">OSR</span>
+                    <div class="absolute inset-0 border border-osr-gold/50 rounded-full scale-100 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="absolute inset-0 border-2 border-osr-gold rounded-full scale-90 group-hover:scale-100 opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
+                    <span class="font-heading font-bold text-osr-gold text-lg relative z-10 tracking-widest">OSR</span>
                 </div>
                 <div class="hidden sm:block">
-                    <h1 class="font-heading font-bold text-xl text-white tracking-widest">OM SAI KI RASOI</h1>
-                    <p class="text-[10px] text-osr-gold/80 tracking-[0.3em] uppercase">Luxury Dining</p>
+                    <h1 class="font-heading font-bold text-xl text-white tracking-[0.15em] group-hover:text-osr-gold transition-colors">OM SAI KI RASOI</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="h-[1px] w-8 bg-osr-gold/50"></span>
+                        <p class="text-[10px] text-osr-gold/90 tracking-[0.3em] uppercase font-light">Fine Dining</p>
+                    </div>
                 </div>
             </a>
 
             <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-10">
-                <a href="#home" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
-                    Home
-                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#about" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
-                    About
-                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#menu" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
-                    Menu
-                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#gallery" class="text-white/80 hover:text-osr-gold transition-colors text-sm uppercase tracking-widest font-medium relative group">
-                    Gallery
-                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-osr-gold transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#booking" class="px-5 py-2 border border-osr-gold/50 text-osr-gold text-xs uppercase tracking-widest font-bold rounded hover:bg-osr-gold hover:text-osr-maroon transition-all duration-300">
+            <div class="hidden lg:flex items-center gap-12">
+                <div class="flex gap-8 bg-black/20 backdrop-blur-sm px-8 py-2.5 rounded-full border border-white/5">
+                    <a href="#home" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
+                        Home
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
+                    </a>
+                    <a href="#about" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
+                        About
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
+                    </a>
+                    <a href="#menu" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
+                        Menu
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
+                    </a>
+                    <a href="#gallery" class="text-white/90 hover:text-osr-gold transition-colors text-xs uppercase tracking-[0.15em] font-medium relative group">
+                        Gallery
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-osr-gold transition-all duration-300 group-hover:w-1/2 rounded-full"></span>
+                    </a>
+                </div>
+                <a href="#booking" class="px-6 py-2.5 bg-osr-gold text-osr-black text-xs uppercase tracking-widest font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-glow">
                     Book Table
                 </a>
             </div>
 
             <!-- Icons -->
             <div class="flex items-center gap-6">
-                <button onclick="toggleCart()" class="relative text-white hover:text-osr-gold transition-colors group">
-                    <div class="p-2 rounded-full group-hover:bg-white/10 transition-colors">
-                        <i class="fa-solid fa-cart-shopping text-lg"></i>
-                    </div>
-                    <span id="cart-count" class="absolute top-0 right-0 bg-osr-gold text-osr-maroon text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-300">0</span>
+                <button onclick="toggleCart()" class="relative text-white hover:text-osr-gold transition-colors group p-2">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-osr-maroon border border-white/20 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-300 shadow-lg">0</span>
                 </button>
-                <button onclick="toggleMobileMenu()" class="md:hidden text-osr-gold text-2xl">
-                    <i class="fa-solid fa-bars-staggered"></i>
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-osr-gold text-2xl hover:rotate-90 transition-transform duration-300">
+                    <div class="space-y-1.5">
+                        <span class="block w-6 h-[2px] bg-osr-gold ml-auto"></span>
+                        <span class="block w-8 h-[2px] bg-osr-gold ml-auto"></span>
+                        <span class="block w-4 h-[2px] bg-osr-gold ml-auto"></span>
+                    </div>
                 </button>
             </div>
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden glass-dark border-t border-white/10 absolute w-full">
-            <div class="flex flex-col p-6 gap-6 items-center text-center">
-                <a href="#home" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Home</a>
-                <a href="#about" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">About</a>
-                <a href="#menu" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Menu</a>
-                <a href="#booking" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Book Table</a>
-                <a href="#contact" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading">Contact</a>
+        <div id="mobile-menu" class="hidden lg:hidden glass-dark border-t border-white/10 absolute w-full top-full left-0 animate-slide-up origin-top">
+            <div class="flex flex-col p-8 gap-6 items-center text-center">
+                <a href="#home" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">About</a>
+                <a href="#menu" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Menu</a>
+                <a href="#booking" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Book Table</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="text-white/90 hover:text-osr-gold text-lg font-heading tracking-widest">Contact</a>
             </div>
         </div>
     </nav>
@@ -295,126 +345,175 @@
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-        <!-- Background Image with Modern Gradient Overlay -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1514362545857-3bc16549766b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Luxury Dining" class="w-full h-full object-cover animate-[scale_20s_infinite_alternate]">
-            <div class="absolute inset-0 bg-gradient-to-b from-osr-black/70 via-osr-black/50 to-osr-black/80"></div>
+    <!-- Enhanced Carousel Hero Section -->
+    <section id="home" class="relative h-screen min-h-[700px] overflow-hidden bg-osr-black group">
+        <!-- Slides Container -->
+        <div id="carousel-slides" class="absolute inset-0">
+            <!-- JS will inject slides here -->
         </div>
 
-        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto pt-20">
-            <div class="mb-6 inline-flex flex-col items-center gap-2 reveal">
-                <span class="w-[1px] h-12 bg-osr-gold mb-2"></span>
-                <span class="text-osr-gold tracking-[0.5em] uppercase text-xs font-bold">Est. 2015</span>
-            </div>
-            <h1 class="font-heading text-5xl md:text-7xl lg:text-9xl text-white font-bold mb-6 leading-none reveal" style="transition-delay: 100ms;">
-                Om Sai <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-osr-gold via-yellow-200 to-osr-gold">Ki Rasoi</span>
-            </h1>
-            <p class="text-white/80 text-lg md:text-xl mb-12 font-light tracking-wide max-w-2xl mx-auto leading-relaxed reveal" style="transition-delay: 200ms;">
-                Where royal tradition meets modern culinary art. Experience the finest Indian and Global cuisines in a luxurious setting.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center reveal" style="transition-delay: 300ms;">
-                <a href="#menu" class="btn-gold px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm shadow-glow">Order Online</a>
-                <a href="#booking" class="btn-outline px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm backdrop-blur-sm">Book a Table</a>
-            </div>
+        <!-- Overlay Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-t from-osr-black via-transparent to-osr-black/60 pointer-events-none z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-osr-black/40 via-transparent to-osr-black/40 pointer-events-none z-10"></div>
+
+        <!-- Carousel Controls -->
+        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 text-white hover:bg-osr-gold hover:text-osr-black hover:border-osr-gold transition-all duration-300 flex items-center justify-center backdrop-blur-sm hidden md:flex opacity-0 group-hover:opacity-100 transform -translate-x-4 group-hover:translate-x-0">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 text-white hover:bg-osr-gold hover:text-osr-black hover:border-osr-gold transition-all duration-300 flex items-center justify-center backdrop-blur-sm hidden md:flex opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Dots -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3" id="carousel-dots">
+            <!-- JS will inject dots -->
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce hidden md:block text-white/50">
-            <i class="fa-solid fa-chevron-down text-xl"></i>
+        <div class="absolute bottom-8 left-10 z-20 hidden md:flex items-center gap-3 animate-pulse">
+            <span class="text-[10px] text-white/60 tracking-widest uppercase rotate-90 origin-left translate-y-12 translate-x-3">Scroll</span>
+            <div class="h-16 w-[1px] bg-gradient-to-b from-transparent via-osr-gold to-transparent"></div>
         </div>
     </section>
 
-    <!-- About Section -->
+    <!-- Enhanced About Section -->
     <section id="about" class="py-24 bg-osr-cream relative overflow-hidden">
-        <!-- Decorative Pattern -->
-        <div class="absolute top-0 right-0 w-1/3 h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
+        <div class="absolute -left-20 top-40 w-64 h-64 bg-osr-gold/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center gap-16">
-                <div class="lg:w-1/2 relative reveal">
-                    <div class="relative rounded-2xl overflow-hidden shadow-2xl">
-                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full object-cover h-[500px] hover:scale-105 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="flex flex-col lg:flex-row items-center gap-20">
+                <!-- Image Side -->
+                <div class="lg:w-1/2 relative reveal group">
+                    <div class="relative rounded-t-[10rem] rounded-b-3xl overflow-hidden shadow-2xl border-4 border-white">
+                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full object-cover h-[600px] transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-osr-black/60 via-transparent to-transparent"></div>
                     </div>
                     
+                    <!-- Decorative Badge -->
+                    <div class="absolute -left-6 top-20 animate-[spin_10s_linear_infinite]">
+                         <div class="w-24 h-24 border border-dashed border-osr-gold rounded-full"></div>
+                    </div>
+
                     <!-- Floating Card -->
-                    <div class="absolute -bottom-8 -right-8 glass p-8 rounded-xl shadow-soft hidden md:block max-w-xs animate-[float_4s_ease-in-out_infinite]">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="w-12 h-12 rounded-full bg-osr-maroon flex items-center justify-center text-osr-gold">
+                    <div class="absolute -bottom-10 -right-10 glass p-8 rounded-2xl shadow-soft hidden md:block max-w-xs animate-[float_4s_ease-in-out_infinite] border-l-4 border-osr-gold backdrop-blur-md bg-white/80">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-full bg-osr-maroon flex items-center justify-center text-osr-gold text-xl shadow-lg">
                                 <i class="fa-solid fa-quote-left"></i>
                             </div>
                             <div>
-                                <h4 class="font-heading font-bold text-osr-maroon">Master Chef</h4>
-                                <p class="text-[10px] text-gray-500 uppercase tracking-wider">Executive Head</p>
+                                <h4 class="font-heading font-bold text-osr-maroon text-lg">Sanjeev K.</h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Master Chef</p>
                             </div>
                         </div>
-                        <p class="text-sm text-gray-600 italic leading-relaxed">"Cooking is an art, but feeding people is an act of love."</p>
+                        <p class="text-sm text-gray-600 italic leading-relaxed font-serif">"Cooking is an art, but feeding people is an act of love. We serve memories, not just food."</p>
+                        <div class="mt-4 flex gap-1">
+                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
+                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
+                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
+                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
+                            <i class="fa-solid fa-star text-osr-gold text-xs"></i>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Content Side -->
                 <div class="lg:w-1/2 reveal" style="transition-delay: 200ms;">
-                    <span class="text-osr-gold uppercase tracking-[0.2em] font-bold text-xs mb-4 block">Our Story</span>
-                    <h2 class="font-heading text-5xl md:text-6xl font-bold text-osr-maroon mb-8">A Legacy of <br>Flavor & Luxury</h2>
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="h-[1px] w-12 bg-osr-gold"></span>
+                        <span class="text-osr-gold uppercase tracking-[0.3em] font-bold text-xs">Since 2015</span>
+                    </div>
+                    
+                    <h2 class="font-heading text-5xl md:text-6xl font-bold text-osr-maroon mb-8 leading-tight">
+                        A Legacy of <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-osr-gold to-yellow-600">Culinary Excellence</span>
+                    </h2>
+                    
                     <p class="text-gray-600 mb-8 leading-loose text-lg font-light">
-                        Founded with a vision to bring authentic royal flavors to the modern palate, Om Sai Ki Rasoi has been a beacon of culinary excellence. Our chefs meticulously craft each dish using traditional spices and modern techniques.
+                        Founded with a vision to bring authentic royal flavors to the modern palate, <span class="font-heading text-osr-maroon font-bold">Om Sai Ki Rasoi</span> has been a beacon of fine dining. Our chefs meticulously craft each dish using traditional spices and modern techniques, creating a symphony of flavors that dance on your tongue.
                     </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-osr-gold/10 flex items-center justify-center text-osr-gold text-xl shrink-0">
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-3 gap-4 border-y border-osr-gold/20 py-8 mb-10">
+                        <div class="text-center">
+                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">15+</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Years Experience</p>
+                        </div>
+                        <div class="text-center border-l border-osr-gold/20">
+                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">50+</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Expert Chefs</p>
+                        </div>
+                        <div class="text-center border-l border-osr-gold/20">
+                            <h4 class="font-heading text-3xl font-bold text-osr-maroon mb-1">20k+</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Happy Guests</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-700 text-xl border border-green-200">
                                 <i class="fa-solid fa-leaf"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-osr-maroon mb-1 font-heading text-lg">Fresh Ingredients</h3>
-                                <p class="text-sm text-gray-500">Farm-to-table vegetables and premium spices sourced daily.</p>
+                                <h3 class="font-bold text-osr-maroon font-heading">100% Fresh</h3>
+                                <p class="text-xs text-gray-500">Organic Sourcing</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-osr-gold/10 flex items-center justify-center text-osr-gold text-xl shrink-0">
-                                <i class="fa-solid fa-medal"></i>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-osr-gold/10 flex items-center justify-center text-osr-gold text-xl border border-osr-gold/20">
+                                <i class="fa-solid fa-award"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-osr-maroon mb-1 font-heading text-lg">Award Winning</h3>
-                                <p class="text-sm text-gray-500">Recognized for best North Indian cuisine in the city.</p>
+                                <h3 class="font-bold text-osr-maroon font-heading">Award Winning</h3>
+                                <p class="text-xs text-gray-500">Best Taste 2023</p>
                             </div>
                         </div>
                     </div>
-                    <button class="text-osr-maroon font-bold text-sm tracking-widest uppercase border-b border-osr-maroon pb-1 hover:text-osr-gold hover:border-osr-gold transition-all">Read Full Story</button>
+                    
+                    <button class="mt-10 group flex items-center gap-2 text-osr-maroon font-bold text-sm tracking-widest uppercase hover:text-osr-gold transition-colors">
+                        Read Our Full Journey 
+                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Menu Section -->
+    <!-- Enhanced Menu Section -->
     <section id="menu" class="py-24 bg-white relative">
+        <!-- Decorative Background -->
+        <div class="absolute inset-0 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.05] pointer-events-none"></div>
+        
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-center mb-16 reveal">
-                <span class="text-osr-gold font-bold uppercase tracking-[0.2em] text-xs">Delicious Choices</span>
+                <span class="text-osr-gold font-bold uppercase tracking-[0.2em] text-xs">Culinary Masterpieces</span>
                 <h2 class="font-heading text-5xl font-bold text-osr-maroon mt-4 mb-6">Our Exclusive Menu</h2>
-                <div class="flex justify-center">
-                   <div class="w-16 h-1 bg-osr-gold rounded-full"></div>
+                <div class="flex justify-center items-center gap-4">
+                    <span class="h-[1px] w-12 bg-gradient-to-r from-transparent to-osr-gold"></span>
+                    <i class="fa-solid fa-utensils text-osr-gold/50 text-sm"></i>
+                    <span class="h-[1px] w-12 bg-gradient-to-l from-transparent to-osr-gold"></span>
                 </div>
             </div>
 
             <!-- Menu Filters & Search -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 sticky top-[80px] bg-white/90 backdrop-blur-md z-30 py-6 px-6 rounded-2xl shadow-soft border border-gray-100 reveal" style="transition-delay: 100ms;">
-                <div class="flex overflow-x-auto pb-2 md:pb-0 gap-3 w-full md:w-auto hide-scrollbar" id="menu-filters">
-                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-osr-maroon text-white shadow-lg transition-all filter-btn" data-category="all">All</button>
-                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="veg">Pure Veg</button>
-                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="chinese">Chinese</button>
-                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="biryani">Biryani</button>
-                    <button class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold bg-gray-50 text-gray-500 hover:bg-osr-gold/10 hover:text-osr-maroon transition-all filter-btn" data-category="dessert">Desserts</button>
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-14 sticky top-[80px] bg-white/80 backdrop-blur-xl z-30 py-4 px-6 rounded-full shadow-soft border border-gray-100 reveal transition-all duration-300" style="transition-delay: 100ms;" id="filter-bar">
+                <div class="flex overflow-x-auto pb-2 lg:pb-0 gap-2 w-full lg:w-auto hide-scrollbar" id="menu-filters">
+                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-osr-maroon text-white shadow-lg transition-all filter-btn hover:-translate-y-1" data-category="all">All Dishes</button>
+                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="veg">Vegetarian</button>
+                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="chinese">Oriental</button>
+                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="biryani">Royal Biryani</button>
+                    <button class="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 hover:bg-osr-gold hover:text-white transition-all filter-btn hover:-translate-y-1" data-category="dessert">Desserts</button>
                 </div>
                 
-                <div class="relative w-full md:w-72">
-                    <input type="text" id="menu-search" placeholder="Find your craving..." class="w-full pl-12 pr-6 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-osr-gold/20 focus:border-osr-gold text-sm transition-all">
-                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <div class="relative w-full lg:w-80 group">
+                    <input type="text" id="menu-search" placeholder="Search for delicacies..." class="w-full pl-12 pr-6 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-osr-gold/20 focus:border-osr-gold text-sm transition-all group-hover:bg-white group-hover:shadow-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-osr-gold transition-colors"></i>
                 </div>
             </div>
 
             <!-- Menu Grid -->
-            <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 reveal" style="transition-delay: 200ms;">
+            <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 reveal" style="transition-delay: 200ms;">
                 <!-- Items injected by JS -->
             </div>
         </div>
@@ -675,15 +774,15 @@
     <script>
         // --- Data ---
         const menuItems = [
-            { id: 1, name: "Paneer Butter Masala", price: 320, category: "veg", image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600", desc: "Cottage cheese cubes simmered in a rich, creamy tomato gravy.", type: "veg" },
-            { id: 2, name: "Chicken Biryani", price: 450, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", desc: "Aromatic basmati rice layered with spiced chicken and saffron.", type: "nonveg" },
-            { id: 3, name: "Dal Makhani", price: 280, category: "veg", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600", desc: "Slow cooked black lentils with fresh cream and butter.", type: "veg" },
-            { id: 4, name: "Hakka Noodles", price: 220, category: "chinese", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600", desc: "Wok-tossed noodles with crunchy fresh vegetables.", type: "veg" },
-            { id: 5, name: "Butter Chicken", price: 480, category: "nonveg", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600", desc: "Classic tandoori chicken in a velvety tomato butter sauce.", type: "nonveg" },
-            { id: 6, name: "Gulab Jamun", price: 120, category: "dessert", image: "https://images.unsplash.com/photo-1593701478446-43e02686e6fd?w=600", desc: "Soft khoya dumplings soaked in rose-scented sugar syrup.", type: "veg" },
-            { id: 7, name: "Veg Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1642821373181-696a54913e93?w=600", desc: "Flavorful rice cooked with garden fresh mixed vegetables.", type: "veg" },
-            { id: 8, name: "Chilli Chicken", price: 380, category: "chinese", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=600", desc: "Spicy crispy chicken chunks tossed with peppers and onions.", type: "nonveg" },
-             { id: 9, name: "Rasmalai", price: 150, category: "dessert", image: "https://images.unsplash.com/photo-1563148560-f1c5c7d01859?w=600", desc: "Soft cheese patties immersed in chilled sweet saffron milk.", type: "veg" },
+            { id: 1, name: "Paneer Butter Masala", price: 320, category: "veg", image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600", desc: "Cottage cheese cubes simmered in a rich, creamy tomato gravy.", type: "veg", rating: 4.8, tag: "Bestseller" },
+            { id: 2, name: "Chicken Biryani", price: 450, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", desc: "Aromatic basmati rice layered with spiced chicken and saffron.", type: "nonveg", rating: 4.9, tag: "Chef's Pick" },
+            { id: 3, name: "Dal Makhani", price: 280, category: "veg", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600", desc: "Slow cooked black lentils with fresh cream and butter.", type: "veg", rating: 4.7 },
+            { id: 4, name: "Hakka Noodles", price: 220, category: "chinese", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600", desc: "Wok-tossed noodles with crunchy fresh vegetables.", type: "veg", rating: 4.5 },
+            { id: 5, name: "Butter Chicken", price: 480, category: "nonveg", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600", desc: "Classic tandoori chicken in a velvety tomato butter sauce.", type: "nonveg", rating: 5.0, tag: "Must Try" },
+            { id: 6, name: "Gulab Jamun", price: 120, category: "dessert", image: "https://images.unsplash.com/photo-1593701478446-43e02686e6fd?w=600", desc: "Soft khoya dumplings soaked in rose-scented sugar syrup.", type: "veg", rating: 4.8 },
+            { id: 7, name: "Veg Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1642821373181-696a54913e93?w=600", desc: "Flavorful rice cooked with garden fresh mixed vegetables.", type: "veg", rating: 4.6 },
+            { id: 8, name: "Chilli Chicken", price: 380, category: "chinese", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=600", desc: "Spicy crispy chicken chunks tossed with peppers and onions.", type: "nonveg", rating: 4.7 },
+             { id: 9, name: "Rasmalai", price: 150, category: "dessert", image: "https://images.unsplash.com/photo-1563148560-f1c5c7d01859?w=600", desc: "Soft cheese patties immersed in chilled sweet saffron milk.", type: "veg", rating: 4.9, tag: "Sweet Tooth" },
         ];
 
         const initialReviews = [
@@ -692,9 +791,31 @@
             { name: "Amit Verma", text: "Ordered for a family function. Packaging was premium and food was hot. A truly 5-star experience.", rating: 5 }
         ];
 
+        // --- Carousel Data ---
+        const heroSlides = [
+            {
+                image: "https://images.unsplash.com/photo-1514362545857-3bc16549766b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+                title: "Om Sai <br><span class='text-transparent bg-clip-text bg-gradient-to-r from-osr-gold via-yellow-200 to-osr-gold'>Ki Rasoi</span>",
+                subtitle: "Where royal tradition meets modern culinary art. Experience the finest Indian and Global cuisines in a luxurious setting."
+            },
+            {
+                image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+                title: "Exquisite <br><span class='text-transparent bg-clip-text bg-gradient-to-r from-osr-gold via-yellow-200 to-osr-gold'>Flavors</span>",
+                subtitle: "Savor the authenticity of premium spices and farm-fresh ingredients crafted by our master chefs."
+            },
+            {
+                image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+                title: "Celebrate <br><span class='text-transparent bg-clip-text bg-gradient-to-r from-osr-gold via-yellow-200 to-osr-gold'>Life</span>",
+                subtitle: "The perfect ambiance for your special moments. Create memories with fine dining and exceptional service."
+            }
+        ];
+
         // --- State ---
         let cart = JSON.parse(localStorage.getItem('osr_cart')) || [];
         let reviews = JSON.parse(localStorage.getItem('osr_reviews')) || initialReviews;
+        let currentSlide = 0;
+        let slideInterval;
+        let isPaused = false; // Track hover state
         
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -702,6 +823,7 @@
             updateCartUI();
             renderReviews();
             setupScrollReveal();
+            initCarousel();
             
             // Show Offer Popup after 3 seconds
             setTimeout(() => {
@@ -729,6 +851,110 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
 
+        // --- Carousel Logic ---
+        function initCarousel() {
+            const container = document.getElementById('carousel-slides');
+            const dotsContainer = document.getElementById('carousel-dots');
+            const heroSection = document.getElementById('home');
+            
+            heroSlides.forEach((slide, index) => {
+                // Create Slide
+                const slideDiv = document.createElement('div');
+                slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+                slideDiv.innerHTML = `
+                    <img src="${slide.image}" class="w-full h-full object-cover animate-zoom-slow" alt="Slide ${index + 1}">
+                    <div class="absolute inset-0 flex items-center justify-center text-center z-20 pt-20">
+                        <div class="max-w-5xl px-6 slide-content">
+                             <div class="mb-6 inline-flex flex-col items-center gap-2">
+                                <span class="w-[1px] h-12 bg-osr-gold mb-2"></span>
+                                <span class="text-osr-gold tracking-[0.5em] uppercase text-xs font-bold">Est. 2015</span>
+                            </div>
+                            <h1 class="font-heading text-5xl md:text-7xl lg:text-9xl text-white font-bold mb-6 leading-none shadow-black drop-shadow-lg">
+                                ${slide.title}
+                            </h1>
+                            <p class="text-white/90 text-lg md:text-xl mb-12 font-light tracking-wide max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                                ${slide.subtitle}
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                                <a href="#menu" class="btn-gold px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm shadow-glow">Order Online</a>
+                                <a href="#booking" class="btn-outline px-10 py-4 rounded-full font-bold tracking-widest uppercase text-sm backdrop-blur-sm">Book a Table</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(slideDiv);
+
+                // Create Dot
+                const dot = document.createElement('button');
+                dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${index === 0 ? 'bg-osr-gold w-8' : 'bg-white/50 hover:bg-white'}`;
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            // Pause on hover event listeners
+            heroSection.addEventListener('mouseenter', () => {
+                isPaused = true;
+                clearInterval(slideInterval);
+            });
+            heroSection.addEventListener('mouseleave', () => {
+                isPaused = false;
+                startSlideTimer();
+            });
+
+            startSlideTimer();
+        }
+
+        function updateCarouselUI() {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.getElementById('carousel-dots').children;
+
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            Array.from(dots).forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.className = 'w-8 h-3 rounded-full transition-all duration-300 bg-osr-gold';
+                } else {
+                    dot.className = 'w-3 h-3 rounded-full transition-all duration-300 bg-white/50 hover:bg-white';
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % heroSlides.length;
+            updateCarouselUI();
+            resetSlideTimer();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + heroSlides.length) % heroSlides.length;
+            updateCarouselUI();
+            resetSlideTimer();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarouselUI();
+            resetSlideTimer();
+        }
+
+        function startSlideTimer() {
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000); // 5 seconds per slide
+        }
+
+        function resetSlideTimer() {
+            clearInterval(slideInterval);
+            if (!isPaused) {
+                startSlideTimer();
+            }
+        }
+
         // --- Menu Logic ---
         function renderMenu(category, searchTerm = '') {
             const grid = document.getElementById('menu-grid');
@@ -741,33 +967,77 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-20 text-gray-400 italic">No dishes found matching your taste.</div>`;
+                grid.innerHTML = `<div class="col-span-3 text-center py-20 text-gray-400 italic flex flex-col items-center">
+                    <i class="fa-solid fa-utensils text-4xl mb-4 opacity-20"></i>
+                    <p>No culinary delights found matching your taste.</p>
+                </div>`;
                 return;
             }
 
             filtered.forEach(item => {
-                const badgeClass = item.type === 'veg' ? 'badge-veg' : 'badge-nonveg';
-                const dotClass = item.type === 'veg' ? 'badge-veg-dot' : 'badge-nonveg-dot';
+                const badgeClass = item.type === 'veg' ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600';
+                const dotClass = item.type === 'veg' ? 'bg-green-600' : 'bg-red-600';
                 
+                // Special Badge Logic
+                let specialBadge = '';
+                if(item.tag) {
+                    specialBadge = `<div class="absolute top-4 left-4 bg-osr-gold text-osr-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md z-10">${item.tag}</div>`;
+                }
+
+                // Stars Logic
+                let starsHTML = '';
+                const fullStars = Math.floor(item.rating);
+                for(let i=0; i<5; i++) {
+                    if(i < fullStars) starsHTML += '<i class="fa-solid fa-star text-osr-gold text-[10px]"></i>';
+                    else if(i === fullStars && item.rating % 1 !== 0) starsHTML += '<i class="fa-solid fa-star-half-stroke text-osr-gold text-[10px]"></i>';
+                    else starsHTML += '<i class="fa-regular fa-star text-gray-300 text-[10px]"></i>';
+                }
+
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-soft hover:shadow-2xl transition-all duration-500 overflow-hidden group flex flex-col h-full border border-gray-100 hover:-translate-y-2";
+                card.className = "group relative bg-white rounded-[2rem] shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-col h-full border border-gray-100 hover:border-osr-gold/30 hover:-translate-y-2 overflow-hidden";
                 card.innerHTML = `
-                    <div class="relative h-56 overflow-hidden">
+                    <div class="relative h-64 overflow-hidden">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
-                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-1.5 rounded shadow-lg ${badgeClass}">
-                            <div class="${dotClass}"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 transition-opacity duration-300"></div>
+                        
+                        ${specialBadge}
+                        
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md w-6 h-6 flex items-center justify-center rounded border ${badgeClass} shadow-lg z-10">
+                            <div class="w-3 h-3 rounded-full ${dotClass}"></div>
+                        </div>
+
+                        <div class="absolute bottom-4 left-6 right-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                             <div class="flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-heading font-bold text-2xl text-white mb-1 drop-shadow-md leading-tight">${item.name}</h3>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="flex gap-0.5">${starsHTML}</div>
+                                        <span class="text-[10px] text-white/80">(${item.rating})</span>
+                                    </div>
+                                </div>
+                             </div>
                         </div>
                     </div>
-                    <div class="p-6 flex flex-col flex-1">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-heading font-bold text-xl text-osr-maroon group-hover:text-osr-gold transition-colors">${item.name}</h3>
-                            <span class="font-bold text-lg text-osr-maroon">₹${item.price}</span>
+
+                    <div class="p-6 flex flex-col flex-1 relative bg-white">
+                        <!-- Price Tag Floating -->
+                        <div class="absolute -top-6 right-6 bg-osr-maroon text-osr-gold px-4 py-2 rounded-xl shadow-lg font-bold text-sm border border-osr-gold/20 transform group-hover:scale-110 transition-transform duration-300">
+                            ₹${item.price}
                         </div>
-                        <p class="text-sm text-gray-500 mb-6 line-clamp-2 leading-relaxed flex-1">${item.desc}</p>
-                        <button onclick="addToCart(${item.id})" class="w-full border-2 border-osr-maroon/10 text-osr-maroon hover:bg-osr-maroon hover:text-white hover:border-osr-maroon py-3 rounded-xl transition-all duration-300 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn">
-                            Add to Cart <i class="fa-solid fa-arrow-right opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all"></i>
-                        </button>
+
+                        <p class="text-sm text-gray-500 mb-6 line-clamp-3 leading-relaxed flex-1 mt-2">${item.desc}</p>
+                        
+                        <div class="flex items-center gap-4 mt-auto">
+                            <button onclick="addToCart(${item.id})" class="flex-1 bg-osr-black text-white py-3.5 rounded-xl transition-all duration-300 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn hover:bg-osr-gold hover:text-osr-black shadow-lg">
+                                Add to Order 
+                                <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover/btn:bg-black/10 transition-colors">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                </span>
+                            </button>
+                            <button class="w-12 h-12 rounded-xl border border-gray-200 text-gray-400 flex items-center justify-center hover:border-red-500 hover:text-red-500 hover:bg-red-50 transition-all" title="Add to Favourites">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1054,11 +1324,12 @@
             if (window.scrollY > 20) {
                 nav.classList.remove('py-4');
                 nav.classList.add('py-3');
-                navBg.classList.remove('opacity-0');
+                // Updated Logic: Use 'glass-dark' effect instead of opacity transition
+                navBg.className = 'absolute inset-0 transition-all duration-500 glass-dark';
             } else {
                 nav.classList.add('py-4');
                 nav.classList.remove('py-3');
-                navBg.classList.add('opacity-0');
+                navBg.className = 'absolute inset-0 bg-transparent transition-all duration-500';
             }
         });
 
