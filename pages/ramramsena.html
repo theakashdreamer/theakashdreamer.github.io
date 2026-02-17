@@ -2,13 +2,13 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Ram Ram Sena | Serving Dharma, Culture & Humanity</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600;700&family=Rozha+One&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -36,6 +36,7 @@
                     fontFamily: {
                         sans: ['Poppins', 'sans-serif'],
                         serif: ['Cinzel', 'serif'],
+                        hindi: ['Poppins', 'sans-serif'],
                     }
                 }
             }
@@ -47,6 +48,7 @@
         .glass-nav {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
@@ -54,7 +56,14 @@
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Sarayu_River_night_view%2C_Ayodhya_001.jpg/1280px-Sarayu_River_night_view%2C_Ayodhya_001.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
+            /* Scroll on mobile for better performance, Fixed on desktop */
+            background-attachment: scroll;
+        }
+
+        @media (min-width: 768px) {
+            .hero-pattern {
+                background-attachment: fixed;
+            }
         }
 
         /* Lightbox transitions */
@@ -92,94 +101,106 @@
                     <i class="fa-solid fa-om text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-serif text-2xl font-bold text-saffron-700 leading-none">Ram Ram Sena</h1>
-                    <span class="text-xs text-gray-500 font-semibold tracking-wider">SEVA & DHARMA</span>
+                    <h1 class="font-serif text-xl md:text-2xl font-bold text-saffron-700 leading-none" data-key="logo_text">Ram Ram Sena</h1>
+                    <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wider" data-key="logo_sub">SEVA & DHARMA</span>
                 </div>
             </a>
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-6 font-medium text-gray-700">
-                <a href="#home" class="hover:text-saffron-600 transition">Home</a>
-                <a href="#about" class="hover:text-saffron-600 transition">About</a>
-                <a href="#activities" class="hover:text-saffron-600 transition">Activities</a>
-                <a href="#knowledge" class="hover:text-saffron-600 transition">Knowledge</a>
-                <a href="#events" class="hover:text-saffron-600 transition">Events</a>
-                <a href="#gallery" class="hover:text-saffron-600 transition">Gallery</a>
-                <a href="#contact" class="hover:text-saffron-600 transition">Contact</a>
-                <a href="#join" class="px-5 py-2 bg-saffron-600 text-white rounded-full shadow hover:bg-saffron-700 transition transform hover:-translate-y-0.5">
+                <a href="#home" class="hover:text-saffron-600 transition" data-key="nav_home">Home</a>
+                <a href="#about" class="hover:text-saffron-600 transition" data-key="nav_about">About</a>
+                <a href="#activities" class="hover:text-saffron-600 transition" data-key="nav_activities">Activities</a>
+                <a href="#knowledge" class="hover:text-saffron-600 transition" data-key="nav_knowledge">Knowledge</a>
+                <a href="#events" class="hover:text-saffron-600 transition" data-key="nav_events">Events</a>
+                <a href="#gallery" class="hover:text-saffron-600 transition" data-key="nav_gallery">Gallery</a>
+                <a href="#contact" class="hover:text-saffron-600 transition" data-key="nav_contact">Contact</a>
+                
+                <!-- Language Switcher -->
+                <button onclick="toggleLanguage()" class="flex items-center gap-1 px-3 py-1 border border-gray-300 rounded-md hover:bg-orange-50 transition text-sm">
+                    <i class="fa-solid fa-language text-saffron-600"></i>
+                    <span id="lang-text">EN/हिंदी</span>
+                </button>
+
+                <a href="#join" class="px-5 py-2 bg-saffron-600 text-white rounded-full shadow hover:bg-saffron-700 transition transform hover:-translate-y-0.5" data-key="nav_join">
                     Join Us
                 </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="lg:hidden text-2xl text-gray-700 focus:outline-none">
+            <button id="mobile-menu-btn" class="lg:hidden p-2 text-2xl text-gray-700 focus:outline-none hover:text-saffron-600 transition">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
 
         <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-full shadow-lg">
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-full shadow-lg max-h-[80vh] overflow-y-auto">
             <div class="flex flex-col p-4 space-y-4 font-medium text-center">
-                <a href="#home" class="mobile-link hover:text-saffron-600">Home</a>
-                <a href="#about" class="mobile-link hover:text-saffron-600">About</a>
-                <a href="#activities" class="mobile-link hover:text-saffron-600">Activities</a>
-                <a href="#knowledge" class="mobile-link hover:text-saffron-600">Knowledge</a>
-                <a href="#events" class="mobile-link hover:text-saffron-600">Events</a>
-                <a href="#gallery" class="mobile-link hover:text-saffron-600">Gallery</a>
-                <a href="#contact" class="mobile-link hover:text-saffron-600">Contact</a>
-                <a href="#join" class="mobile-link px-5 py-2 bg-saffron-600 text-white rounded-lg mx-auto inline-block">Join Us</a>
+                <a href="#home" class="mobile-link hover:text-saffron-600" data-key="nav_home">Home</a>
+                <a href="#about" class="mobile-link hover:text-saffron-600" data-key="nav_about">About</a>
+                <a href="#activities" class="mobile-link hover:text-saffron-600" data-key="nav_activities">Activities</a>
+                <a href="#knowledge" class="mobile-link hover:text-saffron-600" data-key="nav_knowledge">Knowledge</a>
+                <a href="#events" class="mobile-link hover:text-saffron-600" data-key="nav_events">Events</a>
+                <a href="#gallery" class="mobile-link hover:text-saffron-600" data-key="nav_gallery">Gallery</a>
+                <a href="#contact" class="mobile-link hover:text-saffron-600" data-key="nav_contact">Contact</a>
+                
+                <button onclick="toggleLanguage()" class="mobile-link text-saffron-600 font-bold border py-2 rounded-lg border-saffron-200 bg-orange-50 w-full justify-center flex items-center gap-2">
+                    <i class="fa-solid fa-language"></i> Switch Language (हिंदी)
+                </button>
+
+                <a href="#join" class="mobile-link px-5 py-2 bg-saffron-600 text-white rounded-lg mx-auto inline-block" data-key="nav_join">Join Us</a>
             </div>
         </div>
     </nav>
 
     <!-- 2. Hero Section -->
-    <header id="home" class="relative h-screen flex items-center justify-center text-center hero-pattern text-white px-4">
+    <header id="home" class="relative min-h-screen flex items-center justify-center text-center hero-pattern text-white px-4 pt-16">
         <div class="relative z-10 max-w-4xl mx-auto" data-aos="fade-up">
-            <div class="mb-4 inline-block px-4 py-1 border border-gold-400 rounded-full bg-black/30 backdrop-blur-sm text-gold-400 text-sm font-semibold tracking-widest uppercase">
+            <div class="mb-4 inline-block px-4 py-1 border border-gold-400 rounded-full bg-black/30 backdrop-blur-sm text-gold-400 text-sm font-semibold tracking-widest uppercase" data-key="hero_badge">
                 Jai Shri Ram
             </div>
-            <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-shadow-lg">
+            <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-shadow-lg" data-key="hero_title">
                 Serving <span class="text-saffron-500">Dharma</span>, Culture & Humanity
             </h1>
-            <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed px-2" data-key="hero_desc">
                 Ram Ram Sena is a Hindu community dedicated to promoting Dharma, cultural heritage, social service (Seva), and unity inspired by the ideals of Lord Ram.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#join" class="px-8 py-3 bg-saffron-600 hover:bg-saffron-700 text-white font-bold rounded-lg shadow-lg transition transform hover:scale-105">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center px-4">
+                <a href="#join" class="px-8 py-3 bg-saffron-600 hover:bg-saffron-700 text-white font-bold rounded-lg shadow-lg transition transform hover:scale-105" data-key="hero_btn_join">
                     Join Community
                 </a>
-                <a href="#knowledge" class="px-8 py-3 bg-transparent border-2 border-white hover:bg-white hover:text-saffron-700 text-white font-bold rounded-lg transition">
+                <a href="#knowledge" class="px-8 py-3 bg-transparent border-2 border-white hover:bg-white hover:text-saffron-700 text-white font-bold rounded-lg transition" data-key="hero_btn_explore">
                     Explore Knowledge
                 </a>
             </div>
         </div>
         
         <!-- Scroll Down Indicator -->
-        <a href="#about" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70 hover:text-white">
+        <a href="#about" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70 hover:text-white hidden md:block">
             <i class="fa-solid fa-chevron-down text-2xl"></i>
         </a>
     </header>
 
     <!-- 3. About Section -->
-    <section id="about" class="py-20 bg-white">
+    <section id="about" class="py-16 md:py-20 bg-white">
         <div class="container mx-auto px-4 md:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 md:order-1 relative">
                     <div class="absolute -top-4 -left-4 w-24 h-24 bg-saffron-100 rounded-full z-0"></div>
-                    <img src="https://m.media-amazon.com/images/I/71qxnukfS-L._SL1500_.jpg" alt="Community Prayer" class="relative z-10 rounded-2xl shadow-2xl w-full object-contain h-[400px] bg-white">
+                    <img src="https://m.media-amazon.com/images/I/71qxnukfS-L._SL1500_.jpg" alt="Community Prayer" class="relative z-10 rounded-2xl shadow-2xl w-full object-contain h-[300px] md:h-[400px] bg-white">
                     <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-xl z-20 border-l-4 border-saffron-600 hidden md:block">
                         <p class="font-serif font-bold text-2xl text-gray-800">10,000+</p>
-                        <p class="text-sm text-gray-500">Active Volunteers</p>
+                        <p class="text-sm text-gray-500" data-key="about_stat">Active Volunteers</p>
                     </div>
                 </div>
                 
                 <div class="order-1 md:order-2">
-                    <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2">Who We Are</h2>
-                    <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-6">About Ram Ram Sena</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
+                    <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2" data-key="about_subtitle">Who We Are</h2>
+                    <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-6" data-key="about_title">About Ram Ram Sena</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed" data-key="about_p1">
                         Ram Ram Sena is a faith-driven Hindu community organization inspired by the life and teachings of Lord Ram, who symbolizes righteousness, discipline, sacrifice, and ideal leadership.
                     </p>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
+                    <p class="text-gray-600 mb-6 leading-relaxed" data-key="about_p2">
                         The term “Ram Ram” is a sacred greeting expressing respect and devotion, while “Sena” represents a united group working for a noble cause. Together, Ram Ram Sena stands for unity, service, and cultural preservation.
                     </p>
                     <div class="flex items-start gap-4 mb-4">
@@ -187,8 +208,8 @@
                             <i class="fa-solid fa-hands-praying"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800">Spiritual Growth</h4>
-                            <p class="text-sm text-gray-500">Regular programs to strengthen faith.</p>
+                            <h4 class="font-bold text-gray-800" data-key="about_f1_title">Spiritual Growth</h4>
+                            <p class="text-sm text-gray-500" data-key="about_f1_desc">Regular programs to strengthen faith.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
@@ -196,8 +217,8 @@
                             <i class="fa-solid fa-hand-holding-heart"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800">Social Service</h4>
-                            <p class="text-sm text-gray-500">Helping the needy through Seva.</p>
+                            <h4 class="font-bold text-gray-800" data-key="about_f2_title">Social Service</h4>
+                            <p class="text-sm text-gray-500" data-key="about_f2_desc">Helping the needy through Seva.</p>
                         </div>
                     </div>
                 </div>
@@ -206,25 +227,26 @@
     </section>
 
     <!-- 4. Mission & Values -->
-    <section class="py-20 bg-orange-50 relative overflow-hidden">
+    <section class="py-16 md:py-20 bg-orange-50 relative overflow-hidden">
         <!-- Decorative bg element -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-saffron-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div class="absolute bottom-0 left-0 w-64 h-64 bg-gold-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
         <div class="container mx-auto px-4 relative z-10">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">Mission & Vision</h2>
-                <p class="text-gray-600 text-lg">To build a united, disciplined, and spiritually aware Hindu society dedicated to service and righteousness inspired by the ideals of Lord Ram.</p>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-key="mission_title">Mission & Vision</h2>
+                <p class="text-gray-600 text-lg" data-key="mission_desc">To build a united, disciplined, and spiritually aware Hindu society dedicated to service and righteousness inspired by the ideals of Lord Ram.</p>
             </div>
 
-            <div class="grid md:grid-cols-4 gap-6">
+            <!-- Enhanced Responsive Grid: 1 col mobile, 2 col tablet, 4 col desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Value Card 1 -->
                 <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-saffron-500 hover:transform hover:-translate-y-2 transition duration-300 text-center group">
                     <div class="w-16 h-16 mx-auto bg-orange-100 text-saffron-600 rounded-full flex items-center justify-center text-2xl mb-4 group-hover:bg-saffron-600 group-hover:text-white transition">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
-                    <h3 class="font-bold text-xl mb-2">Dharma</h3>
-                    <p class="text-gray-500 text-sm">Upholding righteousness and moral duty in daily life.</p>
+                    <h3 class="font-bold text-xl mb-2" data-key="val_dharma">Dharma</h3>
+                    <p class="text-gray-500 text-sm" data-key="val_dharma_desc">Upholding righteousness and moral duty in daily life.</p>
                 </div>
 
                 <!-- Value Card 2 -->
@@ -232,8 +254,8 @@
                     <div class="w-16 h-16 mx-auto bg-orange-100 text-saffron-600 rounded-full flex items-center justify-center text-2xl mb-4 group-hover:bg-saffron-600 group-hover:text-white transition">
                         <i class="fa-solid fa-hand-holding-hand"></i>
                     </div>
-                    <h3 class="font-bold text-xl mb-2">Seva</h3>
-                    <p class="text-gray-500 text-sm">Selfless service to humanity without expectation.</p>
+                    <h3 class="font-bold text-xl mb-2" data-key="val_seva">Seva</h3>
+                    <p class="text-gray-500 text-sm" data-key="val_seva_desc">Selfless service to humanity without expectation.</p>
                 </div>
 
                 <!-- Value Card 3 -->
@@ -241,8 +263,8 @@
                     <div class="w-16 h-16 mx-auto bg-orange-100 text-saffron-600 rounded-full flex items-center justify-center text-2xl mb-4 group-hover:bg-saffron-600 group-hover:text-white transition">
                         <i class="fa-solid fa-users"></i>
                     </div>
-                    <h3 class="font-bold text-xl mb-2">Unity</h3>
-                    <p class="text-gray-500 text-sm">Strength in togetherness and community brotherhood.</p>
+                    <h3 class="font-bold text-xl mb-2" data-key="val_unity">Unity</h3>
+                    <p class="text-gray-500 text-sm" data-key="val_unity_desc">Strength in togetherness and community brotherhood.</p>
                 </div>
 
                 <!-- Value Card 4 -->
@@ -250,28 +272,29 @@
                     <div class="w-16 h-16 mx-auto bg-orange-100 text-saffron-600 rounded-full flex items-center justify-center text-2xl mb-4 group-hover:bg-saffron-600 group-hover:text-white transition">
                         <i class="fa-solid fa-om"></i>
                     </div>
-                    <h3 class="font-bold text-xl mb-2">Culture</h3>
-                    <p class="text-gray-500 text-sm">Preserving heritage and spiritual traditions.</p>
+                    <h3 class="font-bold text-xl mb-2" data-key="val_culture">Culture</h3>
+                    <p class="text-gray-500 text-sm" data-key="val_culture_desc">Preserving heritage and spiritual traditions.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 5. Activities Section -->
-    <section id="activities" class="py-20 bg-white">
+    <section id="activities" class="py-16 md:py-20 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2">What We Do</h2>
-                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">Our Core Activities</h3>
+                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2" data-key="act_subtitle">What We Do</h2>
+                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900" data-key="act_title">Our Core Activities</h3>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Enhanced Responsive Grid: 1 col mobile, 2 col tablet, 3 col desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Activity 1 -->
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-book-open-reader"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Religious Programs</h4>
-                        <p class="text-gray-600 text-sm">Ramayan Path, Sundar Kand recitations, Bhajan-Kirtan, and regular Temple seva.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_1_title">Religious Programs</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_1_desc">Ramayan Path, Sundar Kand recitations, Bhajan-Kirtan, and regular Temple seva.</p>
                     </div>
                 </div>
 
@@ -279,8 +302,8 @@
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-gift"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Festival Celebrations</h4>
-                        <p class="text-gray-600 text-sm">Grand celebrations of Ram Navami, Diwali, Dussehra, and Hanuman Jayanti.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_2_title">Festival Celebrations</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_2_desc">Grand celebrations of Ram Navami, Diwali, Dussehra, and Hanuman Jayanti.</p>
                     </div>
                 </div>
 
@@ -288,8 +311,8 @@
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-utensils"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Food Seva (Bhandara)</h4>
-                        <p class="text-gray-600 text-sm">Organizing free food distribution for devotees and needy people regularly.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_3_title">Food Seva (Bhandara)</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_3_desc">Organizing free food distribution for devotees and needy people regularly.</p>
                     </div>
                 </div>
 
@@ -297,8 +320,8 @@
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-droplet"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Blood Donation</h4>
-                        <p class="text-gray-600 text-sm">Health awareness camps and emergency blood support initiatives.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_4_title">Blood Donation</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_4_desc">Health awareness camps and emergency blood support initiatives.</p>
                     </div>
                 </div>
 
@@ -306,8 +329,8 @@
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-cow"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Gau Seva</h4>
-                        <p class="text-gray-600 text-sm">Cow protection, supporting local Gaushalas, and fodder distribution.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_5_title">Gau Seva</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_5_desc">Cow protection, supporting local Gaushalas, and fodder distribution.</p>
                     </div>
                 </div>
 
@@ -315,8 +338,8 @@
                 <div class="flex items-start gap-4 p-6 rounded-lg hover:bg-orange-50 transition border border-gray-100 hover:border-orange-200">
                     <div class="text-3xl text-saffron-600"><i class="fa-solid fa-hand-holding-medical"></i></div>
                     <div>
-                        <h4 class="font-bold text-lg mb-2 text-gray-800">Social Help</h4>
-                        <p class="text-gray-600 text-sm">Blanket drives in winter, poor family support, and disaster relief work.</p>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800" data-key="act_6_title">Social Help</h4>
+                        <p class="text-gray-600 text-sm" data-key="act_6_desc">Blanket drives in winter, poor family support, and disaster relief work.</p>
                     </div>
                 </div>
             </div>
@@ -324,30 +347,31 @@
     </section>
 
     <!-- 6. Knowledge Hub -->
-    <section id="knowledge" class="py-20 bg-gray-900 text-white">
+    <section id="knowledge" class="py-16 md:py-20 bg-gray-900 text-white">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-700 pb-4">
                 <div class="mb-4 md:mb-0">
-                    <h2 class="text-saffron-500 font-bold uppercase tracking-wide text-sm mb-2">Wisdom & Dharma</h2>
-                    <h3 class="font-serif text-3xl md:text-4xl font-bold">Knowledge Hub</h3>
+                    <h2 class="text-saffron-500 font-bold uppercase tracking-wide text-sm mb-2" data-key="know_subtitle">Wisdom & Dharma</h2>
+                    <h3 class="font-serif text-3xl md:text-4xl font-bold" data-key="know_title">Knowledge Hub</h3>
                 </div>
-                <div class="flex gap-2">
-                    <input type="text" placeholder="Search topics..." class="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-saffron-500 border border-gray-700">
+                <div class="flex gap-2 w-full md:w-auto">
+                    <input type="text" placeholder="Search topics..." class="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-saffron-500 border border-gray-700 w-full md:w-64" data-key="placeholder_search">
                     <button class="bg-saffron-600 hover:bg-saffron-700 text-white px-4 py-2 rounded-lg transition"><i class="fa-solid fa-search"></i></button>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <!-- Enhanced Responsive Grid: 1 col mobile, 2 col tablet, 3 col desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Article 1 -->
                 <article class="bg-gray-800 rounded-xl overflow-hidden shadow-lg group">
                     <div class="h-48 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1606293926075-69a00febfcf1?q=80&w=2070&auto=format&fit=crop" alt="Ram Idol" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     </div>
                     <div class="p-6">
-                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider">Scripture</span>
-                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition">Ideals of Lord Ram in Modern Life</h4>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">Understanding how the Maryada Purushottam's life teaches us discipline, sacrifice, and ideal leadership in today's chaotic world.</p>
-                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline">Read Article &rarr;</a>
+                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider" data-key="art_tag_scripture">Scripture</span>
+                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition" data-key="art_1_title">Ideals of Lord Ram in Modern Life</h4>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3" data-key="art_1_desc">Understanding how the Maryada Purushottam's life teaches us discipline, sacrifice, and ideal leadership in today's chaotic world.</p>
+                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline" data-key="btn_read">Read Article &rarr;</a>
                     </div>
                 </article>
 
@@ -357,10 +381,10 @@
                         <img src="https://images.unsplash.com/photo-1516723236086-5d666497f1bc?q=80&w=1974&auto=format&fit=crop" alt="Diwali Lamps" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     </div>
                     <div class="p-6">
-                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider">Festival</span>
-                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition">Why Diwali is Celebrated</h4>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">Beyond crackers and sweets, explore the spiritual victory of light over darkness and the return of Lord Ram to Ayodhya.</p>
-                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline">Read Article &rarr;</a>
+                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider" data-key="art_tag_fest">Festival</span>
+                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition" data-key="art_2_title">Why Diwali is Celebrated</h4>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3" data-key="art_2_desc">Beyond crackers and sweets, explore the spiritual victory of light over darkness and the return of Lord Ram to Ayodhya.</p>
+                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline" data-key="btn_read">Read Article &rarr;</a>
                     </div>
                 </article>
 
@@ -370,10 +394,10 @@
                         <img src="https://images.unsplash.com/photo-1616749911663-72782782b998?q=80&w=2066&auto=format&fit=crop" alt="Seva" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     </div>
                     <div class="p-6">
-                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider">Philosophy</span>
-                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition">Value of Seva in Hindu Dharma</h4>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">Seva is not just charity; it is a spiritual practice to cleanse the ego and see the divine in everyone.</p>
-                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline">Read Article &rarr;</a>
+                        <span class="text-xs text-saffron-400 font-bold uppercase tracking-wider" data-key="art_tag_phil">Philosophy</span>
+                        <h4 class="text-xl font-bold mt-2 mb-3 group-hover:text-saffron-400 transition" data-key="art_3_title">Value of Seva in Hindu Dharma</h4>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3" data-key="art_3_desc">Seva is not just charity; it is a spiritual practice to cleanse the ego and see the divine in everyone.</p>
+                        <a href="#" class="text-saffron-500 font-semibold text-sm hover:underline" data-key="btn_read">Read Article &rarr;</a>
                     </div>
                 </article>
             </div>
@@ -381,55 +405,55 @@
     </section>
 
     <!-- 7. Events Section -->
-    <section id="events" class="py-20 bg-orange-50">
+    <section id="events" class="py-16 md:py-20 bg-orange-50">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2">Join The Community</h2>
-                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">Upcoming Events</h3>
+                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2" data-key="event_subtitle">Join The Community</h2>
+                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900" data-key="event_title">Upcoming Events</h3>
             </div>
 
             <div class="max-w-4xl mx-auto space-y-4">
                 <!-- Event 1 -->
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 border-l-4 border-saffron-500">
-                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px]">
+                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px] w-full md:w-auto">
                         <span class="block text-3xl font-bold">17</span>
-                        <span class="uppercase text-sm font-bold">April</span>
+                        <span class="uppercase text-sm font-bold" data-key="month_apr">April</span>
                     </div>
                     <div class="flex-1 text-center md:text-left">
-                        <h4 class="text-xl font-bold text-gray-800">Ram Navami Grand Celebration</h4>
-                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-location-dot mr-1"></i> Community Temple Hall, Ayodhya Road</p>
+                        <h4 class="text-xl font-bold text-gray-800" data-key="evt_1_title">Ram Navami Grand Celebration</h4>
+                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-location-dot mr-1"></i> <span data-key="evt_1_loc">Community Temple Hall, Ayodhya Road</span></p>
                     </div>
-                    <button onclick="openModal('Ram Navami')" class="px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold">
+                    <button onclick="openModal('Ram Navami')" class="w-full md:w-auto px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold" data-key="btn_register">
                         Register
                     </button>
                 </div>
 
                 <!-- Event 2 -->
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 border-l-4 border-saffron-500">
-                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px]">
+                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px] w-full md:w-auto">
                         <span class="block text-3xl font-bold">05</span>
-                        <span class="uppercase text-sm font-bold">May</span>
+                        <span class="uppercase text-sm font-bold" data-key="month_may">May</span>
                     </div>
                     <div class="flex-1 text-center md:text-left">
-                        <h4 class="text-xl font-bold text-gray-800">Sundar Kand Path</h4>
-                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-clock mr-1"></i> 6:00 PM - Community Hall</p>
+                        <h4 class="text-xl font-bold text-gray-800" data-key="evt_2_title">Sundar Kand Path</h4>
+                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-clock mr-1"></i> <span data-key="evt_2_loc">6:00 PM - Community Hall</span></p>
                     </div>
-                    <button onclick="openModal('Sundar Kand')" class="px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold">
+                    <button onclick="openModal('Sundar Kand')" class="w-full md:w-auto px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold" data-key="btn_register">
                         Register
                     </button>
                 </div>
 
                 <!-- Event 3 -->
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 border-l-4 border-saffron-500">
-                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px]">
+                    <div class="bg-orange-100 text-saffron-800 rounded-lg p-3 text-center min-w-[100px] w-full md:w-auto">
                         <span class="block text-3xl font-bold">20</span>
-                        <span class="uppercase text-sm font-bold">May</span>
+                        <span class="uppercase text-sm font-bold" data-key="month_may">May</span>
                     </div>
                     <div class="flex-1 text-center md:text-left">
-                        <h4 class="text-xl font-bold text-gray-800">Blood Donation Camp</h4>
-                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-heart-pulse mr-1"></i> City Hospital Grounds</p>
+                        <h4 class="text-xl font-bold text-gray-800" data-key="evt_3_title">Blood Donation Camp</h4>
+                        <p class="text-gray-500 text-sm mt-1"><i class="fa-solid fa-heart-pulse mr-1"></i> <span data-key="evt_3_loc">City Hospital Grounds</span></p>
                     </div>
-                    <button onclick="openModal('Blood Donation')" class="px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold">
+                    <button onclick="openModal('Blood Donation')" class="w-full md:w-auto px-6 py-2 border border-saffron-600 text-saffron-600 hover:bg-saffron-600 hover:text-white rounded-full transition font-semibold" data-key="btn_register">
                         Register
                     </button>
                 </div>
@@ -438,14 +462,15 @@
     </section>
 
     <!-- 8. Gallery Section -->
-    <section id="gallery" class="py-20 bg-white">
+    <section id="gallery" class="py-16 md:py-20 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2">Memories & Divinity</h2>
-                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">Photo Gallery</h3>
+                <h2 class="text-saffron-600 font-bold uppercase tracking-wide text-sm mb-2" data-key="gallery_subtitle">Memories & Divinity</h2>
+                <h3 class="font-serif text-3xl md:text-4xl font-bold text-gray-900" data-key="gallery_title">Photo Gallery</h3>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Enhanced Responsive Grid: 2 col on mobile, 3 col on tablet, 4 col on desktop -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <!-- Image 1 (Large) -->
                 <div class="col-span-2 row-span-2 relative overflow-hidden rounded-xl cursor-pointer group" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1544830211-685c731885c7?q=80&w=2060&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Ganga Aarti">
@@ -454,38 +479,38 @@
                     </div>
                 </div>
                 <!-- Image 2 -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1614945486782-b67329fb8ae0?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Food Seva">
                 </div>
                 <!-- Image 3 (Reverted to Puja Thali) -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1574352067721-72d5913ee35c?q=80&w=2074&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Puja Thali">
                 </div>
                 <!-- Image 4 -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1596627689100-38e4a955740a?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Decorations">
                 </div>
                 <!-- Image 5 -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1623945415309-847253503f19?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Community Gathering">
                 </div>
                 
                 <!-- Added Images: Ram Bhagvan & Hanuman Ji & Mandir -->
                 <!-- Image 6: Lord Ram -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1606293926075-69a00febfcf1?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Lord Ram Idol">
                     <div class="absolute inset-0 bg-saffron-900/20 group-hover:bg-transparent transition"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-xs font-bold text-center opacity-0 group-hover:opacity-100 transition">Jai Shri Ram</div>
                 </div>
                 
                 <!-- Image 7: Hanuman Ji -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1628067424918-641595186b59?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Hanuman Ji">
                      <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-xs font-bold text-center opacity-0 group-hover:opacity-100 transition">Jai Bajrangbali</div>
                 </div>
 
                 <!-- Image 8: Ram Mandir -->
-                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-64" onclick="openLightbox(this)">
+                <div class="relative overflow-hidden rounded-xl cursor-pointer group h-40 md:h-64" onclick="openLightbox(this)">
                     <img src="https://images.unsplash.com/photo-1706023364947-8147d25e016c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Ayodhya Ram Mandir">
                     <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-xs font-bold text-center opacity-0 group-hover:opacity-100 transition">Ayodhya Dham</div>
                 </div>
@@ -494,35 +519,35 @@
     </section>
 
     <!-- 9. Join Us Form & 10. Contact Section -->
-    <section id="join" class="py-20 bg-orange-50">
+    <section id="join" class="py-16 md:py-20 bg-orange-50">
         <div class="container mx-auto px-4 md:px-8">
-            <div class="grid md:grid-cols-2 gap-12 bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="grid lg:grid-cols-2 gap-12 bg-white rounded-2xl shadow-xl overflow-hidden">
                 
                 <!-- Contact Info Side -->
-                <div class="bg-gray-900 text-white p-10 flex flex-col justify-between">
+                <div class="bg-gray-900 text-white p-8 md:p-10 flex flex-col justify-between">
                     <div>
-                        <h3 class="font-serif text-3xl font-bold mb-6">Contact Us</h3>
-                        <p class="text-gray-400 mb-8">Have questions or want to contribute? Reach out to us or visit our office.</p>
+                        <h3 class="font-serif text-2xl md:text-3xl font-bold mb-6" data-key="contact_title">Contact Us</h3>
+                        <p class="text-gray-400 mb-8" data-key="contact_desc">Have questions or want to contribute? Reach out to us or visit our office.</p>
                         
                         <div class="space-y-6">
                             <div class="flex items-start gap-4">
                                 <div class="text-saffron-500 text-xl"><i class="fa-solid fa-location-dot"></i></div>
                                 <div>
-                                    <h5 class="font-bold">Our Office</h5>
-                                    <p class="text-gray-400 text-sm">Ram Ram Sena Community Office,<br>Ayodhya Road, India</p>
+                                    <h5 class="font-bold" data-key="contact_office">Our Office</h5>
+                                    <p class="text-gray-400 text-sm" data-key="contact_addr">Ram Ram Sena Community Office,<br>Ayodhya Road, India</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-4">
                                 <div class="text-saffron-500 text-xl"><i class="fa-solid fa-phone"></i></div>
                                 <div>
-                                    <h5 class="font-bold">Phone</h5>
+                                    <h5 class="font-bold" data-key="contact_phone">Phone</h5>
                                     <p class="text-gray-400 text-sm">+91 98765 43210</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-4">
                                 <div class="text-saffron-500 text-xl"><i class="fa-solid fa-envelope"></i></div>
                                 <div>
-                                    <h5 class="font-bold">Email</h5>
+                                    <h5 class="font-bold" data-key="contact_email">Email</h5>
                                     <p class="text-gray-400 text-sm">info@ramramsena.org</p>
                                 </div>
                             </div>
@@ -530,7 +555,7 @@
                     </div>
 
                     <div class="mt-10">
-                        <h5 class="font-bold mb-4">Follow Us</h5>
+                        <h5 class="font-bold mb-4" data-key="follow_us">Follow Us</h5>
                         <div class="flex gap-4">
                             <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-saffron-600 flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
                             <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-saffron-600 flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
@@ -541,31 +566,31 @@
                 </div>
 
                 <!-- Join Form Side -->
-                <div id="contact" class="p-10">
-                    <h3 class="font-serif text-3xl font-bold text-gray-800 mb-2">Become a Volunteer</h3>
-                    <p class="text-gray-500 mb-6">Join the Sena and serve the society.</p>
+                <div id="contact" class="p-8 md:p-10">
+                    <h3 class="font-serif text-2xl md:text-3xl font-bold text-gray-800 mb-2" data-key="form_title">Become a Volunteer</h3>
+                    <p class="text-gray-500 mb-6" data-key="form_sub">Join the Sena and serve the society.</p>
                     
                     <form id="joinForm" onsubmit="handleJoinSubmit(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_name">Full Name</label>
                             <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_mobile">Mobile Number</label>
                                 <input type="tel" pattern="[0-9]{10}" placeholder="10 digits" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_city">City</label>
                                 <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_email">Email</label>
                             <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Area of Interest</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_interest">Area of Interest</label>
                             <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition">
                                 <option>Event Volunteering</option>
                                 <option>Food Distribution (Bhandara)</option>
@@ -575,10 +600,10 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Message (Optional)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-key="form_msg">Message (Optional)</label>
                             <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:outline-none transition"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-saffron-600 hover:bg-saffron-700 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
+                        <button type="submit" class="w-full bg-saffron-600 hover:bg-saffron-700 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5" data-key="form_btn">
                             Send Request
                         </button>
                     </form>
@@ -595,18 +620,18 @@
     <!-- 11. Footer -->
     <footer class="bg-gray-900 text-gray-300 py-10 border-t-4 border-saffron-600">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0 text-center md:text-left">
-                    <h2 class="font-serif text-2xl font-bold text-white mb-1">Ram Ram Sena</h2>
-                    <p class="text-sm">Dedicated to Dharma, Service & Cultural Unity.</p>
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="font-serif text-2xl font-bold text-white mb-1" data-key="footer_title">Ram Ram Sena</h2>
+                    <p class="text-sm" data-key="footer_desc">Dedicated to Dharma, Service & Cultural Unity.</p>
                 </div>
-                <div class="flex space-x-6 text-sm font-medium mb-4 md:mb-0">
-                    <a href="#about" class="hover:text-saffron-500 transition">About</a>
-                    <a href="#activities" class="hover:text-saffron-500 transition">Activities</a>
-                    <a href="#events" class="hover:text-saffron-500 transition">Events</a>
-                    <a href="#contact" class="hover:text-saffron-500 transition">Contact</a>
+                <div class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm font-medium">
+                    <a href="#about" class="hover:text-saffron-500 transition" data-key="nav_about">About</a>
+                    <a href="#activities" class="hover:text-saffron-500 transition" data-key="nav_activities">Activities</a>
+                    <a href="#events" class="hover:text-saffron-500 transition" data-key="nav_events">Events</a>
+                    <a href="#contact" class="hover:text-saffron-500 transition" data-key="nav_contact">Contact</a>
                 </div>
-                <div class="text-sm">
+                <div class="text-sm w-full md:w-auto text-center md:text-right">
                     &copy; 2026 Ram Ram Sena. All Rights Reserved.
                 </div>
             </div>
@@ -678,6 +703,251 @@
 
     <!-- JavaScript Logic -->
     <script>
+        // --- Translations Object ---
+        const translations = {
+            en: {
+                // Navbar
+                logo_text: "Ram Ram Sena",
+                logo_sub: "SEVA & DHARMA",
+                nav_home: "Home",
+                nav_about: "About",
+                nav_activities: "Activities",
+                nav_knowledge: "Knowledge",
+                nav_events: "Events",
+                nav_gallery: "Gallery",
+                nav_contact: "Contact",
+                nav_join: "Join Us",
+                // Hero
+                hero_badge: "Jai Shri Ram",
+                hero_title: `Serving <span class="text-saffron-500">Dharma</span>, Culture & Humanity`,
+                hero_desc: "Ram Ram Sena is a Hindu community dedicated to promoting Dharma, cultural heritage, social service (Seva), and unity inspired by the ideals of Lord Ram.",
+                hero_btn_join: "Join Community",
+                hero_btn_explore: "Explore Knowledge",
+                // About
+                about_stat: "Active Volunteers",
+                about_subtitle: "Who We Are",
+                about_title: "About Ram Ram Sena",
+                about_p1: "Ram Ram Sena is a faith-driven Hindu community organization inspired by the life and teachings of Lord Ram, who symbolizes righteousness, discipline, sacrifice, and ideal leadership.",
+                about_p2: "The term “Ram Ram” is a sacred greeting expressing respect and devotion, while “Sena” represents a united group working for a noble cause. Together, Ram Ram Sena stands for unity, service, and cultural preservation.",
+                about_f1_title: "Spiritual Growth",
+                about_f1_desc: "Regular programs to strengthen faith.",
+                about_f2_title: "Social Service",
+                about_f2_desc: "Helping the needy through Seva.",
+                // Mission
+                mission_title: "Mission & Vision",
+                mission_desc: "To build a united, disciplined, and spiritually aware Hindu society dedicated to service and righteousness inspired by the ideals of Lord Ram.",
+                val_dharma: "Dharma",
+                val_dharma_desc: "Upholding righteousness and moral duty in daily life.",
+                val_seva: "Seva",
+                val_seva_desc: "Selfless service to humanity without expectation.",
+                val_unity: "Unity",
+                val_unity_desc: "Strength in togetherness and community brotherhood.",
+                val_culture: "Culture",
+                val_culture_desc: "Preserving heritage and spiritual traditions.",
+                // Activities
+                act_subtitle: "What We Do",
+                act_title: "Our Core Activities",
+                act_1_title: "Religious Programs",
+                act_1_desc: "Ramayan Path, Sundar Kand recitations, Bhajan-Kirtan, and regular Temple seva.",
+                act_2_title: "Festival Celebrations",
+                act_2_desc: "Grand celebrations of Ram Navami, Diwali, Dussehra, and Hanuman Jayanti.",
+                act_3_title: "Food Seva (Bhandara)",
+                act_3_desc: "Organizing free food distribution for devotees and needy people regularly.",
+                act_4_title: "Blood Donation",
+                act_4_desc: "Health awareness camps and emergency blood support initiatives.",
+                act_5_title: "Gau Seva",
+                act_5_desc: "Cow protection, supporting local Gaushalas, and fodder distribution.",
+                act_6_title: "Social Help",
+                act_6_desc: "Blanket drives in winter, poor family support, and disaster relief work.",
+                // Knowledge
+                know_subtitle: "Wisdom & Dharma",
+                know_title: "Knowledge Hub",
+                placeholder_search: "Search topics...",
+                art_tag_scripture: "Scripture",
+                art_1_title: "Ideals of Lord Ram in Modern Life",
+                art_1_desc: "Understanding how the Maryada Purushottam's life teaches us discipline, sacrifice, and ideal leadership in today's chaotic world.",
+                btn_read: "Read Article &rarr;",
+                art_tag_fest: "Festival",
+                art_2_title: "Why Diwali is Celebrated",
+                art_2_desc: "Beyond crackers and sweets, explore the spiritual victory of light over darkness and the return of Lord Ram to Ayodhya.",
+                art_tag_phil: "Philosophy",
+                art_3_title: "Value of Seva in Hindu Dharma",
+                art_3_desc: "Seva is not just charity; it is a spiritual practice to cleanse the ego and see the divine in everyone.",
+                // Events
+                event_subtitle: "Join The Community",
+                event_title: "Upcoming Events",
+                month_apr: "April",
+                month_may: "May",
+                evt_1_title: "Ram Navami Grand Celebration",
+                evt_1_loc: "Community Temple Hall, Ayodhya Road",
+                btn_register: "Register",
+                evt_2_title: "Sundar Kand Path",
+                evt_2_loc: "6:00 PM - Community Hall",
+                evt_3_title: "Blood Donation Camp",
+                evt_3_loc: "City Hospital Grounds",
+                // Gallery
+                gallery_subtitle: "Memories & Divinity",
+                gallery_title: "Photo Gallery",
+                // Contact
+                contact_title: "Contact Us",
+                contact_desc: "Have questions or want to contribute? Reach out to us or visit our office.",
+                contact_office: "Our Office",
+                contact_addr: "Ram Ram Sena Community Office,<br>Ayodhya Road, India",
+                contact_phone: "Phone",
+                contact_email: "Email",
+                follow_us: "Follow Us",
+                form_title: "Become a Volunteer",
+                form_sub: "Join the Sena and serve the society.",
+                form_name: "Full Name",
+                form_mobile: "Mobile Number",
+                form_city: "City",
+                form_email: "Email",
+                form_interest: "Area of Interest",
+                form_msg: "Message (Optional)",
+                form_btn: "Send Request",
+                // Footer
+                footer_title: "Ram Ram Sena",
+                footer_desc: "Dedicated to Dharma, Service & Cultural Unity."
+            },
+            hi: {
+                // Navbar
+                logo_text: "राम राम सेना",
+                logo_sub: "सेवा और धर्म",
+                nav_home: "मुख्य पृष्ठ",
+                nav_about: "परिचय",
+                nav_activities: "गतिविधियाँ",
+                nav_knowledge: "ज्ञान",
+                nav_events: "कार्यक्रम",
+                nav_gallery: "गैलरी",
+                nav_contact: "संपर्क",
+                nav_join: "जुड़ें",
+                // Hero
+                hero_badge: "जय श्री राम",
+                hero_title: `<span class="text-saffron-500">धर्म</span>, संस्कृति और मानवता की सेवा`,
+                hero_desc: "राम राम सेना एक हिंदू समुदाय है जो भगवान राम के आदर्शों से प्रेरित होकर धर्म, सांस्कृतिक विरासत, समाज सेवा और एकता को बढ़ावा देने के लिए समर्पित है।",
+                hero_btn_join: "समुदाय में शामिल हों",
+                hero_btn_explore: "ज्ञान खोजें",
+                // About
+                about_stat: "सक्रिय स्वयंसेवक",
+                about_subtitle: "हमारा परिचय",
+                about_title: "राम राम सेना के बारे में",
+                about_p1: "राम राम सेना एक धर्म-प्रेरित संगठन है जो भगवान राम के जीवन और शिक्षाओं से प्रेरित है, जो धार्मिकता, अनुशासन, त्याग और आदर्श नेतृत्व के प्रतीक हैं।",
+                about_p2: "शब्द 'राम राम' सम्मान और भक्ति व्यक्त करने वाला एक पवित्र अभिवादन है, जबकि 'सेना' एक नेक काम के लिए काम कर रहे एकजुट समूह का प्रतिनिधित्व करती है।",
+                about_f1_title: "आध्यात्मिक विकास",
+                about_f1_desc: "आस्था को मजबूत करने के लिए नियमित कार्यक्रम।",
+                about_f2_title: "समाज सेवा",
+                about_f2_desc: "सेवा के माध्यम से जरूरतमंदों की मदद करना।",
+                // Mission
+                mission_title: "मिशन और विजन",
+                mission_desc: "भगवान राम के आदर्शों से प्रेरित होकर सेवा और धार्मिकता के लिए समर्पित एक एकजुट, अनुशासित और आध्यात्मिक रूप से जागरूक समाज का निर्माण करना।",
+                val_dharma: "धर्म",
+                val_dharma_desc: "दैनिक जीवन में धार्मिकता और नैतिक कर्तव्य का पालन करना।",
+                val_seva: "सेवा",
+                val_seva_desc: "बिना किसी अपेक्षा के मानवता की निस्वार्थ सेवा।",
+                val_unity: "एकता",
+                val_unity_desc: "सदाचार और सामुदायिक भाईचारे में शक्ति।",
+                val_culture: "संस्कृति",
+                val_culture_desc: "विरासत और आध्यात्मिक परंपराओं का संरक्षण।",
+                // Activities
+                act_subtitle: "हम क्या करते हैं",
+                act_title: "हमारी मुख्य गतिविधियाँ",
+                act_1_title: "धार्मिक कार्यक्रम",
+                act_1_desc: "रामायण पाठ, सुंदर कांड पाठ, भजन-कीर्तन और नियमित मंदिर सेवा।",
+                act_2_title: "त्योहार उत्सव",
+                act_2_desc: "राम नवमी, दिवाली, दशहरा और हनुमान जयंती के भव्य उत्सव।",
+                act_3_title: "अन्नदान (भंडारा)",
+                act_3_desc: "भक्तों और जरूरतमंद लोगों के लिए नियमित रूप से मुफ्त भोजन वितरण का आयोजन।",
+                act_4_title: "रक्तदान",
+                act_4_desc: "स्वास्थ्य जागरूकता शिविर और आपातकालीन रक्त सहायता पहल।",
+                act_5_title: "गौ सेवा",
+                act_5_desc: "गौ रक्षा, स्थानीय गौशालाओं का समर्थन और चारा वितरण।",
+                act_6_title: "सामाजिक सहायता",
+                act_6_desc: "सर्दियों में कंबल वितरण, गरीब परिवारों की सहायता और आपदा राहत कार्य।",
+                // Knowledge
+                know_subtitle: "ज्ञान और धर्म",
+                know_title: "ज्ञान केंद्र",
+                placeholder_search: "विषय खोजें...",
+                art_tag_scripture: "शास्त्र",
+                art_1_title: "आधुनिक जीवन में भगवान राम के आदर्श",
+                art_1_desc: "यह समझना कि मर्यादा पुरुषोत्तम का जीवन आज की अराजक दुनिया में हमें अनुशासन, त्याग और आदर्श नेतृत्व कैसे सिखाता है।",
+                btn_read: "लेख पढ़ें &rarr;",
+                art_tag_fest: "त्योहार",
+                art_2_title: "दिवाली क्यों मनाई जाती है",
+                art_2_desc: "पटाखों और मिठाइयों से परे, अंधकार पर प्रकाश की आध्यात्मिक जीत और भगवान राम की अयोध्या वापसी का अन्वेषण करें।",
+                art_tag_phil: "दर्शन",
+                art_3_title: "हिंदू धर्म में सेवा का महत्व",
+                art_3_desc: "सेवा केवल दान नहीं है; यह अहंकार को शुद्ध करने और हर किसी में परमात्मा को देखने का एक आध्यात्मिक अभ्यास है।",
+                // Events
+                event_subtitle: "समुदाय में शामिल हों",
+                event_title: "आगामी कार्यक्रम",
+                month_apr: "अप्रैल",
+                month_may: "मई",
+                evt_1_title: "राम नवमी भव्य उत्सव",
+                evt_1_loc: "सामुदायिक मंदिर हॉल, अयोध्या रोड",
+                btn_register: "पंजीकरण करें",
+                evt_2_title: "सुंदर कांड पाठ",
+                evt_2_loc: "शाम 6:00 बजे - सामुदायिक हॉल",
+                evt_3_title: "रक्तदान शिविर",
+                evt_3_loc: "सिटी हॉस्पिटल ग्राउंड",
+                // Gallery
+                gallery_subtitle: "यादें और दिव्यता",
+                gallery_title: "फोटो गैलरी",
+                // Contact
+                contact_title: "संपर्क करें",
+                contact_desc: "क्या आपके पास कोई प्रश्न हैं या योगदान देना चाहते हैं? हमसे संपर्क करें या हमारे कार्यालय आएं।",
+                contact_office: "हमारा कार्यालय",
+                contact_addr: "राम राम सेना सामुदायिक कार्यालय,<br>अयोध्या रोड, भारत",
+                contact_phone: "फ़ोन",
+                contact_email: "ईमेल",
+                follow_us: "हमें फॉलो करें",
+                form_title: "स्वयंसेवक बनें",
+                form_sub: "सेना में शामिल हों और समाज की सेवा करें।",
+                form_name: "पूरा नाम",
+                form_mobile: "मोबाइल नंबर",
+                form_city: "शहर",
+                form_email: "ईमेल",
+                form_interest: "रुचि का क्षेत्र",
+                form_msg: "संदेश (वैकल्पिक)",
+                form_btn: "अनुरोध भेजें",
+                // Footer
+                footer_title: "राम राम सेना",
+                footer_desc: "धर्म, सेवा और सांस्कृतिक एकता को समर्पित।"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'hi' : 'en';
+            
+            // Update Lang Button Text
+            const langText = document.getElementById('lang-text');
+            if(langText) {
+                langText.innerText = currentLang === 'en' ? 'EN/हिंदी' : 'हिंदी/EN';
+            }
+
+            // Update all elements with data-key
+            const elements = document.querySelectorAll('[data-key]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    // Check if element is an input with placeholder
+                    if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.innerHTML = translations[currentLang][key];
+                    }
+                }
+            });
+
+            // Update Body Font for Hindi aesthetics
+            if (currentLang === 'hi') {
+                document.body.classList.add('font-hindi');
+            } else {
+                document.body.classList.remove('font-hindi');
+            }
+        }
+
         // --- Navbar Scroll Logic ---
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
@@ -719,7 +989,7 @@
         function handleEventSubmit(e) {
             e.preventDefault();
             closeModal();
-            showToast("Registration Successful! We will contact you shortly.");
+            showToast(currentLang === 'hi' ? "पंजीकरण सफल! जय श्री राम!" : "Registration Successful! Jai Shri Ram!");
             e.target.reset();
         }
 
@@ -748,7 +1018,7 @@
         // --- Join Form Logic ---
         function handleJoinSubmit(e) {
             e.preventDefault();
-            showToast("Thank you for joining Ram Ram Sena! Jai Shri Ram!");
+            showToast(currentLang === 'hi' ? "राम राम सेना में शामिल होने के लिए धन्यवाद! जय श्री राम!" : "Thank you for joining Ram Ram Sena! Jai Shri Ram!");
             e.target.reset();
         }
 
