@@ -233,36 +233,95 @@
             transform: translateY(0);
         }
 
-        /* Booklet Styles */
-        .book-wrapper {
-            perspective: 1500px;
+        /* 3D Booklet Styles */
+        .book-scene {
+            perspective: 2000px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .book {
+            position: relative;
+            width: 90%;
+            height: 90%;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Default aspect ratio is handled by container */
         }
-        .book-page {
+        .sheet {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%; /* Each sheet is half the book width (spine is center) */
+            height: 100%;
+            transform-origin: left center; /* Spine logic */
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); /* Realistic ease */
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .sheet.flipped {
+            transform: rotateY(-180deg);
+        }
+        .page-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
             background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
             background-color: #FFF8F0;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            border-radius: 0 10px 10px 0; /* Outer corners rounded */
         }
-        .page-shadow-right {
-            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent 10%);
+        .page-face.front {
+            z-index: 2;
+            border-left: 1px solid rgba(0,0,0,0.1);
         }
-        .page-shadow-left {
-            background: linear-gradient(to left, rgba(0,0,0,0.1), transparent 10%);
+        .page-face.back {
+            transform: rotateY(180deg);
+            z-index: 1;
+            border-radius: 10px 0 0 10px; /* Outer corners rounded when flipped */
+            border-right: 1px solid rgba(0,0,0,0.1);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent); /* Spine shadow */
         }
+        
+        /* Mobile Specific for Booklet */
+        @media (max-width: 768px) {
+            .book-scene {
+                perspective: 1500px;
+            }
+            .book {
+                width: 95%;
+                height: 80vh;
+            }
+            .sheet {
+                width: 100%; /* Full width on mobile */
+                right: auto;
+                left: 0;
+                transform-origin: left center;
+            }
+            /* When flipped on mobile, it goes off-screen if we don't adjust? 
+               Actually, we can treat mobile book as a single stack that flips completely.
+               Or stick to the spread logic but scale it down.
+               Let's scale/fit the spread logic for best "Book" feel.
+            */
+        }
+        
         /* Binding effect */
         .book-binding {
             position: absolute;
             left: 50%;
-            top: 2%;
-            bottom: 2%;
-            width: 4px;
-            background: linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.2));
+            top: 1%;
+            bottom: 1%;
+            width: 6px;
+            background: linear-gradient(to right, rgba(90, 15, 28, 0.8), rgba(90, 15, 28, 0.6) 40%, rgba(90, 15, 28, 0.6) 60%, rgba(90, 15, 28, 0.8));
             transform: translateX(-50%);
-            z-index: 20;
+            z-index: 50;
             border-radius: 2px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -574,7 +633,7 @@
                     <div class="w-16 h-16 lg:w-20 lg:h-20 border border-osr-gold/50 rounded-full flex items-center justify-center mb-6 relative z-10">
                         <i class="fa-solid fa-phone-volume text-2xl lg:text-3xl text-osr-gold animate-pulse"></i>
                     </div>
-                    <p class="font-heading text-xl lg:text-2xl text-white relative z-10">+91 7880335787</p>
+                    <p class="font-heading text-xl lg:text-2xl text-white relative z-10">+91 98765 43210</p>
                 </div>
                 
                 <!-- Form Side -->
@@ -739,7 +798,7 @@
                         </li>
                         <li class="flex gap-3 items-center">
                             <i class="fa-solid fa-phone text-osr-gold"></i>
-                            <span>+91 7880335787</span>
+                            <span>+91 98765 43210</span>
                         </li>
                         <li class="flex gap-3 items-center">
                             <i class="fa-solid fa-envelope text-osr-gold"></i>
@@ -810,24 +869,15 @@
         </div>
     </div>
 
-    <!-- Booklet Modal -->
+    <!-- 3D Booklet Modal -->
     <div id="booklet-modal" class="fixed inset-0 bg-black/90 z-[90] hidden flex items-center justify-center p-2 lg:p-4 backdrop-blur-md">
         <button onclick="closeBooklet()" class="absolute top-4 right-4 text-white text-3xl hover:text-osr-gold transition-colors z-[95]"><i class="fa-solid fa-xmark"></i></button>
         
-        <div class="book-wrapper w-full max-w-5xl aspect-[3/4] md:aspect-[2/1] relative transition-all">
-            <div class="book w-full h-full relative shadow-2xl rounded-lg overflow-hidden flex bg-osr-cream" id="menu-book">
+        <div class="book-scene w-full max-w-5xl aspect-[3/4] md:aspect-[2/1] relative transition-all">
+            <div class="book" id="menu-book">
                 <!-- Binding -->
                 <div class="book-binding hidden md:block"></div>
-                
-                <!-- Left Page (Current) -->
-                <div class="w-full md:w-1/2 h-full absolute md:relative top-0 left-0 book-page page-shadow-right p-6 md:p-12 overflow-y-auto" id="book-page-left">
-                    <!-- Content injected via JS -->
-                </div>
-
-                <!-- Right Page (Next) -->
-                <div class="w-full md:w-1/2 h-full absolute md:relative top-0 right-0 book-page page-shadow-left p-6 md:p-12 overflow-y-auto hidden md:block" id="book-page-right">
-                    <!-- Content injected via JS -->
-                </div>
+                <!-- Sheets will be injected here -->
             </div>
 
             <!-- Navigation Controls -->
@@ -982,8 +1032,8 @@
         let isPaused = false; // Track hover state
         
         // Booklet State
-        let currentBookPage = 0;
-        let bookPages = [];
+        let currentBookSheet = 0;
+        let bookSheets = [];
 
         // Swipe Handling
         let touchStartX = 0;
@@ -996,7 +1046,7 @@
             renderReviews();
             setupScrollReveal();
             initCarousel();
-            initBookPages(); // Prepare booklet content
+            initBookContent(); // Prepare booklet content
             
             // Show Offer Popup after 3 seconds
             setTimeout(() => {
@@ -1142,33 +1192,30 @@
             }
         }
 
-        // --- Booklet Logic ---
-        function initBookPages() {
-            // Group items by category for pages
+        // --- Booklet Logic (3D Page Flip) ---
+        function initBookContent() {
+            // Flatten pages logic
             const categories = ['veg', 'nonveg', 'chinese', 'biryani', 'dessert'];
-            bookPages = [];
+            let pages = [];
             
-            // Cover Page (Index 0)
-            bookPages.push({
-                type: 'cover',
-                content: `
-                    <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg">
-                        <div class="w-16 h-16 lg:w-20 lg:h-20 border-2 border-osr-gold rounded-full flex items-center justify-center mb-6">
-                            <span class="font-heading font-bold text-osr-gold text-2xl">OSR</span>
-                        </div>
-                        <h2 class="font-heading text-3xl lg:text-4xl font-bold text-osr-maroon mb-2">Om Sai Ki Rasoi</h2>
-                        <div class="w-16 h-1 bg-osr-gold mb-6"></div>
-                        <p class="font-heading italic text-lg lg:text-xl text-gray-600">The Royal Menu</p>
-                        <p class="text-[10px] lg:text-xs text-gray-400 mt-auto uppercase tracking-widest">Est. 2015</p>
+            // Cover Page (Page 0)
+            pages.push(`
+                <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg">
+                    <div class="w-16 h-16 lg:w-20 lg:h-20 border-2 border-osr-gold rounded-full flex items-center justify-center mb-6">
+                        <span class="font-heading font-bold text-osr-gold text-2xl">OSR</span>
                     </div>
-                `
-            });
+                    <h2 class="font-heading text-3xl lg:text-4xl font-bold text-osr-maroon mb-2">Om Sai Ki Rasoi</h2>
+                    <div class="w-16 h-1 bg-osr-gold mb-6"></div>
+                    <p class="font-heading italic text-lg lg:text-xl text-gray-600">The Royal Menu</p>
+                    <p class="text-[10px] lg:text-xs text-gray-400 mt-auto uppercase tracking-widest">Est. 2015</p>
+                </div>
+            `);
 
             // Category Pages
             categories.forEach(cat => {
                 const items = menuItems.filter(item => {
                     if (cat === 'veg') return item.category === 'veg' && item.type === 'veg';
-                    if (cat === 'nonveg') return item.type === 'nonveg' && item.category !== 'chinese' && item.category !== 'biryani'; // Simplification for demo
+                    if (cat === 'nonveg') return item.type === 'nonveg' && item.category !== 'chinese' && item.category !== 'biryani';
                     return item.category === cat;
                 });
 
@@ -1206,32 +1253,40 @@
                     });
 
                     pageContent += `</div>`;
-                    bookPages.push({ type: 'content', content: pageContent });
+                    pages.push(pageContent);
                 }
             });
             
-             // Back Cover (Last Index)
-            bookPages.push({
-                type: 'cover',
-                content: `
-                    <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg bg-osr-maroon text-white">
-                        <i class="fa-solid fa-wine-glass text-4xl text-osr-gold mb-4"></i>
-                        <h3 class="font-heading text-2xl font-bold mb-4">Thank You</h3>
-                        <p class="text-sm opacity-80 mb-8">We look forward to serving you.</p>
-                        <div class="text-xs space-y-2 opacity-60">
-                            <p>For Reservations:</p>
-                            <p class="font-bold text-osr-gold">+91 7880335787</p>
-                            <p>www.omsaikirasoi.com</p>
-                        </div>
+             // Back Cover
+            pages.push(`
+                <div class="flex flex-col items-center justify-center h-full text-center border-4 border-double border-osr-maroon p-6 rounded-lg bg-osr-maroon text-white">
+                    <i class="fa-solid fa-wine-glass text-4xl text-osr-gold mb-4"></i>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Thank You</h3>
+                    <p class="text-sm opacity-80 mb-8">We look forward to serving you.</p>
+                    <div class="text-xs space-y-2 opacity-60">
+                        <p>For Reservations:</p>
+                        <p class="font-bold text-osr-gold">+91 98765 43210</p>
+                        <p>www.omsaikirasoi.com</p>
                     </div>
-                `
-            });
+                </div>
+            `);
+
+            // Convert Pages to Sheets (Pairs of Front/Back)
+            bookSheets = [];
+            // Assuming even number of pages ideally, but handle odd
+            // Sheet 0: Front=Page 0 (Cover), Back=Page 1
+            // Sheet 1: Front=Page 2, Back=Page 3
+            for (let i = 0; i < pages.length; i += 2) {
+                bookSheets.push({
+                    front: pages[i],
+                    back: pages[i+1] || `<div class="h-full flex items-center justify-center text-gray-300 italic">End of Menu</div>`
+                });
+            }
         }
 
         function openBooklet() {
             document.getElementById('booklet-modal').classList.remove('hidden');
-            currentBookPage = 0;
-            renderBooklet();
+            renderBooklet3D();
             document.body.style.overflow = 'hidden';
         }
 
@@ -1240,59 +1295,110 @@
             document.body.style.overflow = '';
         }
 
-        function renderBooklet() {
-            const leftContainer = document.getElementById('book-page-left');
-            const rightContainer = document.getElementById('book-page-right');
-            const btnPrev = document.getElementById('btn-prev-page');
-            const btnNext = document.getElementById('btn-next-page');
-
-            // Left Page logic
-            leftContainer.innerHTML = bookPages[currentBookPage].content;
-
-            // Right Page logic (Show next page if available, else empty or specific ending)
-            // On mobile, right page is hidden via CSS, so this logic is fine
-            if (currentBookPage + 1 < bookPages.length) {
-                rightContainer.innerHTML = bookPages[currentBookPage + 1].content;
-            } else {
-                rightContainer.innerHTML = ''; // Empty end paper
-            }
-
-            // Button states
-            btnPrev.disabled = currentBookPage === 0;
-            btnNext.disabled = currentBookPage >= bookPages.length - 1; // Simplify to allow single page turns if needed, but double view is standard for desktop
+        function renderBooklet3D() {
+            const bookContainer = document.getElementById('menu-book');
+            // Binding is separate, keep it
+            const bindingHTML = `<div class="book-binding hidden md:block"></div>`;
             
-            // Adjust for mobile (single view logic could be applied here if we hid the right pane via CSS)
+            let sheetsHTML = '';
+            // Z-Index logic: 
+            // Unflipped sheets: Top sheet is highest index (e.g. 10, 9, 8...)
+            // Flipped sheets: Top flipped sheet is highest index (e.g. 1, 2, 3...)
+            // Actually, for stack:
+            // Right stack (not flipped): i=0 is top. z-index = total - i.
+            // Left stack (flipped): i=0 is bottom. z-index = i.
+            
+            bookSheets.forEach((sheet, index) => {
+                // Determine initial z-index based on state (all closed initially)
+                // Right stack order
+                const zIndex = bookSheets.length - index;
+                
+                sheetsHTML += `
+                    <div class="sheet" id="sheet-${index}" style="z-index: ${zIndex};" onclick="toggleFlip(${index})">
+                        <div class="page-face front">${sheet.front}</div>
+                        <div class="page-face back">${sheet.back}</div>
+                    </div>
+                `;
+            });
+
+            bookContainer.innerHTML = bindingHTML + sheetsHTML;
+            
+            // Set initial state
+            currentBookSheet = 0; 
+            updateButtons();
+        }
+
+        function toggleFlip(index) {
+            // Determine direction based on current state of this sheet
+            const sheet = document.getElementById(`sheet-${index}`);
+            if (sheet.classList.contains('flipped')) {
+                // It is currently on the left, flip back to right (Prev)
+                // We should flip this sheet back.
+                // Logic: if we click a left page, we want to go back.
+                // But clicking a specific sheet might be tricky if they overlap.
+                // Just use the buttons for navigation for simplicity and robustness.
+                // However, clicking the left page usually means "Previous".
+                // If sheet-index is the top-most flipped sheet, flip it back.
+                // Top-most flipped sheet is the one with highest index among flipped ones.
+                // If index == currentBookSheet - 1 (since current is next to flip)
+            } else {
+                // It is on right, flip to left (Next)
+            }
         }
 
         function nextPage() {
-            // Move forward by 2 pages for booklet feel on desktop
-            if (window.innerWidth >= 768) {
-                 if (currentBookPage + 2 < bookPages.length) {
-                    currentBookPage += 2;
-                } else if (currentBookPage + 1 < bookPages.length) {
-                     currentBookPage += 1;
-                }
-            } else {
-                if (currentBookPage + 1 < bookPages.length) {
-                    currentBookPage += 1;
-                }
+            if (currentBookSheet < bookSheets.length) {
+                const sheet = document.getElementById(`sheet-${currentBookSheet}`);
+                sheet.classList.add('flipped');
+                // Update z-index for flipped state: higher index = on top of left stack
+                sheet.style.zIndex = currentBookSheet; 
+                currentBookSheet++;
+                updateButtons();
             }
-            renderBooklet();
         }
 
         function prevPage() {
-             if (window.innerWidth >= 768) {
-                if (currentBookPage - 2 >= 0) {
-                    currentBookPage -= 2;
-                } else {
-                    currentBookPage = 0;
-                }
-            } else {
-                 if (currentBookPage > 0) {
-                    currentBookPage -= 1;
-                }
+            if (currentBookSheet > 0) {
+                currentBookSheet--;
+                const sheet = document.getElementById(`sheet-${currentBookSheet}`);
+                sheet.classList.remove('flipped');
+                // Reset z-index for right stack: higher index = on top
+                // Wait, slight delay to prevent z-index jumping before animation?
+                // Actually CSS transition handles the flip. Z-index change is instant.
+                // For flipping back (Left to Right), the sheet being flipped back (currentBookSheet)
+                // should be on TOP of the right stack immediately so it is visible during flip.
+                // Right stack top is index 0? No, index 0 is bottom of right stack?
+                // Let's re-verify z-index logic.
+                // Initial: S0(z3), S1(z2), S2(z1). All Right.
+                // Flip S0: S0(z0) Left. S1(z2), S2(z1) Right. 
+                // S1 is visible on right. S0 is visible on left (if z0 is fine? No, S0 should be on bottom of left stack if S1 flips later).
+                // Flip S1: S1(z1) Left. S2(z1) Right.
+                // Left stack: S0(z0), S1(z1). S1 is on top of S0. Correct.
+                
+                // Flip Back S1: S1 goes Right. S1 needs to be on TOP of S2(z1).
+                // S1 New Z should be (Total - 1) = 2.
+                // So updating Z-index to (Total - Index) works for right stack.
+                setTimeout(() => {
+                     sheet.style.zIndex = bookSheets.length - currentBookSheet;
+                }, 600); // Halfway through transition? Or immediately?
+                // If immediately: S1 becomes z2. S2 is z1. S1 covers S2. Correct.
+                // Does it cover S0(z0)? Yes.
+                // So immediate update is fine.
+                sheet.style.zIndex = bookSheets.length - currentBookSheet;
+                
+                updateButtons();
             }
-            renderBooklet();
+        }
+        
+        function updateButtons() {
+            const btnPrev = document.getElementById('btn-prev-page');
+            const btnNext = document.getElementById('btn-next-page');
+            
+            btnPrev.disabled = currentBookSheet === 0;
+            // On mobile, we might want to allow flipping the last sheet to close the book
+            // On desktop 2-page spread, flipping last sheet reveals back cover.
+            // If currentBookSheet == total, we are at end.
+            btnNext.disabled = currentBookSheet === bookSheets.length;
         }
         
         function addVariantToCart(id, variantName, price) {
