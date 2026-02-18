@@ -1,0 +1,11 @@
+# Ram Ram Sena
+/ramramsena   /pages/ramramsena.html#home   301
+
+# Donation
+/donate       /pages/donation.html          301
+
+# Contact
+/contact      /pages/contact.html           301
+
+# Default fallback
+/*            /index.html                   200
