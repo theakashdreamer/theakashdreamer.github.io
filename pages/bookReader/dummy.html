@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic Manager Pro</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Theme & Glassmorphism */
+        :root {
+            --primary: #FF9933;
+            --primary-hover: #e68a2e;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background-attachment: fixed;
+            color: #374151;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Reading Highlight Styles */
+        .reading-section {
+            position: relative;
+            padding: 8px 12px;
+            margin: 4px -12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .reading-section:hover {
+            background: rgba(255, 153, 51, 0.05);
+        }
+        .reading-section.is-active {
+            background: rgba(255, 153, 51, 0.1);
+            border-left-color: var(--primary);
+        }
+        .reading-section.is-active::after {
+            content: 'RESUME POINT';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+        }
+
+        /* Quill Editor Customization */
+        .ql-toolbar.ql-snow {
+            border: none;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+            background: rgba(255,255,255,0.5);
+        }
+        .ql-container.ql-snow {
+            border: none;
+            border-radius: 0 0 12px 12px;
+            background: rgba(255,255,255,0.3);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        .ql-editor {
+            min-height: 150px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .prose img { border-radius: 8px; max-width: 100%; }
+        .prose ul { list-style-type: disc; padding-left: 1.5rem; }
+        .prose ol { list-style-type: decimal; padding-left: 1.5rem; }
+        .prose blockquote { border-left: 4px solid var(--primary); padding-left: 1rem; font-style: italic; color: #6b7280; }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full glass-nav z-40 h-16 flex items-center shadow-sm">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-200">
+                    <i class="ph ph-notebook text-2xl"></i>
+                </div>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-600">
+                    Topic Manager
+                </h1>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <button onclick="toggleModal('add-modal')" class="hidden md:flex bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-lg shadow-orange-200 items-center gap-2">
+                    <i class="ph ph-plus-circle text-lg"></i>
+                    <span>New Topic</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 lg:px-8 mt-24">
+        
+        <!-- Mobile FAB -->
+        <button onclick="toggleModal('add-modal')" class="md:hidden fixed bottom-6 right-6 z-30 w-14 h-14 bg-orange-500 text-white rounded-full shadow-xl flex items-center justify-center text-2xl">
+            <i class="ph ph-plus"></i>
+        </button>
+
+        <!-- Search Bar -->
+        <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="relative w-full md:w-96">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                <input type="text" id="search-input" placeholder="Search topics..." 
+                    class="w-full bg-white/50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-orange-500 focus:border-orange-500 block pl-10 p-3 outline-none transition">
+            </div>
+            <div class="text-sm text-gray-500 font-medium">
+                <span id="topic-count">0</span> Topics Found
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div id="topics-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center animate-fade-in">
+            <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6">
+                <i class="ph ph-files text-4xl text-orange-400"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">No topics yet</h3>
+            <p class="text-gray-500 max-w-sm mb-6">Create your first topic to start organizing your thoughts.</p>
+            <button onclick="toggleModal('add-modal')" class="text-orange-600 font-semibold hover:text-orange-700">+ Create New Topic</button>
+        </div>
+
+    </main>
+
+    <!-- ADD MODAL -->
+    <div id="add-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('add-modal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
+                <div class="px-6 py-4 border-b flex justify-between items-center bg-white/50">
+                    <h3 class="text-lg font-semibold">Create New Topic</h3>
+                    <button onclick="toggleModal('add-modal')" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="p-6 space-y-4 overflow-y-auto">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                        <input type="text" id="new-topic-title" class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm focus:border-orange-500 outline-none" placeholder="Enter topic title...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                        <div id="editor-container-add" class="bg-white"></div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+                    <button onclick="toggleModal('add-modal')" class="px-4 py-2 text-sm bg-white border rounded-xl">Cancel</button>
+                    <button onclick="saveNewTopic()" id="btn-save-new" class="px-6 py-2 text-sm text-white bg-orange-500 rounded-xl hover:bg-orange-600 flex items-center gap-2">
+                        <span>Save Topic</span>
+                        <div class="loader hidden" id="loader-save-new"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('edit-modal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
+                <div class="px-6 py-4 border-b flex justify-between items-center bg-white/50">
+                    <h3 class="text-lg font-semibold">Edit Topic</h3>
+                    <button onclick="toggleModal('edit-modal')" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="p-6 space-y-4 overflow-y-auto">
+                    <input type="hidden" id="edit-topic-id">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                        <input type="text" id="edit-topic-title" class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm focus:border-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                        <div id="editor-container-edit" class="bg-white"></div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+                    <button onclick="toggleModal('edit-modal')" class="px-4 py-2 text-sm bg-white border rounded-xl">Cancel</button>
+                    <button onclick="updateTopic()" id="btn-update" class="px-6 py-2 text-sm text-white bg-orange-500 rounded-xl flex items-center gap-2">
+                        <span>Update Topic</span>
+                        <div class="loader hidden" id="loader-update"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW MODAL -->
+    <div id="view-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('view-modal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
+                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start bg-white/50">
+                    <div>
+                        <h3 id="view-title" class="text-2xl font-bold text-gray-900 mb-1"></h3>
+                        <p id="view-date" class="text-xs text-gray-500 uppercase tracking-wide font-semibold"></p>
+                    </div>
+                    <button onclick="toggleModal('view-modal')" class="text-gray-400 hover:text-gray-600 p-1 bg-gray-100 rounded-full">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
+                <div id="view-scroll-container" class="p-8 overflow-y-auto bg-white/80 flex-1">
+                    <div id="view-content" class="prose prose-orange max-w-none text-gray-700"></div>
+                    <div class="mt-8 pt-8 border-t text-center text-xs text-gray-400 italic">
+                        Click on any paragraph to mark your reading progress.
+                    </div>
+                </div>
+                <div class="px-8 py-5 bg-gray-50/50 flex justify-end border-t">
+                    <button onclick="toggleModal('view-modal')" class="px-5 py-2 text-sm font-medium text-gray-600 bg-white border rounded-xl hover:bg-gray-50">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, 
+            updateDoc, serverTimestamp, query, orderBy, setDoc, getDoc 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Configuration
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+            authDomain: "registration-93e51.firebaseapp.com",
+            projectId: "registration-93e51",
+            storageBucket: "registration-93e51.firebasestorage.app",
+            messagingSenderId: "509440941274",
+            appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
+        };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'topic-manager-v1';
+
+        // Initialize Firebase services
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let user = null;
+        let quillAdd, quillEdit;
+        let allTopics = [];
+
+        // MANDATORY RULE 3: Auth Handshake (Silent)
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) { console.error("Silent Handshake Fail:", e); }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (u) loadTopics();
+        });
+
+        initAuth();
+
+        // Quill Rich Text Setup
+        const toolbarOptions = [['bold', 'italic', 'underline'], [{ 'list': 'ordered'}, { 'list': 'bullet' }], [{ 'header': [1, 2, false] }], ['link', 'clean']];
+        function initQuill() {
+            if(typeof Quill !== 'undefined') {
+                quillAdd = new Quill('#editor-container-add', { theme: 'snow', modules: { toolbar: toolbarOptions }, placeholder: 'Capture essence...' });
+                quillEdit = new Quill('#editor-container-edit', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+            } else { setTimeout(initQuill, 300); }
+        }
+        const script = document.createElement('script');
+        script.src = "https://cdn.quilljs.com/1.3.6/quill.min.js";
+        script.onload = initQuill;
+        document.head.appendChild(script);
+
+        // UI Logic
+        window.toggleModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+            document.body.style.overflow = modal.classList.contains('hidden') ? 'auto' : 'hidden';
+        };
+
+        // CRUD Operations - Guarded by Rule 3 (if !user return)
+        window.saveNewTopic = async () => {
+            if (!user) return showToast("Awaiting cloud connection...", "error");
+            
+            const title = document.getElementById('new-topic-title').value.trim();
+            const content = quillAdd.root.innerHTML;
+            if (!title || quillAdd.getText().trim().length === 0) return showToast("Title and content required", "error");
+            
+            toggleLoader('loader-save-new', 'btn-save-new', true);
+            try {
+                // Rule 1: Strict Paths
+                const topicsRef = collection(db, 'artifacts', appId, 'public', 'data', 'topics');
+                await addDoc(topicsRef, { 
+                    title, 
+                    content, 
+                    preview: quillAdd.getText().slice(0, 160) + '...', 
+                    createdAt: serverTimestamp() 
+                });
+                showToast("Topic published!");
+                document.getElementById('new-topic-title').value = '';
+                quillAdd.setContents([]);
+                window.toggleModal('add-modal');
+            } catch (e) { showToast("Save failed. Permissions issue.", "error"); }
+            finally { toggleLoader('loader-save-new', 'btn-save-new', false); }
+        };
+
+        window.openEditModal = (id) => {
+            const topic = allTopics.find(t => t.id === id);
+            if(!topic) return;
+            document.getElementById('edit-topic-id').value = id;
+            document.getElementById('edit-topic-title').value = topic.title;
+            quillEdit.root.innerHTML = topic.content;
+            window.toggleModal('edit-modal');
+        };
+
+        window.updateTopic = async () => {
+            if (!user) return;
+            const id = document.getElementById('edit-topic-id').value;
+            const title = document.getElementById('edit-topic-title').value.trim();
+            if (!title) return showToast("Title required", "error");
+            
+            toggleLoader('loader-update', 'btn-update', true);
+            try {
+                // Rule 1: Strict Paths
+                const topicDoc = doc(db, 'artifacts', appId, 'public', 'data', 'topics', id);
+                await updateDoc(topicDoc, { 
+                    title, 
+                    content: quillEdit.root.innerHTML, 
+                    preview: quillEdit.getText().slice(0, 160) + '...' 
+                });
+                showToast("Updated!");
+                window.toggleModal('edit-modal');
+            } catch (e) { showToast("Update failed", "error"); }
+            finally { toggleLoader('loader-update', 'btn-update', false); }
+        };
+
+        window.confirmDelete = async (id) => {
+            if(!user) return;
+            if(confirm("Delete this topic?")) {
+                try { 
+                    const topicDoc = doc(db, 'artifacts', appId, 'public', 'data', 'topics', id);
+                    await deleteDoc(topicDoc); 
+                    showToast("Deleted"); 
+                } catch(e) { showToast("Delete failed", "error"); }
+            }
+        };
+
+        // PROGRESS LOGIC
+        const saveProgress = async (topicId, index) => {
+            if (!user) return;
+            // Associate progress with session identity
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'reading_progress', `${user.uid}_${topicId}`);
+            try { await setDoc(ref, { topicId, lastIndex: index, updatedAt: serverTimestamp() }); }
+            catch (e) { console.error("Progress save error", e); }
+        };
+
+        window.openViewModal = async (id) => {
+            const topic = allTopics.find(t => t.id === id);
+            if(!topic) return;
+            
+            document.getElementById('view-title').innerText = topic.title;
+            const container = document.getElementById('view-content');
+            
+            // Transform content into interactive blocks
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = topic.content;
+            const children = Array.from(tempDiv.children);
+            
+            container.innerHTML = '';
+            children.forEach((el, index) => {
+                const block = document.createElement('div');
+                block.className = 'reading-section';
+                block.dataset.index = index;
+                block.innerHTML = el.outerHTML;
+                block.onclick = () => {
+                    document.querySelectorAll('.reading-section').forEach(b => b.classList.remove('is-active'));
+                    block.classList.add('is-active');
+                    saveProgress(id, index);
+                };
+                container.appendChild(block);
+            });
+
+            const dateStr = topic.createdAt ? new Date(topic.createdAt.seconds * 1000).toLocaleDateString() : 'Just now';
+            document.getElementById('view-date').innerText = `Logged: ${dateStr}`;
+            window.toggleModal('view-modal');
+
+            // Restore Progress (Rule 3 Guard)
+            if (user) {
+                const ref = doc(db, 'artifacts', appId, 'public', 'data', 'reading_progress', `${user.uid}_${id}`);
+                const snap = await getDoc(ref);
+                if (snap.exists()) {
+                    const lastIdx = snap.data().lastIndex;
+                    const target = container.querySelector(`[data-index="${lastIdx}"]`);
+                    if (target) {
+                        target.classList.add('is-active');
+                        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                    }
+                }
+            }
+        };
+
+        function loadTopics() {
+            if (!user) return;
+            const topicsRef = collection(db, 'artifacts', appId, 'public', 'data', 'topics');
+            
+            // Rule 2: Simple query only, sort in JS
+            const q = query(topicsRef);
+            
+            onSnapshot(q, (snapshot) => {
+                // Rule 2: In-memory sorting
+                allTopics = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                
+                renderTopics(allTopics);
+                const countEl = document.getElementById('topic-count');
+                if (countEl) countEl.innerText = allTopics.length;
+            }, (error) => { console.error("Firestore Listen Fail:", error); });
+        }
+
+        function renderTopics(topics) {
+            const grid = document.getElementById('topics-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+            if (topics.length === 0) { grid.classList.add('hidden'); emptyState.classList.remove('hidden'); return; }
+            emptyState.classList.add('hidden'); grid.classList.remove('hidden');
+            
+            topics.forEach((topic) => {
+                const date = topic.createdAt ? new Date(topic.createdAt.seconds * 1000).toLocaleDateString() : '...';
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between card-hover h-64 animate-fade-in bg-white/70 cursor-pointer';
+                card.onclick = (e) => { if(!e.target.closest('button')) window.openViewModal(topic.id); };
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-lg font-bold text-gray-800 line-clamp-1">${topic.title}</h3>
+                            <span class="text-[10px] text-gray-400 font-bold">${date}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm line-clamp-4 leading-relaxed font-medium">${topic.preview || 'Open to view...'}</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                        <button class="text-sm font-bold text-orange-600 flex items-center gap-1">Read <i class="ph ph-arrow-right"></i></button>
+                        <div class="flex gap-1">
+                            <button onclick="openEditModal('${topic.id}')" class="p-2 text-slate-400 hover:text-orange-500 transition"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="confirmDelete('${topic.id}')" class="p-2 text-slate-400 hover:text-red-500 transition"><i class="ph ph-trash text-base"></i></button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `${type === 'error' ? 'bg-red-500' : 'bg-gray-800'} text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-fade-in`;
+            toast.innerHTML = `<i class="ph ${type === 'error' ? 'ph-warning-circle' : 'ph-check-circle'} text-xl"></i><span class="text-sm font-medium">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
+        function toggleLoader(loaderId, btnId, show) {
+            const btn = document.getElementById(btnId);
+            const loader = document.getElementById(loaderId);
+            if (!btn || !loader) return;
+            btn.disabled = show;
+            loader.classList.toggle('hidden', !show);
+        }
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allTopics.filter(t => t.title.toLowerCase().includes(term) || (t.preview && t.preview.toLowerCase().includes(term)));
+            renderTopics(filtered);
+            if (document.getElementById('topic-count')) document.getElementById('topic-count').innerText = filtered.length;
+        });
+
+    </script>
+</body>
+</html>
