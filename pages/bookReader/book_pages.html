@@ -51,7 +51,7 @@
             text-align: justify;
             orphans: 2;
             widows: 2;
-            transition: transform 0.1s; /* Only used for fast resizing now */
+            transition: transform 0.1s; 
         }
         .reader-content p { margin-bottom: 1.5em; }
         .reader-content h1, .reader-content h2 { font-family: 'Inter', sans-serif; font-weight: 600; margin-top: 1.5em; margin-bottom: 1em; break-after: avoid; }
@@ -69,83 +69,103 @@
         #toast.show { transform: translateY(0); }
 
         /* ------------------------------------- */
-        /* CORNER HOVER CURL EFFECTS             */
+        /* VISIBLE CORNER DOG-EARS               */
         /* ------------------------------------- */
         .page-corner-left {
-            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
-            border-bottom: 40px solid rgba(0,0,0,0.06);
-            border-right: 40px solid transparent;
+            position: absolute; top: 0; left: 0;
+            width: 50px; height: 50px;
+            /* Creates the illusion of a folded corner by matching the outer background */
+            background: linear-gradient(135deg, #f3f4f6 50%, #e8e2d2 50%, #fdfaf3 100%);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
         }
-        .dark .page-corner-left { border-bottom-color: rgba(255,255,255,0.06); }
+        .dark .page-corner-left {
+            background: linear-gradient(135deg, #0a0a0a 50%, #333 50%, #121212 100%);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+        }
         #leftClickZone:hover .page-corner-left {
-            opacity: 1; border-bottom-width: 80px; border-right-width: 80px;
-            border-bottom-color: rgba(0,0,0,0.12); filter: drop-shadow(3px -3px 4px rgba(0,0,0,0.15));
+            width: 85px; height: 85px;
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.15);
         }
-        .dark #leftClickZone:hover .page-corner-left { border-bottom-color: rgba(255,255,255,0.15); filter: drop-shadow(3px -3px 4px rgba(0,0,0,0.6)); }
+        .dark #leftClickZone:hover .page-corner-left { box-shadow: 4px 4px 8px rgba(0,0,0,0.8); }
 
         .page-corner-right {
-            position: absolute; bottom: 0; right: 0; width: 0; height: 0;
-            border-bottom: 40px solid rgba(0,0,0,0.06);
-            border-left: 40px solid transparent;
+            position: absolute; top: 0; right: 0;
+            width: 50px; height: 50px;
+            /* Creates the illusion of a folded corner by matching the outer background */
+            background: linear-gradient(225deg, #f3f4f6 50%, #e8e2d2 50%, #fdfaf3 100%);
+            box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
         }
-        .dark .page-corner-right { border-bottom-color: rgba(255,255,255,0.06); }
+        .dark .page-corner-right {
+            background: linear-gradient(225deg, #0a0a0a 50%, #333 50%, #121212 100%);
+            box-shadow: -2px 2px 5px rgba(0,0,0,0.6);
+        }
         #rightClickZone:hover .page-corner-right {
-            opacity: 1; border-bottom-width: 80px; border-left-width: 80px;
-            border-bottom-color: rgba(0,0,0,0.12); filter: drop-shadow(-3px -3px 4px rgba(0,0,0,0.15));
+            width: 85px; height: 85px;
+            box-shadow: -4px 4px 8px rgba(0,0,0,0.15);
         }
-        .dark #rightClickZone:hover .page-corner-right { border-bottom-color: rgba(255,255,255,0.15); filter: drop-shadow(-3px -3px 4px rgba(0,0,0,0.6)); }
+        .dark #rightClickZone:hover .page-corner-right { box-shadow: -4px 4px 8px rgba(0,0,0,0.8); }
 
         /* ------------------------------------- */
         /* REALISTIC DIAGONAL PAGE PEEL CSS      */
         /* ------------------------------------- */
-        /* Next Page Peel (Wipes Bottom-Right to Top-Left) */
         .page-peel-next {
-            -webkit-mask-image: linear-gradient(-45deg, transparent 49%, black 51%);
-            mask-image: linear-gradient(-45deg, transparent 49%, black 51%);
+            -webkit-mask-image: linear-gradient(225deg, transparent 50%, black 50.5%);
+            mask-image: linear-gradient(225deg, transparent 50%, black 50.5%);
             -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
-            animation: peelMaskNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            animation: peelTopRight 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
         .page-fold-next {
-            background: linear-gradient(-45deg, 
+            background: linear-gradient(225deg, 
                 transparent 45%, 
-                rgba(0,0,0,0.3) 50%, 
-                rgba(255,255,255,0.9) 50.5%, 
+                rgba(0,0,0,0.3) 49.5%, 
+                #e8e2d2 50%, 
+                #fdfaf3 50.5%, 
                 rgba(0,0,0,0.1) 51%, 
-                transparent 55%
+                transparent 53%
             );
             background-size: 300% 300%;
-            animation: peelMaskNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            animation: peelTopRight 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            pointer-events: none;
         }
-        @keyframes peelMaskNext {
-            0% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
-            100% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
+        .dark .page-fold-next {
+            background: linear-gradient(225deg, transparent 45%, rgba(0,0,0,0.6) 49.5%, #333 50%, #1a1a1a 50.5%, rgba(0,0,0,0.3) 51%, transparent 53%);
+        }
+        @keyframes peelTopRight {
+            0% { -webkit-mask-position: 100% 0%; mask-position: 100% 0%; background-position: 100% 0%; }
+            100% { -webkit-mask-position: 0% 100%; mask-position: 0% 100%; background-position: 0% 100%; }
         }
 
-        /* Prev Page Peel (Wipes Top-Left to Bottom-Right) */
         .page-peel-prev {
-            -webkit-mask-image: linear-gradient(-45deg, black 49%, transparent 51%);
-            mask-image: linear-gradient(-45deg, black 49%, transparent 51%);
+            -webkit-mask-image: linear-gradient(135deg, transparent 50%, black 50.5%);
+            mask-image: linear-gradient(135deg, transparent 50%, black 50.5%);
             -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
-            animation: peelMaskPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            animation: peelTopLeft 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
         .page-fold-prev {
-            background: linear-gradient(-45deg, 
+            background: linear-gradient(135deg, 
                 transparent 45%, 
-                rgba(0,0,0,0.1) 49%, 
-                rgba(255,255,255,0.9) 49.5%, 
-                rgba(0,0,0,0.3) 50%, 
-                transparent 55%
+                rgba(0,0,0,0.3) 49.5%, 
+                #e8e2d2 50%, 
+                #fdfaf3 50.5%, 
+                rgba(0,0,0,0.1) 51%, 
+                transparent 53%
             );
             background-size: 300% 300%;
-            animation: peelMaskPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            animation: peelTopLeft 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            pointer-events: none;
         }
-        @keyframes peelMaskPrev {
-            0% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
-            100% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
+        .dark .page-fold-prev {
+            background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.6) 49.5%, #333 50%, #1a1a1a 50.5%, rgba(0,0,0,0.3) 51%, transparent 53%);
+        }
+        @keyframes peelTopLeft {
+            0% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
+            100% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
         }
     </style>
 </head>
@@ -232,17 +252,17 @@
                     <h1 id="readerChapterTitle" class="text-2xl md:text-3xl font-serif font-bold text-gray-900 dark:text-white line-clamp-1"></h1>
                 </div>
                 
-                <!-- A4 Page Container Wrapper -->
+                <!-- A4 Page Container Wrapper (Static, animations happen inside via JS) -->
                 <div id="paperWrapper" class="w-full max-w-2xl bg-paper-light dark:bg-paper-dark shadow-xl dark:shadow-none dark:border dark:border-gray-800 rounded-lg overflow-hidden relative shrink-0" style="height: 65vh; min-height: 450px;">
                     
-                    <!-- Left Interaction Zone (Previous Page) -->
-                    <div id="leftClickZone" class="absolute top-0 left-0 w-1/3 h-full z-40 cursor-pointer group hidden" onclick="app.reader.prevPage()">
+                    <!-- Left Interaction Zone (Previous Page) - RESTRICTED TO TOP LEFT CORNER -->
+                    <div id="leftClickZone" class="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 z-40 cursor-pointer group hidden" onclick="app.reader.prevPage()">
                         <!-- Subtle corner curl fold -->
                         <div class="page-corner-left"></div>
                     </div>
 
-                    <!-- Right Interaction Zone (Next Page) -->
-                    <div id="rightClickZone" class="absolute top-0 right-0 w-1/3 h-full z-40 cursor-pointer group hidden" onclick="app.reader.nextPage()">
+                    <!-- Right Interaction Zone (Next Page) - RESTRICTED TO TOP RIGHT CORNER -->
+                    <div id="rightClickZone" class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 z-40 cursor-pointer group hidden" onclick="app.reader.nextPage()">
                         <!-- Subtle corner curl fold -->
                         <div class="page-corner-right"></div>
                     </div>
@@ -491,7 +511,6 @@
 
                     app.state.currentBook = book;
                     
-                    // Retrieve saved progress (Chapter + Page)
                     const savedProg = localStorage.getItem(`lumina_prog_${bookId}`);
                     if (savedProg) {
                         try {
@@ -512,40 +531,49 @@
                     this.renderChapter('none');
                 },
 
-                // This triggers the CSS mask peel animation by cloning the current view before changing it
+                // This handles cloning the DOM to perform the CSS peel animation
                 triggerPeelAnimation(direction, DOMUpdateCallback) {
                     const wrapper = document.getElementById('paperWrapper');
                     const pageContainer = document.getElementById('pageContainer');
+                    const leftZone = document.getElementById('leftClickZone');
+                    const rightZone = document.getElementById('rightClickZone');
                     
-                    // 1. Create Clone Wrapper that will animate away
-                    const cloneWrapper = document.createElement('div');
-                    cloneWrapper.className = `absolute inset-0 z-20 ${direction === 'next' ? 'page-peel-next' : 'page-peel-prev'} bg-paper-light dark:bg-paper-dark rounded-lg overflow-hidden`;
+                    // Temporarily disable click zones to prevent rapid fire
+                    leftZone.style.pointerEvents = 'none';
+                    rightZone.style.pointerEvents = 'none';
                     
-                    // 2. Clone the content and preserve its exact transform state
-                    const cloneContent = pageContainer.cloneNode(true);
-                    cloneContent.id = 'pageContainerClone'; 
-                    const realContent = pageContainer.querySelector('#readerContent');
-                    const clonedContentNode = cloneContent.querySelector('#readerContent');
-                    if (realContent && clonedContentNode) clonedContentNode.style.transform = realContent.style.transform;
+                    // 1. Clone Old Page (The page we are moving away from)
+                    const oldPageClone = pageContainer.cloneNode(true);
+                    oldPageClone.id = 'oldPageClone';
+                    oldPageClone.className = `absolute inset-0 z-20 bg-paper-light dark:bg-paper-dark ${direction === 'next' ? 'peel-old-next' : 'peel-old-prev'}`;
                     
-                    cloneWrapper.appendChild(cloneContent);
+                    // 2. Create the folded "Flap" (The back of the page)
+                    const flap = document.createElement('div');
+                    flap.className = `absolute inset-0 z-30 ${direction === 'next' ? 'peel-flap-next' : 'peel-flap-prev'}`;
                     
-                    // 3. Create the folded paper shadow effect
-                    const foldShadow = document.createElement('div');
-                    foldShadow.className = `absolute inset-0 z-30 pointer-events-none rounded-lg ${direction === 'next' ? 'page-fold-next' : 'page-fold-prev'}`;
+                    // Sync the scroll/translation state for multi-column layout
+                    const oldRealContent = pageContainer.querySelector('#readerContent');
+                    const oldClonedContent = oldPageClone.querySelector('#readerContent');
+                    
+                    if (oldRealContent && oldClonedContent) {
+                        oldClonedContent.style.transform = oldRealContent.style.transform;
+                    }
 
-                    wrapper.appendChild(cloneWrapper);
-                    wrapper.appendChild(foldShadow);
+                    // 3. Mount clones on top of the original container
+                    wrapper.appendChild(oldPageClone);
+                    wrapper.appendChild(flap);
 
-                    // 4. Update real DOM underneath to show the newly navigated page
+                    // 4. Update the actual un-animated DOM underneath to the new page
                     DOMUpdateCallback();
 
-                    // 5. Cleanup the clones after CSS animation finishes
+                    // 5. Clean up clones after CSS animation ends
                     setTimeout(() => {
-                        if (wrapper.contains(cloneWrapper)) wrapper.removeChild(cloneWrapper);
-                        if (wrapper.contains(foldShadow)) wrapper.removeChild(foldShadow);
+                        if (wrapper.contains(oldPageClone)) wrapper.removeChild(oldPageClone);
+                        if (wrapper.contains(flap)) wrapper.removeChild(flap);
                         app.state.isAnimating = false;
-                    }, 900);
+                        leftZone.style.pointerEvents = 'auto';
+                        rightZone.style.pointerEvents = 'auto';
+                    }, 800); 
                 },
 
                 renderChapter(direction = 'none') {
@@ -562,7 +590,7 @@
                         contentDiv.innerHTML = chapter.content;
                         contentDiv.style.fontSize = `${app.state.fontSize}px`;
 
-                        // Wait a tick for the browser to render columns and compute scrollWidth
+                        // Give the browser 10ms to paint and calculate the new scrollWidth
                         setTimeout(() => {
                             this.calcPages();
                             if (app.state.navigatingBackward) {
@@ -609,7 +637,7 @@
                         const isFirst = app.state.currentChapterIdx === 0 && app.state.currentPageIdx === 0;
                         const isLast = app.state.currentChapterIdx === app.state.currentBook.chapters.length - 1 && app.state.currentPageIdx === app.state.totalPages - 1;
                         
-                        // Toggle interactive hover zones
+                        // Show/Hide invisible corner clicking zones based on page position
                         const leftZone = document.getElementById('leftClickZone');
                         const rightZone = document.getElementById('rightClickZone');
                         if (leftZone) leftZone.style.display = isFirst ? 'none' : 'block';
@@ -647,7 +675,6 @@
                         }
                     };
 
-                    // Check if we can actually go next before starting animation flag
                     if ((app.state.currentPageIdx < app.state.totalPages - 1) || (app.state.currentChapterIdx < app.state.currentBook.chapters.length - 1)) {
                         app.state.isAnimating = true;
                         goNext();
