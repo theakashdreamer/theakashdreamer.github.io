@@ -1,408 +1,349 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic Manager</title>
-
+    <title>Lumina Reader</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        paper: { light: '#fdfaf3', dark: '#121212' },
+                        ink: { light: '#2c2c2c', dark: '#e0e0e0' }
+                    }
+                }
+            }
+        }
+    </script>
 
-    <!-- Quill CSS -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Quill Rich Text Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
+    
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-        /* Custom Theme & Glassmorphism */
-        :root {
-            --primary: #FF9933;
-            --primary-hover: #e68a2e;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        /* Base Styles & Transitions */
+        body { transition: background-color 0.3s, color 0.3s; }
+        .view-section { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .view-section.active { display: block; opacity: 1; }
+
+        /* A4 Reader Specific Styles */
+        .reader-content { 
+            font-family: 'Merriweather', serif; 
+            line-height: 1.8; 
+            font-size: 1.125rem;
+            columns: 1;
+            column-gap: 40px; 
+            height: 100%;
+            text-align: justify;
+            orphans: 2;
+            widows: 2;
+            transition: transform 0.1s; /* Only used for fast resizing now */
+        }
+        .reader-content p { margin-bottom: 1.5em; }
+        .reader-content h1, .reader-content h2 { font-family: 'Inter', sans-serif; font-weight: 600; margin-top: 1.5em; margin-bottom: 1em; break-after: avoid; }
+        .reader-content blockquote { border-left: 4px solid #cbd5e1; padding-left: 1rem; font-style: italic; color: #64748b; }
+        .reader-content img { max-width: 100%; max-height: 40vh; object-fit: contain; break-inside: avoid; margin: 1em auto; display: block; }
+        
+        .dark .reader-content blockquote { border-left-color: #475569; color: #94a3b8; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+        #toast { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(150%); }
+        #toast.show { transform: translateY(0); }
+
+        /* ------------------------------------- */
+        /* CORNER HOVER CURL EFFECTS             */
+        /* ------------------------------------- */
+        .page-corner-left {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-bottom: 40px solid rgba(0,0,0,0.06);
+            border-right: 40px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .dark .page-corner-left { border-bottom-color: rgba(255,255,255,0.06); }
+        #leftClickZone:hover .page-corner-left {
+            opacity: 1; border-bottom-width: 80px; border-right-width: 80px;
+            border-bottom-color: rgba(0,0,0,0.12); filter: drop-shadow(3px -3px 4px rgba(0,0,0,0.15));
+        }
+        .dark #leftClickZone:hover .page-corner-left { border-bottom-color: rgba(255,255,255,0.15); filter: drop-shadow(3px -3px 4px rgba(0,0,0,0.6)); }
+
+        .page-corner-right {
+            position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+            border-bottom: 40px solid rgba(0,0,0,0.06);
+            border-left: 40px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .dark .page-corner-right { border-bottom-color: rgba(255,255,255,0.06); }
+        #rightClickZone:hover .page-corner-right {
+            opacity: 1; border-bottom-width: 80px; border-left-width: 80px;
+            border-bottom-color: rgba(0,0,0,0.12); filter: drop-shadow(-3px -3px 4px rgba(0,0,0,0.15));
+        }
+        .dark #rightClickZone:hover .page-corner-right { border-bottom-color: rgba(255,255,255,0.15); filter: drop-shadow(-3px -3px 4px rgba(0,0,0,0.6)); }
+
+        /* ------------------------------------- */
+        /* REALISTIC DIAGONAL PAGE PEEL CSS      */
+        /* ------------------------------------- */
+        /* Next Page Peel (Wipes Bottom-Right to Top-Left) */
+        .page-peel-next {
+            -webkit-mask-image: linear-gradient(-45deg, transparent 49%, black 51%);
+            mask-image: linear-gradient(-45deg, transparent 49%, black 51%);
+            -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
+            animation: peelMaskNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+        }
+        .page-fold-next {
+            background: linear-gradient(-45deg, 
+                transparent 45%, 
+                rgba(0,0,0,0.3) 50%, 
+                rgba(255,255,255,0.9) 50.5%, 
+                rgba(0,0,0,0.1) 51%, 
+                transparent 55%
+            );
+            background-size: 300% 300%;
+            animation: peelMaskNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+        }
+        @keyframes peelMaskNext {
+            0% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
+            100% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            background-attachment: fixed;
-            color: #374151;
+        /* Prev Page Peel (Wipes Top-Left to Bottom-Right) */
+        .page-peel-prev {
+            -webkit-mask-image: linear-gradient(-45deg, black 49%, transparent 51%);
+            mask-image: linear-gradient(-45deg, black 49%, transparent 51%);
+            -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
+            animation: peelMaskPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
-
-        /* Glassmorphism Classes */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
+        .page-fold-prev {
+            background: linear-gradient(-45deg, 
+                transparent 45%, 
+                rgba(0,0,0,0.1) 49%, 
+                rgba(255,255,255,0.9) 49.5%, 
+                rgba(0,0,0,0.3) 50%, 
+                transparent 55%
+            );
+            background-size: 300% 300%;
+            animation: peelMaskPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
-
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Quill Editor Customization */
-        .ql-toolbar.ql-snow {
-            border: none;
-            border-bottom: 1px solid #e5e7eb;
-            border-radius: 12px 12px 0 0;
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .ql-container.ql-snow {
-            border: none;
-            border-radius: 0 0 12px 12px;
-            background: rgba(255, 255, 255, 0.3);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-        }
-
-        .ql-editor {
-            min-height: 150px;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Loader */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 3px solid var(--primary);
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Content Styling inside View Modal */
-        .prose img {
-            border-radius: 8px;
-            max-width: 100%;
-        }
-
-        .prose ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-        }
-
-        .prose ol {
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-        }
-
-        .prose blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 1rem;
-            font-style: italic;
-            color: #6b7280;
-        }
-
-        /* Search Highlight */
-        .highlight {
-            background: #fff3b0;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        /* Active Reading Paragraph */
-        .reading-active {
-            background: #ffe4c7;
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
-            transition: all 0.2s ease;
+        @keyframes peelMaskPrev {
+            0% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
+            100% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
         }
     </style>
 </head>
+<body class="bg-gray-50 text-gray-900 dark:bg-black dark:text-ink-dark antialiased min-h-screen flex flex-col">
 
-<body class="min-h-screen pb-12">
+    <!-- Global Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2">
+        <i class="ph ph-info text-xl"></i>
+        <span id="toastMessage">Notification</span>
+    </div>
 
-    <!-- Toast Notification -->
-    <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2"></div>
-
-    <!-- Navbar -->
-    <nav class="fixed top-0 w-full glass-nav z-40 h-16 flex items-center shadow-sm">
-        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-200">
-                    <i class="ph ph-notebook text-2xl"></i>
+    <!-- Top Navigation -->
+    <header id="mainNav" class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <button onclick="app.navigate('library')" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i class="ph ph-books text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                <h1 class="text-xl font-semibold tracking-tight">Lumina</h1>
+            </button>
+            
+            <div id="navSearch" class="hidden md:block flex-1 max-w-md mx-6">
+                <div class="relative">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search books..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
                 </div>
-                <h1
-                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-600">
-                    Topic Manager
-                </h1>
             </div>
 
-            <div class="flex items-center gap-4">
-                <!-- User Status Removed -->
-                <button onclick="toggleModal('add-modal')"
-                    class="hidden md:flex bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-lg shadow-orange-200 items-center gap-2">
-                    <i class="ph ph-plus-circle text-lg"></i>
-                    <span>New Topic</span>
+            <div class="flex items-center gap-3">
+                <button onclick="app.navigate('admin')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-300" title="Admin Panel">
+                    <i class="ph ph-gear text-xl"></i>
                 </button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 lg:px-8 mt-24">
+    <!-- Reading Progress Bar -->
+    <div id="progressContainer" class="fixed top-0 left-0 w-full h-1 bg-transparent z-50 hidden">
+        <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-300 ease-out"></div>
+    </div>
 
-        <!-- Mobile FAB -->
-        <button onclick="toggleModal('add-modal')"
-            class="md:hidden fixed bottom-6 right-6 z-30 w-14 h-14 bg-orange-500 text-white rounded-full shadow-xl flex items-center justify-center text-2xl">
-            <i class="ph ph-plus"></i>
-        </button>
-
-        <!-- Search & Filter Bar -->
-        <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div class="relative w-full md:w-96">
-                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                <input type="text" id="search-input" placeholder="Search topics..."
-                    class="w-full bg-white/50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-orange-500 focus:border-orange-500 block pl-10 p-3 outline-none transition">
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow relative">
+        
+        <!-- 1. LIBRARY VIEW -->
+        <section id="view-library" class="view-section active max-w-6xl mx-auto px-4 py-8">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Discover</h2>
+                    <p class="text-gray-500 dark:text-gray-400">Your digital bookshelf.</p>
+                </div>
             </div>
-            <div class="text-sm text-gray-500 font-medium">
-                <span id="topic-count">0</span> Topics Found
-            </div>
-        </div>
 
-        <!-- Topics Grid -->
-        <div id="topics-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            <!-- Skeletons will be injected here JS -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center animate-fade-in">
-            <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-                <i class="ph ph-files text-4xl text-orange-400"></i>
+            <div id="loadingLibrary" class="py-20 text-center text-gray-500">
+                <i class="ph ph-spinner-gap animate-spin text-4xl mb-2"></i>
+                <p>Loading your library...</p>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">No topics yet</h3>
-            <p class="text-gray-500 max-w-sm mb-6">Create your first topic to start organizing your thoughts and ideas.
-            </p>
-            <button onclick="toggleModal('add-modal')" class="text-orange-600 font-semibold hover:text-orange-700">
-                + Create New Topic
-            </button>
-        </div>
+
+            <div id="booksGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8 hidden">
+                <!-- Book Cards injected here -->
+            </div>
+            
+            <div id="emptyLibrary" class="hidden py-20 text-center text-gray-500">
+                <i class="ph ph-books text-6xl mb-4 opacity-50"></i>
+                <p class="text-lg">No books found. Go to the Admin panel to add one.</p>
+            </div>
+        </section>
+
+        <!-- 2. READER VIEW -->
+        <section id="view-reader" class="view-section bg-gray-100 dark:bg-[#0a0a0a] min-h-screen absolute top-0 left-0 w-full z-30 overflow-hidden">
+            
+            <!-- Reader Toolbar -->
+            <div class="fixed top-4 right-4 z-40 flex gap-2 bg-white/50 dark:bg-black/50 backdrop-blur-md p-2 rounded-full shadow-sm opacity-30 hover:opacity-100 transition-opacity">
+                <button onclick="app.navigate('library')" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Close Book"><i class="ph ph-x text-lg"></i></button>
+                <div class="w-px bg-gray-300 dark:bg-gray-700 mx-1 my-2"></div>
+                <button onclick="app.reader.adjustFont(-2)" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Decrease Font"><i class="ph ph-text-aa text-sm"></i></button>
+                <button onclick="app.reader.adjustFont(2)" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Increase Font"><i class="ph ph-text-aa text-lg"></i></button>
+                <button onclick="app.reader.toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Toggle Theme"><i class="ph ph-moon text-lg"></i></button>
+                <button onclick="app.reader.toggleFullscreen()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Fullscreen"><i class="ph ph-corners-out text-lg"></i></button>
+            </div>
+
+            <div class="max-w-4xl mx-auto px-4 mt-12 h-[calc(100vh-3rem)] flex flex-col items-center justify-center pb-8">
+                <!-- Header -->
+                <div class="text-center mb-6 w-full shrink-0">
+                    <p id="readerBookTitle" class="text-xs font-sans font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-1"></p>
+                    <h1 id="readerChapterTitle" class="text-2xl md:text-3xl font-serif font-bold text-gray-900 dark:text-white line-clamp-1"></h1>
+                </div>
+                
+                <!-- A4 Page Container Wrapper -->
+                <div id="paperWrapper" class="w-full max-w-2xl bg-paper-light dark:bg-paper-dark shadow-xl dark:shadow-none dark:border dark:border-gray-800 rounded-lg overflow-hidden relative shrink-0" style="height: 65vh; min-height: 450px;">
+                    
+                    <!-- Left Interaction Zone (Previous Page) -->
+                    <div id="leftClickZone" class="absolute top-0 left-0 w-1/3 h-full z-40 cursor-pointer group hidden" onclick="app.reader.prevPage()">
+                        <!-- Subtle corner curl fold -->
+                        <div class="page-corner-left"></div>
+                    </div>
+
+                    <!-- Right Interaction Zone (Next Page) -->
+                    <div id="rightClickZone" class="absolute top-0 right-0 w-1/3 h-full z-40 cursor-pointer group hidden" onclick="app.reader.nextPage()">
+                        <!-- Subtle corner curl fold -->
+                        <div class="page-corner-right"></div>
+                    </div>
+
+                    <!-- Visual Page Padding Area -->
+                    <div class="absolute inset-0 p-6 md:p-10 pointer-events-none z-10"></div>
+                    
+                    <!-- Content Viewport (where the text lives) -->
+                    <div id="pageContainer" class="w-full h-full p-6 md:p-10 overflow-hidden relative">
+                        <div id="readerContent" class="reader-content text-ink-light dark:text-ink-dark">
+                            <!-- Chapter HTML injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Chapter/Page Indicators (Clean UI, No buttons) -->
+                <div class="mt-8 flex flex-col items-center justify-center w-full max-w-2xl shrink-0 opacity-70">
+                    <span id="chapterIndicator" class="text-xs font-sans text-gray-500 uppercase tracking-widest block mb-1"></span>
+                    <span id="pageIndicator" class="text-sm font-sans font-medium text-gray-900 dark:text-gray-300"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ADMIN VIEW -->
+        <section id="view-admin" class="view-section max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2"><i class="ph ph-pencil-simple"></i> Publisher Dashboard</h2>
+                
+                <!-- Tab Selector -->
+                <div class="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-800">
+                    <button onclick="app.admin.setMode('new')" id="tabNewBook" class="pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition">Create New Book</button>
+                    <button onclick="app.admin.setMode('add_chapter')" id="tabAddChapter" class="pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition">Add Chapter to Existing</button>
+                </div>
+
+                <form id="adminForm" onsubmit="app.admin.submitForm(event)">
+                    
+                    <!-- Book Details Section -->
+                    <div id="bookDetailsSection" class="space-y-5 mb-8">
+                        <h3 class="text-lg font-semibold border-b border-gray-100 dark:border-gray-800 pb-2">Book Metadata</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Book Title *</label>
+                                <input type="text" id="adminBookTitle" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Author *</label>
+                                <input type="text" id="adminBookAuthor" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Cover Image URL</label>
+                            <input type="url" id="adminBookCover" placeholder="https://example.com/cover.jpg" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Synopsis</label>
+                            <textarea id="adminBookDesc" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Book Selection (For Add Chapter Mode) -->
+                    <div id="bookSelectionSection" class="mb-8 hidden">
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Select Book *</label>
+                        <select id="adminBookSelect" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">-- Choose a book --</option>
+                        </select>
+                    </div>
+
+                    <!-- Chapter Section -->
+                    <div class="space-y-5">
+                        <h3 class="text-lg font-semibold border-b border-gray-100 dark:border-gray-800 pb-2">Chapter Content</h3>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Chapter Title *</label>
+                            <input type="text" id="adminChapterTitle" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div class="bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
+                            <!-- Quill Toolbar via CDN automatically attaches here -->
+                            <div id="editor" style="height: 400px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 flex justify-end">
+                        <button type="submit" id="adminSubmitBtn" class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center gap-2">
+                            <i class="ph ph-paper-plane-tilt"></i> <span>Publish Content</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
 
     </main>
 
-
-    <!-- ADD MODAL -->
-    <div id="add-modal" class="fixed inset-0 z-50 hidden">
-        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('add-modal')"></div>
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div
-                class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
-                <div class="px-6 py-4 border-b flex justify-between items-center bg-white/50">
-                    <h3 class="text-lg font-semibold">Create New Topic</h3>
-                    <button onclick="toggleModal('add-modal')" class="text-gray-400 hover:text-gray-600"><i
-                            class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" id="new-topic-title"
-                            class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm focus:border-orange-500 outline-none"
-                            placeholder="Enter topic title...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
-                        <div id="editor-container-add" class="bg-white"></div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
-                    <button onclick="toggleModal('add-modal')"
-                        class="px-4 py-2 text-sm bg-white border rounded-xl">Cancel</button>
-                    <button onclick="saveNewTopic()" id="btn-save-new"
-                        class="px-6 py-2 text-sm text-white bg-orange-500 rounded-xl hover:bg-orange-600 flex items-center gap-2">
-                        <span>Save Topic</span>
-                        <div class="loader hidden" id="loader-save-new"></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT MODAL -->
-    <div id="edit-modal" class="fixed inset-0 z-50 hidden">
-        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('edit-modal')"></div>
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div
-                class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
-                <div class="px-6 py-4 border-b flex justify-between items-center bg-white/50">
-                    <h3 class="text-lg font-semibold">Edit Topic</h3>
-                    <button onclick="toggleModal('edit-modal')" class="text-gray-400 hover:text-gray-600"><i
-                            class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <input type="hidden" id="edit-topic-id">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" id="edit-topic-title"
-                            class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm focus:border-orange-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
-                        <div id="editor-container-edit" class="bg-white"></div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
-                    <button onclick="toggleModal('edit-modal')"
-                        class="px-4 py-2 text-sm bg-white border rounded-xl">Cancel</button>
-                    <button onclick="updateTopic()" id="btn-update"
-                        class="px-6 py-2 text-sm text-white bg-orange-500 rounded-xl flex items-center gap-2">
-                        <span>Update Topic</span>
-                        <div class="loader hidden" id="loader-update"></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- VIEW MODAL -->
-    <div id="view-modal" class="fixed inset-0 z-50 hidden">
-        <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" onclick="toggleModal('view-modal')"></div>
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
-                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start bg-white/50">
-                    <div>
-                        <h3 id="view-title" class="text-2xl font-bold text-gray-900 mb-1"></h3>
-                        <p id="view-date" class="text-xs text-gray-500 uppercase tracking-wide font-semibold"></p>
-                    </div>
-                    <button onclick="toggleModal('view-modal')"
-                        class="text-gray-400 hover:text-gray-600 p-1 bg-gray-100 rounded-full">
-                        <i class="ph ph-x text-lg"></i>
-                    </button>
-                </div>
-                <div id="view-scroll-container" class="p-8 overflow-y-auto bg-white/80 flex-1">
-                    <div id="view-content" class="prose prose-orange max-w-none text-gray-700"></div>
-                    <div class="mt-8 pt-8 border-t text-center text-xs text-gray-400 italic">
-                        Click on any paragraph to mark your reading progress.
-                    </div>
-                </div>
-                <div class="px-8 py-5 bg-gray-50/50 flex justify-end border-t">
-                    <button onclick="toggleModal('view-modal')"
-                        class="px-5 py-2 text-sm font-medium text-gray-600 bg-white border rounded-xl hover:bg-gray-50">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Firebase SDK -->
+    <!-- Scripts -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // REMOVED Firebase Auth imports completely
-        import {
-            getFirestore,
-            collection,
-            addDoc,
-            onSnapshot,
-            doc,
-            deleteDoc,
-            updateDoc,
-            serverTimestamp,
-            query,
-            orderBy,
-            getDocs,
-            getDoc,
-            setDoc
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Quill Setup
-        const toolbarOptions = [
-            ['bold', 'italic', 'underline', 'strike'],
-            ['blockquote', 'code-block'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'header': [1, 2, 3, false] }],
-            [{ 'color': [] }, { 'background': [] }],
-            ['link', 'clean']
-        ];
-
-        let quillAdd, quillEdit;
-
-        // Wait for Quill to load
-        function initQuill() {
-            if (typeof Quill !== 'undefined') {
-                quillAdd = new Quill('#editor-container-add', {
-                    theme: 'snow',
-                    modules: { toolbar: toolbarOptions },
-                    placeholder: 'Write something amazing...'
-                });
-
-                quillEdit = new Quill('#editor-container-edit', {
-                    theme: 'snow',
-                    modules: { toolbar: toolbarOptions }
-                });
-            } else {
-                setTimeout(initQuill, 500);
-            }
-        }
-
-        // Load Quill Script
-        const script = document.createElement('script');
-        script.src = "https://cdn.quilljs.com/1.3.6/quill.min.js";
-        script.onload = initQuill;
-        document.head.appendChild(script);
-
-        // Firebase Setup - User Provided Config
+        // ==========================================
+        // SYSTEM & FIREBASE INIT
+        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
             authDomain: "registration-93e51.firebaseapp.com",
@@ -411,391 +352,555 @@
             messagingSenderId: "509440941274",
             appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
         };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'lumina-local-dev';
+        
+        let appInstance, db;
+        let booksCollection;
+        
+        if (firebaseConfig) {
+            appInstance = initializeApp(firebaseConfig);
+            db = getFirestore(appInstance);
+            booksCollection = collection(db, 'artifacts', appId, 'public', 'data', 'books');
+        }
 
-        const app = initializeApp(firebaseConfig);
-        // REMOVED: const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = 'topic-manager-v1';
-
-        // Expose to window as requested
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.serverTimestamp = serverTimestamp;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.getDoc = getDoc;
-        window.setDoc = setDoc;
-
-        let allTopics = [];
-
-        // Init App (No Auth)
-        const initApp = async () => {
-            // Directly load topics without authentication
-            console.log("App initialized. Attempting to load public data...");
-            loadTopics();
-        };
-
-        initApp();
-
-        // --- Functions Exposed to Window ---
-
-        window.toggleModal = (modalId) => {
-            const modal = document.getElementById(modalId);
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            } else {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        };
-
-        window.saveNewTopic = async () => {
-            const title = document.getElementById('new-topic-title').value.trim();
-            const content = quillAdd.root.innerHTML;
-
-            if (!title) {
-                showToast("Please enter a title", "error");
-                return;
-            }
-            if (quillAdd.getText().trim().length === 0) {
-                showToast("Please enter some content", "error");
-                return;
-            }
-
-            const btn = document.getElementById('btn-save-new');
-            const loader = document.getElementById('loader-save-new');
-
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-
-            try {
-                // Saving to PUBLIC collection
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'topics'), {
-                    title: title,
-                    content: content,
-                    createdAt: serverTimestamp(),
-                    preview: quillAdd.getText().slice(0, 150)
+        // ==========================================
+        // APPLICATION LOGIC (The "app" object)
+        // ==========================================
+        window.app = {
+            state: {
+                view: 'library',
+                books: [],
+                currentBook: null,
+                currentChapterIdx: 0,
+                currentPageIdx: 0,
+                totalPages: 1,
+                navigatingBackward: false,
+                isAnimating: false,
+                fontSize: 18, // pt
+                adminMode: 'new',
+                quill: null
+            },
+            
+            // Core Navigation
+            navigate(viewId) {
+                document.querySelectorAll('.view-section').forEach(el => {
+                    if (el.id === `view-${viewId}`) {
+                        el.style.display = 'block';
+                        void el.offsetWidth; // Trigger reflow
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                        setTimeout(() => {
+                            if (!el.classList.contains('active')) el.style.display = 'none';
+                        }, 300);
+                    }
                 });
 
-                showToast("Topic created successfully!");
-                document.getElementById('new-topic-title').value = '';
-                quillAdd.setContents([]);
-                window.toggleModal('add-modal');
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                if (error.code === 'permission-denied') {
-                    showToast("Permission denied. Check Firestore Rules.", "error");
+                this.state.view = viewId;
+                
+                if (viewId === 'reader') {
+                    document.body.style.overflow = 'hidden';
+                    window.scrollTo(0, 0);
                 } else {
-                    showToast("Failed to save topic", "error");
-                }
-            } finally {
-                btn.disabled = false;
-                loader.classList.add('hidden');
-            }
-        };
-
-        window.openEditModal = (id, title, content) => {
-            document.getElementById('edit-topic-id').value = id;
-            document.getElementById('edit-topic-title').value = title;
-            // Decode hidden HTML content or fetch from local object
-            const topic = allTopics.find(t => t.id === id);
-            if (topic) {
-                quillEdit.root.innerHTML = topic.content;
-            }
-            window.toggleModal('edit-modal');
-        };
-
-        window.updateTopic = async () => {
-            const id = document.getElementById('edit-topic-id').value;
-            const title = document.getElementById('edit-topic-title').value.trim();
-            const content = quillEdit.root.innerHTML;
-
-            if (!title) return showToast("Title is required", "error");
-
-            const btn = document.getElementById('btn-update');
-            const loader = document.getElementById('loader-update');
-
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-
-            try {
-                // Updating PUBLIC document
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'topics', id), {
-                    title: title,
-                    content: content,
-                    preview: quillEdit.getText().slice(0, 150)
-                });
-                showToast("Topic updated!");
-                window.toggleModal('edit-modal');
-            } catch (error) {
-                console.error("Error updating: ", error);
-                showToast("Update failed", "error");
-            } finally {
-                btn.disabled = false;
-                loader.classList.add('hidden');
-            }
-        };
-
-        window.confirmDelete = async (id) => {
-            if (confirm("Are you sure you want to delete this topic?")) {
-                try {
-                    // Deleting PUBLIC document
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'topics', id));
-                    showToast("Topic deleted", "success");
-                } catch (err) {
-                    showToast("Failed to delete", "error");
-                }
-            }
-        };
-
-
-        window.openViewModal = (id, term = '') => {
-            const topic = allTopics.find(t => t.id === id);
-            if (topic) {
-
-                let content = topic.content;
-
-                if (term) {
-                    const regex = new RegExp(`(${term})`, "gi");
-                    content = content.replace(regex, `<span class="highlight">$1</span>`);
+                    document.body.style.overflow = 'auto';
+                    window.scrollTo(0, 0);
                 }
 
-                document.getElementById('view-title').innerText = topic.title;
-                document.getElementById('view-content').innerHTML = content;
+                document.getElementById('mainNav').style.display = viewId === 'reader' ? 'none' : 'block';
+                document.getElementById('progressContainer').style.display = viewId === 'reader' ? 'block' : 'none';
 
-                const date = topic.createdAt
-                    ? new Date(topic.createdAt.seconds * 1000).toLocaleDateString(undefined, {
-                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                    })
-                    : 'Just now';
+                if (viewId === 'library') this.library.render();
+                if (viewId === 'admin') this.admin.init();
+            },
 
-                document.getElementById('view-date').innerText = `Created on ${date}`;
+            showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                document.getElementById('toastMessage').textContent = message;
+                
+                if(type === 'error') toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
+                else if(type === 'success') toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
+                else toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
 
-                enableReadingHighlight();
-                window.toggleModal('view-modal');
-            }
-        };
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            },
 
-        // --- Core Logic ---
+            // ==========================================
+            // LIBRARY MODULE
+            // ==========================================
+            library: {
+                init() {
+                    document.getElementById('searchInput').addEventListener('input', (e) => {
+                        this.render(e.target.value.toLowerCase());
+                    });
+                },
 
-        function loadTopics() {
-            // Querying PUBLIC collection
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'topics'), orderBy('createdAt', 'desc'));
-
-            // Show Skeletons initially
-            renderSkeletons();
-
-            onSnapshot(q, (snapshot) => {
-                allTopics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTopics(allTopics);
-                document.getElementById('topic-count').innerText = allTopics.length;
-            }, (error) => {
-                console.error("Snapshot error:", error);
-                if (error.code === 'permission-denied') {
-                    document.getElementById('topics-grid').innerHTML =
-                        '<p class="text-red-500 text-center col-span-3">Permission Denied. Please set Firestore rules to allow public read/write.</p>';
-                } else {
-                    document.getElementById('topics-grid').innerHTML = '<p class="text-red-500">Error loading topics.</p>';
-                }
-            });
-        }
-
-        function renderTopics1(topics) {
-            const grid = document.getElementById('topics-grid');
-            const emptyState = document.getElementById('empty-state');
-
-            grid.innerHTML = '';
-
-            if (topics.length === 0) {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-                grid.classList.remove('hidden');
-
-                topics.forEach(topic => {
-                    const date = topic.createdAt ? new Date(topic.createdAt.seconds * 1000).toLocaleDateString() : '';
-
-                    const card = document.createElement('div');
-                    card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between card-hover h-64 animate-fade-in bg-white/70';
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <h3 class="text-lg font-bold text-gray-800 line-clamp-1" title="${topic.title}">${topic.title}</h3>
-                                <span class="text-xs text-gray-400 font-medium whitespace-nowrap ml-2">${date}</span>
-                            </div>
-                            <p class="text-gray-500 text-sm line-clamp-4 leading-relaxed">${topic.preview || 'No preview available...'}</p>
-                        </div>
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                            <button onclick="openViewModal('${topic.id}')" class="text-sm font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1">
-                                Read Full <i class="ph ph-arrow-right"></i>
-                            </button>
-                            <div class="flex gap-2">
-                                <button onclick="openEditModal('${topic.id}', '${topic.title.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="ph ph-pencil-simple text-lg"></i>
-                                </button>
-                                <button onclick="confirmDelete('${topic.id}')" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
-                                    <i class="ph ph-trash text-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-        }
-        function highlightText(text, term) {
-            if (!term) return text;
-            const regex = new RegExp(`(${term})`, "gi");
-            return text.replace(regex, `<span class="highlight">$1</span>`);
-        }
-
-        function renderTopics(topics, term = '') {
-            const grid = document.getElementById('topics-grid');
-            const emptyState = document.getElementById('empty-state');
-
-            grid.innerHTML = '';
-
-            if (topics.length === 0) {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-                grid.classList.remove('hidden');
-
-                topics.forEach(topic => {
-                    const date = topic.createdAt
-                        ? new Date(topic.createdAt.seconds * 1000).toLocaleDateString()
-                        : '';
-
-                    const titleHighlighted = highlightText(topic.title, term);
-                    const previewHighlighted = highlightText(
-                        topic.preview || 'No preview available...',
-                        term
+                render(filter = '') {
+                    const grid = document.getElementById('booksGrid');
+                    const empty = document.getElementById('emptyLibrary');
+                    grid.innerHTML = '';
+                    
+                    const filteredBooks = app.state.books.filter(b => 
+                        b.title.toLowerCase().includes(filter) || b.author.toLowerCase().includes(filter)
                     );
 
-                    const card = document.createElement('div');
-                    card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between card-hover h-64 animate-fade-in bg-white/70';
+                    if (filteredBooks.length === 0) {
+                        grid.classList.add('hidden');
+                        empty.classList.remove('hidden');
+                        return;
+                    }
 
-                    card.innerHTML = `
-                <div>
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="text-lg font-bold text-gray-800 line-clamp-1">
-                            ${titleHighlighted}
-                        </h3>
-                        <span class="text-xs text-gray-400 font-medium whitespace-nowrap ml-2">${date}</span>
-                    </div>
-                    <p class="text-gray-500 text-sm line-clamp-4 leading-relaxed">
-                        ${previewHighlighted}
-                    </p>
-                </div>
-                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <button onclick="openViewModal('${topic.id}', '${term}')" 
-                        class="text-sm font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1">
-                        Read Full <i class="ph ph-arrow-right"></i>
-                    </button>
-                    <div class="flex gap-2">
-                        <button onclick="openEditModal('${topic.id}', '${topic.title.replace(/'/g, "\\'")}')" 
-                            class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition">
-                            <i class="ph ph-pencil-simple text-lg"></i>
-                        </button>
-                        <button onclick="confirmDelete('${topic.id}')" 
-                            class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
-                            <i class="ph ph-trash text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+                    grid.classList.remove('hidden');
+                    empty.classList.add('hidden');
 
-                    grid.appendChild(card);
-                });
-            }
-        }
-
-        function renderSkeletons() {
-            const grid = document.getElementById('topics-grid');
-            grid.innerHTML = '';
-            for (let i = 0; i < 3; i++) {
-                grid.innerHTML += `
-                    <div class="glass-panel rounded-2xl p-6 h-64 bg-white/40">
-                        <div class="animate-pulse space-y-4">
-                            <div class="h-6 bg-gray-200 rounded w-3/4"></div>
-                            <div class="space-y-2">
-                                <div class="h-4 bg-gray-200 rounded"></div>
-                                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-                            </div>
-                            <div class="pt-10 flex justify-between">
-                                <div class="h-8 bg-gray-200 rounded w-20"></div>
-                                <div class="flex gap-2">
-                                    <div class="h-8 w-8 bg-gray-200 rounded"></div>
-                                    <div class="h-8 w-8 bg-gray-200 rounded"></div>
+                    filteredBooks.forEach(book => {
+                        const cover = book.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(book.title)}&background=random&color=fff&size=400&font-size=0.3`;
+                        const card = document.createElement('div');
+                        card.className = "group cursor-pointer bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-800 flex flex-col h-full";
+                        card.onclick = () => app.reader.open(book.id);
+                        
+                        card.innerHTML = `
+                            <div class="relative pt-[140%] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                <img src="${cover}" alt="${book.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <span class="text-white text-sm font-medium flex items-center gap-1"><i class="ph ph-book-open"></i> Read</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `;
+                            <div class="p-4 flex flex-col flex-grow">
+                                <h3 class="font-bold text-lg leading-tight mb-1 text-gray-900 dark:text-white line-clamp-2">${book.title}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">${book.author}</p>
+                                <div class="mt-auto flex items-center justify-between text-xs text-gray-400">
+                                    <span>${book.chapters ? book.chapters.length : 0} Chapters</span>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
+            },
+
+            // ==========================================
+            // PAGINATED READER MODULE (With Realistic Peel)
+            // ==========================================
+            reader: {
+                open(bookId) {
+                    const book = app.state.books.find(b => b.id === bookId);
+                    if (!book || !book.chapters || book.chapters.length === 0) {
+                        app.showToast("This book has no content yet.", "error");
+                        return;
+                    }
+
+                    app.state.currentBook = book;
+                    
+                    // Retrieve saved progress (Chapter + Page)
+                    const savedProg = localStorage.getItem(`lumina_prog_${bookId}`);
+                    if (savedProg) {
+                        try {
+                            const prog = JSON.parse(savedProg);
+                            app.state.currentChapterIdx = Math.min(prog.chapter || 0, book.chapters.length - 1);
+                            app.state.currentPageIdx = prog.page || 0;
+                        } catch(e) {
+                            app.state.currentChapterIdx = parseInt(savedProg) || 0;
+                            app.state.currentPageIdx = 0;
+                        }
+                    } else {
+                        app.state.currentChapterIdx = 0;
+                        app.state.currentPageIdx = 0;
+                    }
+                    
+                    app.state.navigatingBackward = false;
+                    app.navigate('reader');
+                    this.renderChapter('none');
+                },
+
+                // This triggers the CSS mask peel animation by cloning the current view before changing it
+                triggerPeelAnimation(direction, DOMUpdateCallback) {
+                    const wrapper = document.getElementById('paperWrapper');
+                    const pageContainer = document.getElementById('pageContainer');
+                    
+                    // 1. Create Clone Wrapper that will animate away
+                    const cloneWrapper = document.createElement('div');
+                    cloneWrapper.className = `absolute inset-0 z-20 ${direction === 'next' ? 'page-peel-next' : 'page-peel-prev'} bg-paper-light dark:bg-paper-dark rounded-lg overflow-hidden`;
+                    
+                    // 2. Clone the content and preserve its exact transform state
+                    const cloneContent = pageContainer.cloneNode(true);
+                    cloneContent.id = 'pageContainerClone'; 
+                    const realContent = pageContainer.querySelector('#readerContent');
+                    const clonedContentNode = cloneContent.querySelector('#readerContent');
+                    if (realContent && clonedContentNode) clonedContentNode.style.transform = realContent.style.transform;
+                    
+                    cloneWrapper.appendChild(cloneContent);
+                    
+                    // 3. Create the folded paper shadow effect
+                    const foldShadow = document.createElement('div');
+                    foldShadow.className = `absolute inset-0 z-30 pointer-events-none rounded-lg ${direction === 'next' ? 'page-fold-next' : 'page-fold-prev'}`;
+
+                    wrapper.appendChild(cloneWrapper);
+                    wrapper.appendChild(foldShadow);
+
+                    // 4. Update real DOM underneath to show the newly navigated page
+                    DOMUpdateCallback();
+
+                    // 5. Cleanup the clones after CSS animation finishes
+                    setTimeout(() => {
+                        if (wrapper.contains(cloneWrapper)) wrapper.removeChild(cloneWrapper);
+                        if (wrapper.contains(foldShadow)) wrapper.removeChild(foldShadow);
+                        app.state.isAnimating = false;
+                    }, 900);
+                },
+
+                renderChapter(direction = 'none') {
+                    const book = app.state.currentBook;
+                    const idx = app.state.currentChapterIdx;
+                    const chapter = book.chapters[idx];
+
+                    const internalDOMUpdate = () => {
+                        document.getElementById('readerBookTitle').textContent = book.title;
+                        document.getElementById('readerChapterTitle').textContent = chapter.title;
+                        
+                        const contentDiv = document.getElementById('readerContent');
+                        contentDiv.style.transform = `translateX(0px)`;
+                        contentDiv.innerHTML = chapter.content;
+                        contentDiv.style.fontSize = `${app.state.fontSize}px`;
+
+                        // Wait a tick for the browser to render columns and compute scrollWidth
+                        setTimeout(() => {
+                            this.calcPages();
+                            if (app.state.navigatingBackward) {
+                                app.state.currentPageIdx = app.state.totalPages - 1;
+                                app.state.navigatingBackward = false;
+                            } else if (app.state.currentPageIdx >= app.state.totalPages) {
+                                app.state.currentPageIdx = app.state.totalPages - 1;
+                            }
+                            this.updatePageRender('none'); 
+                        }, 10);
+                    };
+
+                    if (direction !== 'none') {
+                        this.triggerPeelAnimation(direction, internalDOMUpdate);
+                    } else {
+                        internalDOMUpdate();
+                    }
+                },
+
+                calcPages() {
+                    const content = document.getElementById('readerContent');
+                    const gap = 40; 
+                    const colWidth = content.clientWidth;
+                    const totalWidth = content.scrollWidth;
+                    
+                    app.state.totalPages = Math.max(1, Math.ceil((totalWidth + gap) / (colWidth + gap) - 0.05));
+                    if(app.state.currentPageIdx >= app.state.totalPages) {
+                        app.state.currentPageIdx = app.state.totalPages - 1;
+                    }
+                },
+
+                updatePageRender(direction = 'none') {
+                    const content = document.getElementById('readerContent');
+                    const gap = 40;
+                    const colWidth = content.clientWidth;
+                    const shift = (colWidth + gap) * app.state.currentPageIdx;
+
+                    const uiUpdate = () => {
+                        content.style.transform = `translateX(-${shift}px)`;
+                        
+                        document.getElementById('pageIndicator').textContent = `Page ${app.state.currentPageIdx + 1} of ${app.state.totalPages}`;
+                        document.getElementById('chapterIndicator').textContent = `Chapter ${app.state.currentChapterIdx + 1}`;
+                        
+                        const isFirst = app.state.currentChapterIdx === 0 && app.state.currentPageIdx === 0;
+                        const isLast = app.state.currentChapterIdx === app.state.currentBook.chapters.length - 1 && app.state.currentPageIdx === app.state.totalPages - 1;
+                        
+                        // Toggle interactive hover zones
+                        const leftZone = document.getElementById('leftClickZone');
+                        const rightZone = document.getElementById('rightClickZone');
+                        if (leftZone) leftZone.style.display = isFirst ? 'none' : 'block';
+                        if (rightZone) rightZone.style.display = isLast ? 'none' : 'block';
+                        
+                        const totalChapters = app.state.currentBook.chapters.length;
+                        const chapterProg = app.state.currentChapterIdx;
+                        const pageProg = app.state.totalPages > 1 ? (app.state.currentPageIdx / (app.state.totalPages - 1)) : 1;
+                        document.getElementById('progressBar').style.width = (((chapterProg + pageProg) / totalChapters) * 100) + "%";
+
+                        localStorage.setItem(`lumina_prog_${app.state.currentBook.id}`, JSON.stringify({
+                            chapter: app.state.currentChapterIdx,
+                            page: app.state.currentPageIdx
+                        }));
+                    };
+
+                    if (direction !== 'none') {
+                        this.triggerPeelAnimation(direction, uiUpdate);
+                    } else {
+                        uiUpdate();
+                    }
+                },
+
+                nextPage() {
+                    if (app.state.isAnimating) return;
+
+                    const goNext = () => {
+                        if (app.state.currentPageIdx < app.state.totalPages - 1) {
+                            app.state.currentPageIdx++;
+                            this.updatePageRender('next');
+                        } else if (app.state.currentChapterIdx < app.state.currentBook.chapters.length - 1) {
+                            app.state.currentChapterIdx++;
+                            app.state.currentPageIdx = 0;
+                            this.renderChapter('next');
+                        }
+                    };
+
+                    // Check if we can actually go next before starting animation flag
+                    if ((app.state.currentPageIdx < app.state.totalPages - 1) || (app.state.currentChapterIdx < app.state.currentBook.chapters.length - 1)) {
+                        app.state.isAnimating = true;
+                        goNext();
+                    }
+                },
+
+                prevPage() {
+                    if (app.state.isAnimating) return;
+
+                    const goPrev = () => {
+                        if (app.state.currentPageIdx > 0) {
+                            app.state.currentPageIdx--;
+                            this.updatePageRender('prev');
+                        } else if (app.state.currentChapterIdx > 0) {
+                            app.state.currentChapterIdx--;
+                            app.state.navigatingBackward = true;
+                            this.renderChapter('prev');
+                        }
+                    };
+
+                    if ((app.state.currentPageIdx > 0) || (app.state.currentChapterIdx > 0)) {
+                        app.state.isAnimating = true;
+                        goPrev();
+                    }
+                },
+
+                adjustFont(delta) {
+                    let newSize = app.state.fontSize + delta;
+                    if (newSize >= 14 && newSize <= 32) {
+                        const progress = app.state.totalPages > 1 ? app.state.currentPageIdx / (app.state.totalPages - 1) : 0;
+                        app.state.fontSize = newSize;
+                        document.getElementById('readerContent').style.fontSize = `${newSize}px`;
+                        setTimeout(() => {
+                            app.reader.calcPages();
+                            app.state.currentPageIdx = Math.round(progress * (app.state.totalPages - 1));
+                            app.reader.updatePageRender('none'); 
+                        }, 50);
+                    }
+                },
+
+                toggleTheme() {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('lumina_theme', 'light');
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('lumina_theme', 'dark');
+                    }
+                },
+
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(() => {
+                            app.showToast("Fullscreen disabled by browser.", "error");
+                        });
+                    } else {
+                        if (document.exitFullscreen) document.exitFullscreen();
+                    }
+                }
+            },
+
+            // ==========================================
+            // ADMIN MODULE
+            // ==========================================
+            admin: {
+                init() {
+                    if (!app.state.quill) {
+                        app.state.quill = new Quill('#editor', {
+                            theme: 'snow',
+                            modules: {
+                                toolbar: [
+                                    [{ 'header': [1, 2, 3, false] }],
+                                    ['bold', 'italic', 'underline'],
+                                    ['blockquote'],
+                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                    ['clean']
+                                ]
+                            },
+                            placeholder: 'Write the chapter content here...'
+                        });
+                    }
+
+                    this.populateBookDropdown();
+                    this.setMode('new');
+                },
+
+                setMode(mode) {
+                    app.state.adminMode = mode;
+                    const tNew = document.getElementById('tabNewBook');
+                    const tAdd = document.getElementById('tabAddChapter');
+                    const secDetails = document.getElementById('bookDetailsSection');
+                    const secSelect = document.getElementById('bookSelectionSection');
+
+                    if (mode === 'new') {
+                        tNew.className = "pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition";
+                        tAdd.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition cursor-pointer";
+                        secDetails.style.display = 'block';
+                        secSelect.style.display = 'none';
+                        
+                        document.getElementById('adminBookTitle').required = true;
+                        document.getElementById('adminBookAuthor').required = true;
+                        document.getElementById('adminBookSelect').required = false;
+                    } else {
+                        tAdd.className = "pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition";
+                        tNew.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition cursor-pointer";
+                        secDetails.style.display = 'none';
+                        secSelect.style.display = 'block';
+
+                        document.getElementById('adminBookTitle').required = false;
+                        document.getElementById('adminBookAuthor').required = false;
+                        document.getElementById('adminBookSelect').required = true;
+                    }
+                },
+
+                populateBookDropdown() {
+                    const select = document.getElementById('adminBookSelect');
+                    select.innerHTML = '<option value="">-- Choose a book --</option>';
+                    app.state.books.forEach(b => {
+                        const opt = document.createElement('option');
+                        opt.value = b.id;
+                        opt.textContent = `${b.title} (by ${b.author})`;
+                        select.appendChild(opt);
+                    });
+                },
+
+                async submitForm(e) {
+                    e.preventDefault();
+
+                    const btn = document.getElementById('adminSubmitBtn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Processing...';
+                    btn.disabled = true;
+
+                    try {
+                        const chapTitle = document.getElementById('adminChapterTitle').value;
+                        const chapContent = app.state.quill.root.innerHTML;
+
+                        if (app.state.quill.getText().trim().length === 0) {
+                            throw new Error("Chapter content cannot be empty.");
+                        }
+
+                        if (app.state.adminMode === 'new') {
+                            const newBook = {
+                                title: document.getElementById('adminBookTitle').value,
+                                author: document.getElementById('adminBookAuthor').value,
+                                coverImage: document.getElementById('adminBookCover').value || '',
+                                description: document.getElementById('adminBookDesc').value || '',
+                                createdAt: new Date().toISOString(),
+                                chapters: [ { title: chapTitle, content: chapContent } ]
+                            };
+                            await addDoc(booksCollection, newBook);
+                            app.showToast("Book published successfully!", "success");
+
+                        } else {
+                            const bookId = document.getElementById('adminBookSelect').value;
+                            if (!bookId) throw new Error("Please select a book.");
+                            
+                            const bookRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId);
+                            const bookSnap = await getDoc(bookRef);
+                            
+                            if (bookSnap.exists()) {
+                                const bookData = bookSnap.data();
+                                const updatedChapters = bookData.chapters ? [...bookData.chapters] : [];
+                                updatedChapters.push({ title: chapTitle, content: chapContent });
+                                
+                                await updateDoc(bookRef, { chapters: updatedChapters });
+                                app.showToast("Chapter added successfully!", "success");
+                            } else {
+                                throw new Error("Book not found in database.");
+                            }
+                        }
+
+                        document.getElementById('adminForm').reset();
+                        app.state.quill.setContents([]);
+                        app.navigate('library');
+
+                    } catch (error) {
+                        console.error("Submit Error:", error);
+                        let errMsg = error.message || "Failed to save data.";
+                        if (error.code === 'permission-denied') {
+                            errMsg = "Permission Denied! Please set Firestore rules to allow read/write.";
+                        }
+                        app.showToast(errMsg, "error");
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                }
             }
-        }
+        };
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
+        // ==========================================
+        // INITIALIZATION, LISTENERS & FIREBASE
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            
+            if (localStorage.getItem('lumina_theme') === 'dark') document.documentElement.classList.add('dark');
 
-            const colorClass = type === 'error' ? 'bg-red-500' : 'bg-gray-800';
-            const icon = type === 'error' ? 'ph-warning-circle' : 'ph-check-circle';
+            app.library.init();
 
-            toast.className = `${colorClass} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 min-w-[300px]`;
-            toast.innerHTML = `
-                <i class="ph ${icon} text-xl"></i>
-                <span class="text-sm font-medium">${message}</span>
-            `;
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const pContainer = document.getElementById('pageContainer');
+            
+            pContainer.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+            
+            pContainer.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                if (app.state.view !== 'reader' || app.state.isAnimating) return;
+                
+                if (touchEndX < touchStartX - 50) app.reader.nextPage();
+                if (touchEndX > touchStartX + 50) app.reader.prevPage();
+            }, {passive: true});
 
-            container.appendChild(toast);
-
-            // Animate In
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
+            window.addEventListener('keydown', (e) => {
+                if (app.state.view !== 'reader' || app.state.isAnimating) return;
+                if (e.key === 'ArrowRight') app.reader.nextPage();
+                if (e.key === 'ArrowLeft') app.reader.prevPage();
             });
 
-            // Remove
-            setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
+            window.addEventListener('resize', () => {
+                if (app.state.view === 'reader' && !app.state.isAnimating) {
+                    app.reader.calcPages();
+                    app.reader.updatePageRender('none'); 
+                }
+            });
 
-            const filtered = allTopics.filter(t =>
-                t.title.toLowerCase().includes(term) ||
-                (t.preview && t.preview.toLowerCase().includes(term))
-            );
+            if (!firebaseConfig) {
+                document.getElementById('loadingLibrary').innerHTML = `
+                    <div class="text-red-500 max-w-md mx-auto bg-red-50 p-4 rounded-lg border border-red-200">
+                        <i class="ph ph-warning-circle text-3xl mb-2 block"></i>
+                        Firebase Configuration Missing. App requires Canvas environment globals.
+                    </div>`;
+                return;
+            }
 
-            renderTopics(filtered, term);
-            document.getElementById('topic-count').innerText = filtered.length;
+            // Start fetching books directly without auth
+            onSnapshot(booksCollection, (snapshot) => {
+                app.state.books = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('loadingLibrary').classList.add('hidden');
+                
+                if (app.state.view === 'library') {
+                    app.library.render(document.getElementById('searchInput').value.toLowerCase());
+                }
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
+                app.showToast("Failed to load library sync. Check Firestore rules.", "error");
+            });
         });
-
-        // Search functionality
-
-        function enableReadingHighlight() {
-            const container = document.getElementById('view-content');
-            const paragraphs = container.querySelectorAll('p, li, blockquote');
-
-            paragraphs.forEach(p => {
-                p.addEventListener('click', () => {
-                    paragraphs.forEach(el => el.classList.remove('reading-active'));
-                    p.classList.add('reading-active');
-                });
-            });
-        }
 
     </script>
 </body>
-
 </html>
