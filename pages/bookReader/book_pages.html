@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Reader</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,10 +16,23 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['Merriweather', 'serif'],
+                        dyslexic: ['OpenDyslexic', 'sans-serif']
                     },
                     colors: {
-                        paper: { light: '#fdfaf3', dark: '#121212' },
-                        ink: { light: '#2c2c2c', dark: '#e0e0e0' }
+                        paper: {
+                            light: '#fdfcf8',
+                            dark: '#121212',
+                            sepia: '#f4ecd8'
+                        },
+                        ink: {
+                            light: '#2c2c2c',
+                            dark: '#e0e0e0',
+                            sepia: '#433422'
+                        }
+                    },
+                    boxShadow: {
+                        'reader': '0 20px 40px -15px rgba(0,0,0,0.05), 0 0 20px rgba(0,0,0,0.02)',
+                        'floating': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
                     }
                 }
             }
@@ -26,326 +40,805 @@
     </script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <!-- Quill Rich Text Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    
+
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         /* Base Styles & Transitions */
-        body { transition: background-color 0.3s, color 0.3s; }
-        .view-section { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .view-section.active { display: block; opacity: 1; }
+        :root {
+            --peel-shadow: rgba(0, 0, 0, 0.1);
+            --peel-bg-1: #e8e2d2;
+            --peel-bg-2: #fdfcf8;
+            --texture-opacity: 0.4;
+        }
+
+        html.dark {
+            --peel-shadow: rgba(0, 0, 0, 0.6);
+            --peel-bg-1: #333333;
+            --peel-bg-2: #1a1a1a;
+            --texture-opacity: 0.15;
+        }
+
+        html.sepia {
+            --peel-shadow: rgba(67, 52, 34, 0.15);
+            --peel-bg-1: #e0d5ba;
+            --peel-bg-2: #f4ecd8;
+            --texture-opacity: 0.6;
+        }
+
+        body {
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Subtle Paper Noise Texture */
+        .paper-texture {
+            position: absolute;
+            inset: 0;
+            opacity: var(--texture-opacity);
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            z-index: 1;
+            mix-blend-mode: multiply;
+        }
+
+        html.dark .paper-texture {
+            mix-blend-mode: overlay;
+            opacity: 0.2;
+        }
+
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+            opacity: 1;
+        }
 
         /* A4 Reader Specific Styles */
-        .reader-content { 
-            font-family: 'Merriweather', serif; 
-            line-height: 1.8; 
+        .reader-content {
+            font-family: 'Merriweather', serif;
+            line-height: 1.85;
             font-size: 1.125rem;
             columns: 1;
-            column-gap: 40px; 
+            column-gap: 40px;
             height: 100%;
             text-align: justify;
+            hyphens: auto;
             orphans: 2;
             widows: 2;
-            transition: transform 0.1s; 
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 5;
         }
-        .reader-content p { margin-bottom: 1.5em; }
-        .reader-content h1, .reader-content h2 { font-family: 'Inter', sans-serif; font-weight: 600; margin-top: 1.5em; margin-bottom: 1em; break-after: avoid; }
-        .reader-content blockquote { border-left: 4px solid #cbd5e1; padding-left: 1rem; font-style: italic; color: #64748b; }
-        .reader-content img { max-width: 100%; max-height: 40vh; object-fit: contain; break-inside: avoid; margin: 1em auto; display: block; }
-        
-        .dark .reader-content blockquote { border-left-color: #475569; color: #94a3b8; }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
 
-        #toast { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(150%); }
-        #toast.show { transform: translateY(0); }
+        .font-sans .reader-content {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .reader-content p {
+            margin-bottom: 1.5em;
+        }
+
+        /* Beautiful Drop Cap for first paragraph of chapter */
+        .reader-content>p:first-of-type::first-letter {
+            font-size: 3.5em;
+            font-weight: 700;
+            float: left;
+            margin-right: 0.12em;
+            line-height: 0.85;
+            color: inherit;
+            padding-top: 0.05em;
+        }
+
+        .reader-content h1,
+        .reader-content h2,
+        .reader-content h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+            break-after: avoid;
+            line-height: 1.3;
+        }
+
+        .reader-content blockquote {
+            border-left: 3px solid currentColor;
+            padding-left: 1.25rem;
+            font-style: italic;
+            opacity: 0.8;
+            margin: 2em 0;
+        }
+
+        .reader-content img {
+            max-width: 100%;
+            max-height: 40vh;
+            object-fit: contain;
+            break-inside: avoid;
+            margin: 2em auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 4px;
+        }
+
+        html.dark ::-webkit-scrollbar-thumb {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        #toast {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
         /* ------------------------------------- */
         /* VISIBLE CORNER DOG-EARS               */
         /* ------------------------------------- */
-        .page-corner-left {
-            position: absolute; top: 0; left: 0;
-            width: 50px; height: 50px;
-            /* Creates the illusion of a folded corner by matching the outer background */
-            background: linear-gradient(135deg, #f3f4f6 50%, #e8e2d2 50%, #fdfaf3 100%);
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        .page-corner-left,
+        .page-corner-right {
+            position: absolute;
+            top: 0;
+            width: 50px;
+            height: 50px;
+            box-shadow: 2px 2px 5px var(--peel-shadow);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
             z-index: 50;
+            opacity: 0.7;
         }
-        .dark .page-corner-left {
-            background: linear-gradient(135deg, #0a0a0a 50%, #333 50%, #121212 100%);
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+
+        .page-corner-left {
+            left: 0;
+            background: linear-gradient(135deg, transparent 50%, var(--peel-bg-1) 50%, var(--peel-bg-2) 100%);
         }
-        #leftClickZone:hover .page-corner-left {
-            width: 85px; height: 85px;
-            box-shadow: 4px 4px 8px rgba(0,0,0,0.15);
-        }
-        .dark #leftClickZone:hover .page-corner-left { box-shadow: 4px 4px 8px rgba(0,0,0,0.8); }
 
         .page-corner-right {
-            position: absolute; top: 0; right: 0;
-            width: 50px; height: 50px;
-            /* Creates the illusion of a folded corner by matching the outer background */
-            background: linear-gradient(225deg, #f3f4f6 50%, #e8e2d2 50%, #fdfaf3 100%);
-            box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-            z-index: 50;
+            right: 0;
+            background: linear-gradient(225deg, transparent 50%, var(--peel-bg-1) 50%, var(--peel-bg-2) 100%);
+            box-shadow: -2px 2px 5px var(--peel-shadow);
         }
-        .dark .page-corner-right {
-            background: linear-gradient(225deg, #0a0a0a 50%, #333 50%, #121212 100%);
-            box-shadow: -2px 2px 5px rgba(0,0,0,0.6);
-        }
+
+        #leftClickZone:hover .page-corner-left,
         #rightClickZone:hover .page-corner-right {
-            width: 85px; height: 85px;
-            box-shadow: -4px 4px 8px rgba(0,0,0,0.15);
+            width: 85px;
+            height: 85px;
+            opacity: 1;
         }
-        .dark #rightClickZone:hover .page-corner-right { box-shadow: -4px 4px 8px rgba(0,0,0,0.8); }
+
+        #leftClickZone:hover .page-corner-left {
+            box-shadow: 4px 4px 10px var(--peel-shadow);
+        }
+
+        #rightClickZone:hover .page-corner-right {
+            box-shadow: -4px 4px 10px var(--peel-shadow);
+        }
 
         /* ------------------------------------- */
         /* REALISTIC DIAGONAL PAGE PEEL CSS      */
         /* ------------------------------------- */
+        .page-peel-next,
+        .page-peel-prev {
+            -webkit-mask-size: 300% 300%;
+            mask-size: 300% 300%;
+        }
+
         .page-peel-next {
             -webkit-mask-image: linear-gradient(225deg, transparent 50%, black 50.5%);
             mask-image: linear-gradient(225deg, transparent 50%, black 50.5%);
-            -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
             animation: peelTopRight 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-        }
-        .page-fold-next {
-            background: linear-gradient(225deg, 
-                transparent 45%, 
-                rgba(0,0,0,0.3) 49.5%, 
-                #e8e2d2 50%, 
-                #fdfaf3 50.5%, 
-                rgba(0,0,0,0.1) 51%, 
-                transparent 53%
-            );
-            background-size: 300% 300%;
-            animation: peelTopRight 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-            pointer-events: none;
-        }
-        .dark .page-fold-next {
-            background: linear-gradient(225deg, transparent 45%, rgba(0,0,0,0.6) 49.5%, #333 50%, #1a1a1a 50.5%, rgba(0,0,0,0.3) 51%, transparent 53%);
-        }
-        @keyframes peelTopRight {
-            0% { -webkit-mask-position: 100% 0%; mask-position: 100% 0%; background-position: 100% 0%; }
-            100% { -webkit-mask-position: 0% 100%; mask-position: 0% 100%; background-position: 0% 100%; }
         }
 
         .page-peel-prev {
             -webkit-mask-image: linear-gradient(135deg, transparent 50%, black 50.5%);
             mask-image: linear-gradient(135deg, transparent 50%, black 50.5%);
-            -webkit-mask-size: 300% 300%; mask-size: 300% 300%;
             animation: peelTopLeft 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
+
+        .page-fold-next,
         .page-fold-prev {
-            background: linear-gradient(135deg, 
-                transparent 45%, 
-                rgba(0,0,0,0.3) 49.5%, 
-                #e8e2d2 50%, 
-                #fdfaf3 50.5%, 
-                rgba(0,0,0,0.1) 51%, 
-                transparent 53%
-            );
             background-size: 300% 300%;
-            animation: peelTopLeft 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
             pointer-events: none;
         }
-        .dark .page-fold-prev {
-            background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.6) 49.5%, #333 50%, #1a1a1a 50.5%, rgba(0,0,0,0.3) 51%, transparent 53%);
+
+        .page-fold-next {
+            background: linear-gradient(225deg, transparent 45%, rgba(0, 0, 0, 0.15) 49.5%, var(--peel-bg-1) 50%, var(--peel-bg-2) 50.5%, rgba(0, 0, 0, 0.05) 51%, transparent 53%);
+            animation: peelTopRight 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
         }
+
+        .page-fold-prev {
+            background: linear-gradient(135deg, transparent 45%, rgba(0, 0, 0, 0.15) 49.5%, var(--peel-bg-1) 50%, var(--peel-bg-2) 50.5%, rgba(0, 0, 0, 0.05) 51%, transparent 53%);
+            animation: peelTopLeft 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+        }
+
+        @keyframes peelTopRight {
+            0% {
+                -webkit-mask-position: 100% 0%;
+                mask-position: 100% 0%;
+                background-position: 100% 0%;
+            }
+
+            100% {
+                -webkit-mask-position: 0% 100%;
+                mask-position: 0% 100%;
+                background-position: 0% 100%;
+            }
+        }
+
         @keyframes peelTopLeft {
-            0% { -webkit-mask-position: 0% 0%; mask-position: 0% 0%; background-position: 0% 0%; }
-            100% { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; background-position: 100% 100%; }
+            0% {
+                -webkit-mask-position: 0% 0%;
+                mask-position: 0% 0%;
+                background-position: 0% 0%;
+            }
+
+            100% {
+                -webkit-mask-position: 100% 100%;
+                mask-position: 100% 100%;
+                background-position: 100% 100%;
+            }
+        }
+
+        /* Toolbar / UI Overlay animations */
+        .reader-ui-overlay {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reader-ui-active .reader-ui-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Drawer Transition */
+        #tocDrawer {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-100%);
+        }
+
+        #tocDrawer.open {
+            transform: translateX(0);
+        }
+
+        /* ------------------------------------- */
+        /* HARDBOUND BOOK COVER OPEN ANIMATION   */
+        /* ------------------------------------- */
+        .book-stage {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2600px;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.95));
+            z-index: 100;
+            transition: opacity .5s ease;
+        }
+
+        .book-wrapper {
+            position: relative;
+            width: 380px;
+            height: 520px;
+            transform-style: preserve-3d;
+        }
+
+        .book-back,
+        .book-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px 12px 12px 4px;
+        }
+
+        .book-back {
+            background: #2a2a2a;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .7);
+            transform: translateZ(-10px);
+        }
+
+        .book-spine {
+            position: absolute;
+            width: 40px;
+            height: 100%;
+            left: -20px;
+            background: linear-gradient(90deg, #111, #333 20%, #111 80%, #000);
+            box-shadow: inset -4px 0 10px rgba(0, 0, 0, .8);
+            transform: rotateY(-90deg);
+            transform-origin: right center;
+        }
+
+        .book-front {
+            background: linear-gradient(145deg, #4f46e5, #312e81);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .8), inset 4px 0 10px rgba(255, 255, 255, 0.1);
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transition: transform 1.6s cubic-bezier(.4, 0, .2, 1);
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .book-front::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, .15) 0%, transparent 10%, transparent 90%, rgba(0, 0, 0, 0.2) 100%);
+            pointer-events: none;
+        }
+
+        .cover-content h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .cover-content p {
+            font-family: 'Inter', sans-serif;
+            opacity: .85;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .book-stage.open .book-front {
+            transform: rotateY(-165deg);
+        }
+
+        .book-stage.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Utility */
+        .sepia-bg {
+            background-color: var(--peel-bg-2);
+        }
+
+        /* ============================================= */
+        /* ENHANCED USER-FRIENDLY PAGE FLIP              */
+        /* ============================================= */
+
+        .page-flip-stage {
+            position: absolute;
+            inset: 0;
+            perspective: 2400px;
+            z-index: 70;
+            pointer-events: none;
+        }
+
+        .page-sheet {
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            will-change: transform;
+        }
+
+        /* NEXT PAGE */
+        .page-flip-next {
+            transform-origin: left center;
+            animation: flipNextEnhanced .95s cubic-bezier(.25, .8, .25, 1) forwards;
+        }
+
+        /* PREV PAGE */
+        .page-flip-prev {
+            transform-origin: right center;
+            animation: flipPrevEnhanced .95s cubic-bezier(.25, .8, .25, 1) forwards;
+        }
+
+        /* Depth shadow */
+        .page-sheet::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,
+                    rgba(0, 0, 0, .35),
+                    rgba(0, 0, 0, .15),
+                    transparent 55%);
+            opacity: .5;
+            transition: opacity .3s;
+        }
+
+        /* Keyframes */
+        @keyframes flipNextEnhanced {
+            0% {
+                transform: rotateY(0deg);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, .2);
+            }
+
+            50% {
+                transform: rotateY(-90deg);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, .45);
+            }
+
+            100% {
+                transform: rotateY(-180deg);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+            }
+        }
+
+        @keyframes flipPrevEnhanced {
+            0% {
+                transform: rotateY(0deg);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, .2);
+            }
+
+            50% {
+                transform: rotateY(90deg);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, .45);
+            }
+
+            100% {
+                transform: rotateY(180deg);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-black dark:text-ink-dark antialiased min-h-screen flex flex-col">
+
+<body
+    class="bg-gray-50 text-gray-900 dark:bg-black dark:text-ink-dark sepia:bg-[#e8dec5] sepia:text-ink-sepia antialiased min-h-screen flex flex-col transition-colors duration-500">
 
     <!-- Global Toast Notification -->
-    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2">
+    <div id="toast"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-[100] flex items-center gap-2 font-sans text-sm font-medium">
         <i class="ph ph-info text-xl"></i>
         <span id="toastMessage">Notification</span>
     </div>
 
     <!-- Top Navigation -->
-    <header id="mainNav" class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors">
+    <header id="mainNav"
+        class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 sepia:bg-[#f4ecd8]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] shadow-sm transition-colors">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <button onclick="app.navigate('library')" class="flex items-center gap-2 hover:opacity-80 transition">
-                <i class="ph ph-books text-2xl text-indigo-600 dark:text-indigo-400"></i>
-                <h1 class="text-xl font-semibold tracking-tight">Lumina</h1>
+            <button onclick="app.navigate('library')" class="flex items-center gap-2 hover:opacity-80 transition group">
+                <div
+                    class="bg-indigo-600 dark:bg-indigo-500 p-1.5 rounded-lg group-hover:rotate-12 transition-transform">
+                    <i class="ph ph-books text-xl text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white sepia:text-ink-sepia">Lumina
+                </h1>
             </button>
-            
+
             <div id="navSearch" class="hidden md:block flex-1 max-w-md mx-6">
                 <div class="relative">
-                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search books..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                    <i
+                        class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search your library..."
+                        class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] bg-gray-100 dark:bg-gray-900 sepia:bg-[#e8dec5] dark:text-white sepia:text-ink-sepia focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <button onclick="app.navigate('admin')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-300" title="Admin Panel">
-                    <i class="ph ph-gear text-xl"></i>
+                <button onclick="app.navigate('admin')"
+                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-600 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Publisher Dashboard">
+                    <i class="ph ph-pencil-simple text-xl"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Reading Progress Bar -->
-    <div id="progressContainer" class="fixed top-0 left-0 w-full h-1 bg-transparent z-50 hidden">
-        <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-300 ease-out"></div>
+    <!-- Reading Progress Bar (Top edge) -->
+    <div id="progressContainer" class="fixed top-0 left-0 w-full h-1 bg-transparent z-50 hidden pointer-events-none">
+        <div id="progressBar" class="h-full bg-indigo-500 dark:bg-indigo-400 w-0 transition-all duration-300 ease-out">
+        </div>
     </div>
 
     <!-- MAIN CONTENT AREA -->
     <main class="flex-grow relative">
-        
+
         <!-- 1. LIBRARY VIEW -->
-        <section id="view-library" class="view-section active max-w-6xl mx-auto px-4 py-8">
-            <div class="flex justify-between items-end mb-8">
+        <section id="view-library" class="view-section active max-w-6xl mx-auto px-4 py-10">
+            <div class="flex justify-between items-end mb-10">
                 <div>
-                    <h2 class="text-3xl font-bold mb-2">Discover</h2>
-                    <p class="text-gray-500 dark:text-gray-400">Your digital bookshelf.</p>
+                    <h2 class="text-3xl font-bold mb-2 font-serif text-gray-900 dark:text-white sepia:text-ink-sepia">
+                        Discover</h2>
+                    <p class="text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] font-sans">Your digital bookshelf.
+                    </p>
                 </div>
             </div>
 
-            <div id="loadingLibrary" class="py-20 text-center text-gray-500">
-                <i class="ph ph-spinner-gap animate-spin text-4xl mb-2"></i>
-                <p>Loading your library...</p>
+            <div id="loadingLibrary"
+                class="py-24 text-center text-gray-400 dark:text-gray-500 flex flex-col items-center">
+                <i class="ph ph-circle-notch animate-spin text-4xl mb-3 text-indigo-500"></i>
+                <p class="font-medium text-sm">Syncing Library...</p>
             </div>
 
-            <div id="booksGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8 hidden">
+            <div id="booksGrid"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-8 hidden">
                 <!-- Book Cards injected here -->
             </div>
-            
-            <div id="emptyLibrary" class="hidden py-20 text-center text-gray-500">
-                <i class="ph ph-books text-6xl mb-4 opacity-50"></i>
-                <p class="text-lg">No books found. Go to the Admin panel to add one.</p>
+
+            <div id="emptyLibrary"
+                class="hidden py-24 text-center text-gray-500 dark:text-gray-400 flex flex-col items-center">
+                <div
+                    class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 sepia:bg-[#e8dec5] flex items-center justify-center mb-4">
+                    <i class="ph ph-books text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white sepia:text-ink-sepia mb-1">Your library
+                    is empty</h3>
+                <p class="text-sm max-w-xs mx-auto mb-6">Go to the Publisher Dashboard to add your first book.</p>
+                <button onclick="app.navigate('admin')"
+                    class="bg-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:bg-indigo-700 transition shadow-md">Add
+                    a Book</button>
             </div>
         </section>
 
         <!-- 2. READER VIEW -->
-        <section id="view-reader" class="view-section bg-gray-100 dark:bg-[#0a0a0a] min-h-screen absolute top-0 left-0 w-full z-30 overflow-hidden">
-            
-            <!-- Reader Toolbar -->
-            <div class="fixed top-4 right-4 z-40 flex gap-2 bg-white/50 dark:bg-black/50 backdrop-blur-md p-2 rounded-full shadow-sm opacity-30 hover:opacity-100 transition-opacity">
-                <button onclick="app.navigate('library')" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Close Book"><i class="ph ph-x text-lg"></i></button>
-                <div class="w-px bg-gray-300 dark:bg-gray-700 mx-1 my-2"></div>
-                <button onclick="app.reader.adjustFont(-2)" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Decrease Font"><i class="ph ph-text-aa text-sm"></i></button>
-                <button onclick="app.reader.adjustFont(2)" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Increase Font"><i class="ph ph-text-aa text-lg"></i></button>
-                <button onclick="app.reader.toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Toggle Theme"><i class="ph ph-moon text-lg"></i></button>
-                <button onclick="app.reader.toggleFullscreen()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white" title="Fullscreen"><i class="ph ph-corners-out text-lg"></i></button>
+        <section id="view-reader"
+            class="view-section bg-gray-100 dark:bg-[#0a0a0a] sepia:bg-[#e8dec5] min-h-screen absolute top-0 left-0 w-full z-30 overflow-hidden font-sans reader-ui-active">
+
+            <!-- TOC Drawer Overlay -->
+            <div id="tocOverlay"
+                class="fixed inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm z-50 hidden transition-opacity opacity-0"
+                onclick="app.reader.toggleTOC()"></div>
+
+            <!-- Table of Contents Drawer -->
+            <div id="tocDrawer"
+                class="fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-900 sepia:bg-[#f4ecd8] shadow-2xl z-50 flex flex-col border-r border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba]">
+                <div
+                    class="p-6 border-b border-gray-100 dark:border-gray-800 sepia:border-[#e0d5ba] flex justify-between items-center bg-gray-50 dark:bg-black sepia:bg-[#e8dec5]">
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white sepia:text-ink-sepia font-serif">Contents
+                    </h3>
+                    <button onclick="app.reader.toggleTOC()"
+                        class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 sepia:hover:bg-[#dcd0b3] transition">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
+                <div class="flex-grow overflow-y-auto p-4 custom-scrollbar" id="tocList">
+                    <!-- Chapters injected here -->
+                </div>
             </div>
 
-            <div class="max-w-4xl mx-auto px-4 mt-12 h-[calc(100vh-3rem)] flex flex-col items-center justify-center pb-8">
-                <!-- Header -->
-                <div class="text-center mb-6 w-full shrink-0">
-                    <p id="readerBookTitle" class="text-xs font-sans font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-1"></p>
-                    <h1 id="readerChapterTitle" class="text-2xl md:text-3xl font-serif font-bold text-gray-900 dark:text-white line-clamp-1"></h1>
-                </div>
-                
-                <!-- A4 Page Container Wrapper (Static, animations happen inside via JS) -->
-                <div id="paperWrapper" class="w-full max-w-2xl bg-paper-light dark:bg-paper-dark shadow-xl dark:shadow-none dark:border dark:border-gray-800 rounded-lg overflow-hidden relative shrink-0" style="height: 65vh; min-height: 450px;">
-                    
-                    <!-- Left Interaction Zone (Previous Page) - RESTRICTED TO TOP LEFT CORNER -->
-                    <div id="leftClickZone" class="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 z-40 cursor-pointer group hidden" onclick="app.reader.prevPage()">
-                        <!-- Subtle corner curl fold -->
-                        <div class="page-corner-left"></div>
-                    </div>
-
-                    <!-- Right Interaction Zone (Next Page) - RESTRICTED TO TOP RIGHT CORNER -->
-                    <div id="rightClickZone" class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 z-40 cursor-pointer group hidden" onclick="app.reader.nextPage()">
-                        <!-- Subtle corner curl fold -->
-                        <div class="page-corner-right"></div>
-                    </div>
-
-                    <!-- Visual Page Padding Area -->
-                    <div class="absolute inset-0 p-6 md:p-10 pointer-events-none z-10"></div>
-                    
-                    <!-- Content Viewport (where the text lives) -->
-                    <div id="pageContainer" class="w-full h-full p-6 md:p-10 overflow-hidden relative">
-                        <div id="readerContent" class="reader-content text-ink-light dark:text-ink-dark">
-                            <!-- Chapter HTML injected here -->
+            <!-- Hardbound Book Cover -->
+            <div id="bookCoverStage" class="book-stage hidden">
+                <div class="book-wrapper">
+                    <div class="book-back"></div>
+                    <div class="book-spine"></div>
+                    <div class="book-front" id="bookFrontCover">
+                        <div class="cover-content">
+                            <h2 id="coverBookTitle">Book Title</h2>
+                            <p id="coverBookAuthor">Author Name</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Unified Chapter/Page Indicators (Clean UI, No buttons) -->
-                <div class="mt-8 flex flex-col items-center justify-center w-full max-w-2xl shrink-0 opacity-70">
-                    <span id="chapterIndicator" class="text-xs font-sans text-gray-500 uppercase tracking-widest block mb-1"></span>
-                    <span id="pageIndicator" class="text-sm font-sans font-medium text-gray-900 dark:text-gray-300"></span>
+            <!-- Floating Dock Toolbar (Bottom Center) -->
+            <div
+                class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 reader-ui-overlay flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 sepia:bg-[#fdfcf8]/90 backdrop-blur-md px-4 py-2 rounded-full shadow-floating border border-gray-200 dark:border-gray-700 sepia:border-[#e0d5ba]">
+
+                <button onclick="app.navigate('library')"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Library">
+                    <i class="ph ph-books text-xl"></i>
+                </button>
+
+                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
+
+                <button onclick="app.reader.toggleTOC()"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Table of Contents">
+                    <i class="ph ph-list-dashes text-xl"></i>
+                </button>
+
+                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
+
+                <button onclick="app.reader.adjustFont(-1)"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Decrease Font">
+                    <i class="ph ph-text-a-under text-sm"></i>
+                </button>
+                <button onclick="app.reader.adjustFont(1)"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Increase Font">
+                    <i class="ph ph-text-a-under text-lg"></i>
+                </button>
+                <button onclick="app.reader.toggleFontFamily()"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia font-serif font-bold text-sm px-3"
+                    title="Toggle Font Style">
+                    Aa
+                </button>
+
+                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
+
+                <button onclick="app.reader.cycleTheme()"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia flex items-center gap-1"
+                    title="Cycle Theme">
+                    <i id="themeIcon" class="ph ph-sun text-xl"></i>
+                </button>
+
+                <button onclick="app.reader.toggleFullscreen()"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia hidden sm:block"
+                    title="Fullscreen">
+                    <i id="fsIcon" class="ph ph-corners-out text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Reader Main Area -->
+            <div id="readerArea"
+                class="w-full h-screen flex flex-col items-center justify-center relative pb-10 sm:pb-0"
+                onclick="app.reader.handleAreaClick(event)">
+
+                <!-- A4 Page Container Wrapper -->
+                <div id="paperWrapper"
+                    class="w-full max-w-3xl bg-paper-light dark:bg-paper-dark sepia:bg-paper-sepia shadow-reader dark:shadow-none sm:rounded-xl overflow-hidden relative shrink-0 transition-colors duration-500 border border-transparent dark:border-gray-800 sepia:border-[#e0d5ba]"
+                    style="height: 100vh; sm:height: 75vh; min-height: 500px; max-height: 850px;">
+
+                    <!-- Paper Noise Overlay -->
+                    <div class="paper-texture"></div>
+
+                    <!-- Left Interaction Zone (30% width) -->
+                    <div id="leftClickZone"
+                        class="absolute top-0 left-0 w-[30%] h-full z-40 cursor-pointer group hidden"
+                        onclick="app.reader.prevPage(); event.stopPropagation();">
+                        <div class="page-corner-left"></div>
+                    </div>
+
+                    <!-- Right Interaction Zone (30% width) -->
+                    <div id="rightClickZone"
+                        class="absolute top-0 right-0 w-[30%] h-full z-40 cursor-pointer group hidden"
+                        onclick="app.reader.nextPage(); event.stopPropagation();">
+                        <div class="page-corner-right"></div>
+                    </div>
+
+                    <!-- Header inside paper -->
+                    <div
+                        class="absolute top-0 left-0 w-full pt-8 pb-4 px-10 md:px-14 z-20 flex justify-between items-end border-b border-black/5 dark:border-white/5 sepia:border-ink-sepia/10 bg-gradient-to-b from-paper-light via-paper-light to-transparent dark:from-paper-dark sepia:from-paper-sepia">
+                        <p id="readerBookTitle"
+                            class="text-xs font-sans font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 sepia:text-[#9a8c78] truncate w-1/2">
+                        </p>
+                        <p id="readerChapterTitle"
+                            class="text-sm font-serif font-medium text-gray-700 dark:text-gray-300 sepia:text-ink-sepia truncate w-1/2 text-right">
+                        </p>
+                    </div>
+
+                    <!-- Content Viewport -->
+                    <div id="pageContainer" class="w-full h-full pt-24 pb-20 px-10 md:px-14 overflow-hidden relative">
+                        <div id="readerContent"
+                            class="reader-content text-ink-light dark:text-ink-dark sepia:text-ink-sepia">
+                            <!-- Chapter HTML injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Footer inside paper -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full pb-6 pt-4 px-10 md:px-14 z-20 flex justify-between items-center text-xs font-sans font-medium text-gray-400 dark:text-gray-500 sepia:text-[#9a8c78] bg-gradient-to-t from-paper-light via-paper-light to-transparent dark:from-paper-dark sepia:from-paper-sepia pointer-events-none">
+                        <span id="pageIndicator">Page 1</span>
+                        <span id="percentIndicator">0%</span>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- 3. ADMIN VIEW -->
-        <section id="view-admin" class="view-section max-w-4xl mx-auto px-4 py-8">
-            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 md:p-8">
-                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2"><i class="ph ph-pencil-simple"></i> Publisher Dashboard</h2>
-                
+        <section id="view-admin" class="view-section max-w-4xl mx-auto px-4 py-10 font-sans">
+            <div
+                class="bg-white dark:bg-gray-900 sepia:bg-[#fdfcf8] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] p-6 md:p-10">
+                <h2
+                    class="text-2xl font-bold mb-8 flex items-center gap-3 text-gray-900 dark:text-white sepia:text-ink-sepia">
+                    <div
+                        class="bg-indigo-100 text-indigo-600 p-2 rounded-lg dark:bg-indigo-900/50 dark:text-indigo-400">
+                        <i class="ph ph-pencil-simple"></i>
+                    </div>
+                    Publisher Dashboard
+                </h2>
+
                 <!-- Tab Selector -->
-                <div class="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-800">
-                    <button onclick="app.admin.setMode('new')" id="tabNewBook" class="pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition">Create New Book</button>
-                    <button onclick="app.admin.setMode('add_chapter')" id="tabAddChapter" class="pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition">Add Chapter to Existing</button>
+                <div class="flex gap-6 mb-8 border-b border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba]">
+                    <button onclick="app.admin.setMode('new')" id="tabNewBook"
+                        class="pb-3 border-b-2 border-indigo-600 font-semibold text-indigo-600 transition">Create New
+                        Book</button>
+                    <button onclick="app.admin.setMode('add_chapter')" id="tabAddChapter"
+                        class="pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white sepia:hover:text-ink-sepia transition">Add
+                        Chapter</button>
                 </div>
 
                 <form id="adminForm" onsubmit="app.admin.submitForm(event)">
-                    
                     <!-- Book Details Section -->
-                    <div id="bookDetailsSection" class="space-y-5 mb-8">
-                        <h3 class="text-lg font-semibold border-b border-gray-100 dark:border-gray-800 pb-2">Book Metadata</h3>
+                    <div id="bookDetailsSection"
+                        class="space-y-5 mb-8 bg-gray-50 dark:bg-gray-800/50 sepia:bg-[#e8dec5]/30 p-6 rounded-xl border border-gray-100 dark:border-gray-800 sepia:border-[#e0d5ba]">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Book Title *</label>
-                                <input type="text" id="adminBookTitle" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <label
+                                    class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Book
+                                    Title *</label>
+                                <input type="text" id="adminBookTitle"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-white dark:bg-gray-900 sepia:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Author *</label>
-                                <input type="text" id="adminBookAuthor" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <label
+                                    class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Author
+                                    *</label>
+                                <input type="text" id="adminBookAuthor"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-white dark:bg-gray-900 sepia:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Cover Image URL</label>
-                            <input type="url" id="adminBookCover" placeholder="https://example.com/cover.jpg" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <label
+                                class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Cover
+                                Image URL</label>
+                            <input type="url" id="adminBookCover" placeholder="https://example.com/cover.jpg"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-white dark:bg-gray-900 sepia:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Synopsis</label>
-                            <textarea id="adminBookDesc" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                            <label
+                                class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Synopsis</label>
+                            <textarea id="adminBookDesc" rows="3"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-white dark:bg-gray-900 sepia:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia"></textarea>
                         </div>
                     </div>
 
                     <!-- Book Selection (For Add Chapter Mode) -->
-                    <div id="bookSelectionSection" class="mb-8 hidden">
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Select Book *</label>
-                        <select id="adminBookSelect" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <div id="bookSelectionSection"
+                        class="mb-8 hidden bg-gray-50 dark:bg-gray-800/50 sepia:bg-[#e8dec5]/30 p-6 rounded-xl border border-gray-100 dark:border-gray-800 sepia:border-[#e0d5ba]">
+                        <label
+                            class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Select
+                            Book *</label>
+                        <select id="adminBookSelect"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-white dark:bg-gray-900 sepia:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia">
                             <option value="">-- Choose a book --</option>
                         </select>
                     </div>
 
                     <!-- Chapter Section -->
                     <div class="space-y-5">
-                        <h3 class="text-lg font-semibold border-b border-gray-100 dark:border-gray-800 pb-2">Chapter Content</h3>
                         <div>
-                            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Chapter Title *</label>
-                            <input type="text" id="adminChapterTitle" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <label
+                                class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300 sepia:text-ink-sepia">Chapter
+                                Title *</label>
+                            <input type="text" id="adminChapterTitle" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3] bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white sepia:text-ink-sepia text-lg font-serif">
                         </div>
-                        <div class="bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
+                        <div
+                            class="bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 sepia:border-[#dcd0b3]">
                             <!-- Quill Toolbar via CDN automatically attaches here -->
-                            <div id="editor" style="height: 400px;"></div>
+                            <div id="editor"
+                                style="height: 400px; font-family: 'Merriweather', serif; font-size: 16px;"></div>
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 flex justify-end">
-                        <button type="submit" id="adminSubmitBtn" class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center gap-2">
-                            <i class="ph ph-paper-plane-tilt"></i> <span>Publish Content</span>
+                    <div
+                        class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] flex justify-end">
+                        <button type="submit" id="adminSubmitBtn"
+                            class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition flex items-center gap-2 shadow-md">
+                            <i class="ph ph-paper-plane-tilt text-lg"></i> <span>Publish Content</span>
                         </button>
                     </div>
                 </form>
@@ -356,10 +849,10 @@
 
     <!-- Scripts -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-    
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ==========================================
         // SYSTEM & FIREBASE INIT
@@ -373,10 +866,10 @@
             appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
         };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'lumina-local-dev';
-        
+
         let appInstance, db;
         let booksCollection;
-        
+
         if (firebaseConfig) {
             appInstance = initializeApp(firebaseConfig);
             db = getFirestore(appInstance);
@@ -397,10 +890,15 @@
                 navigatingBackward: false,
                 isAnimating: false,
                 fontSize: 18, // pt
+                theme: 'light', // light, dark, sepia
+                fontFamily: 'serif', // serif, sans
+                uiVisible: true,
+                uiTimeout: null,
+                tocOpen: false,
                 adminMode: 'new',
                 quill: null
             },
-            
+
             // Core Navigation
             navigate(viewId) {
                 document.querySelectorAll('.view-section').forEach(el => {
@@ -417,17 +915,28 @@
                 });
 
                 this.state.view = viewId;
-                
+                document.getElementById('mainNav').style.display = viewId === 'reader' ? 'none' : 'block';
+                document.getElementById('progressContainer').style.display = viewId === 'reader' ? 'block' : 'none';
+
                 if (viewId === 'reader') {
                     document.body.style.overflow = 'hidden';
                     window.scrollTo(0, 0);
+
+                    // Specific responsive heights
+                    const wrapper = document.getElementById('paperWrapper');
+                    if (window.innerWidth < 640) {
+                        wrapper.style.height = '100vh';
+                        wrapper.style.borderRadius = '0';
+                    } else {
+                        wrapper.style.height = '85vh';
+                        wrapper.style.borderRadius = '0.75rem';
+                    }
+                    this.reader.resetUIHideTimer();
                 } else {
                     document.body.style.overflow = 'auto';
                     window.scrollTo(0, 0);
+                    if (this.state.tocOpen) this.reader.toggleTOC();
                 }
-
-                document.getElementById('mainNav').style.display = viewId === 'reader' ? 'none' : 'block';
-                document.getElementById('progressContainer').style.display = viewId === 'reader' ? 'block' : 'none';
 
                 if (viewId === 'library') this.library.render();
                 if (viewId === 'admin') this.admin.init();
@@ -436,10 +945,12 @@
             showToast(message, type = 'info') {
                 const toast = document.getElementById('toast');
                 document.getElementById('toastMessage').textContent = message;
-                
-                if(type === 'error') toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
-                else if(type === 'success') toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
-                else toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 show';
+
+                let colorClass = 'bg-gray-900';
+                if (type === 'error') colorClass = 'bg-red-600';
+                if (type === 'success') colorClass = 'bg-emerald-600';
+
+                toast.className = `fixed bottom-6 left-1/2 transform -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-floating z-[100] flex items-center gap-2 font-sans text-sm font-medium ${colorClass} show`;
 
                 setTimeout(() => toast.classList.remove('show'), 3000);
             },
@@ -458,8 +969,8 @@
                     const grid = document.getElementById('booksGrid');
                     const empty = document.getElementById('emptyLibrary');
                     grid.innerHTML = '';
-                    
-                    const filteredBooks = app.state.books.filter(b => 
+
+                    const filteredBooks = app.state.books.filter(b =>
                         b.title.toLowerCase().includes(filter) || b.author.toLowerCase().includes(filter)
                     );
 
@@ -473,23 +984,39 @@
                     empty.classList.add('hidden');
 
                     filteredBooks.forEach(book => {
-                        const cover = book.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(book.title)}&background=random&color=fff&size=400&font-size=0.3`;
+                        // Generate a beautiful gradient cover if none exists
+                        const hue = Math.floor(Math.random() * 360);
+                        const cover = book.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(book.title)}&background=${hue},60%,50%&color=fff&size=400&font-size=0.25&length=3`;
+
+                        const savedProg = localStorage.getItem(`lumina_prog_${book.id}`);
+                        let progText = "Not started";
+                        let progPercent = 0;
+                        if (savedProg && book.chapters && book.chapters.length > 0) {
+                            try {
+                                const p = JSON.parse(savedProg);
+                                progPercent = Math.round((p.chapter / book.chapters.length) * 100);
+                                progText = `${progPercent}% read`;
+                            } catch (e) { }
+                        }
+
                         const card = document.createElement('div');
-                        card.className = "group cursor-pointer bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-800 flex flex-col h-full";
+                        card.className = "group cursor-pointer bg-white dark:bg-gray-900 sepia:bg-[#fdfcf8] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 dark:border-gray-800 sepia:border-[#e0d5ba] flex flex-col h-full relative";
                         card.onclick = () => app.reader.open(book.id);
-                        
+
                         card.innerHTML = `
-                            <div class="relative pt-[140%] overflow-hidden bg-gray-100 dark:bg-gray-800">
-                                <img src="${cover}" alt="${book.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400'">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                                    <span class="text-white text-sm font-medium flex items-center gap-1"><i class="ph ph-book-open"></i> Read</span>
+                            <div class="relative pt-[140%] overflow-hidden bg-gray-200 dark:bg-gray-800">
+                                <img src="${cover}" alt="${book.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                    <span class="text-white text-sm font-medium flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="ph ph-book-open"></i> Read Now</span>
                                 </div>
+                                ${progPercent > 0 ? `<div class="absolute top-0 left-0 w-full h-1 bg-gray-200/30"><div class="h-full bg-indigo-500" style="width: ${progPercent}%"></div></div>` : ''}
                             </div>
                             <div class="p-4 flex flex-col flex-grow">
-                                <h3 class="font-bold text-lg leading-tight mb-1 text-gray-900 dark:text-white line-clamp-2">${book.title}</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">${book.author}</p>
-                                <div class="mt-auto flex items-center justify-between text-xs text-gray-400">
+                                <h3 class="font-bold text-base leading-tight mb-1 text-gray-900 dark:text-white sepia:text-ink-sepia line-clamp-2 font-serif">${book.title}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] mb-3">${book.author}</p>
+                                <div class="mt-auto flex items-center justify-between text-xs font-medium text-gray-400 dark:text-gray-500">
                                     <span>${book.chapters ? book.chapters.length : 0} Chapters</span>
+                                    <span class="${progPercent > 0 ? 'text-indigo-600 dark:text-indigo-400' : ''}">${progText}</span>
                                 </div>
                             </div>
                         `;
@@ -499,7 +1026,7 @@
             },
 
             // ==========================================
-            // PAGINATED READER MODULE (With Realistic Peel)
+            // PAGINATED READER MODULE
             // ==========================================
             reader: {
                 open(bookId) {
@@ -510,72 +1037,123 @@
                     }
 
                     app.state.currentBook = book;
-                    
+                    this.buildTOC();
+
                     const savedProg = localStorage.getItem(`lumina_prog_${bookId}`);
                     if (savedProg) {
                         try {
                             const prog = JSON.parse(savedProg);
                             app.state.currentChapterIdx = Math.min(prog.chapter || 0, book.chapters.length - 1);
                             app.state.currentPageIdx = prog.page || 0;
-                        } catch(e) {
-                            app.state.currentChapterIdx = parseInt(savedProg) || 0;
+                        } catch {
+                            app.state.currentChapterIdx = 0;
                             app.state.currentPageIdx = 0;
                         }
                     } else {
                         app.state.currentChapterIdx = 0;
                         app.state.currentPageIdx = 0;
                     }
-                    
+
                     app.state.navigatingBackward = false;
                     app.navigate('reader');
-                    this.renderChapter('none');
+
+                    // Init themes
+                    this.applyTheme(localStorage.getItem('lumina_theme') || 'light');
+                    this.applyFontFamily(localStorage.getItem('lumina_font') || 'serif');
+
+                    // HARDBOUND COVER ANIMATION
+                    this.showHardboundCover(book);
                 },
 
-                // This handles cloning the DOM to perform the CSS peel animation
+                buildTOC() {
+                    const list = document.getElementById('tocList');
+                    list.innerHTML = '';
+                    app.state.currentBook.chapters.forEach((chap, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = `w-full text-left px-4 py-3 rounded-lg text-sm transition-colors mb-1 ${idx === app.state.currentChapterIdx ? 'bg-indigo-50 dark:bg-indigo-900/30 sepia:bg-[#e8dec5] text-indigo-700 dark:text-indigo-300 sepia:text-indigo-900 font-semibold' : 'hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] text-gray-700 dark:text-gray-300 sepia:text-ink-sepia'}`;
+                        btn.innerHTML = `<span class="opacity-50 mr-2 text-xs">${idx + 1}.</span> ${chap.title}`;
+                        btn.onclick = () => {
+                            app.state.currentChapterIdx = idx;
+                            app.state.currentPageIdx = 0;
+                            this.renderChapter('none');
+                            this.toggleTOC();
+                        };
+                        list.appendChild(btn);
+                    });
+                },
+
+                updateTOCActive() {
+                    const list = document.getElementById('tocList');
+                    Array.from(list.children).forEach((btn, idx) => {
+                        if (idx === app.state.currentChapterIdx) {
+                            btn.className = 'w-full text-left px-4 py-3 rounded-lg text-sm transition-colors mb-1 bg-indigo-50 dark:bg-indigo-900/30 sepia:bg-[#e8dec5] text-indigo-700 dark:text-indigo-300 sepia:text-indigo-900 font-semibold';
+                        } else {
+                            btn.className = 'w-full text-left px-4 py-3 rounded-lg text-sm transition-colors mb-1 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] text-gray-700 dark:text-gray-300 sepia:text-ink-sepia';
+                        }
+                    });
+                },
+
+                toggleTOC() {
+                    app.state.tocOpen = !app.state.tocOpen;
+                    const drawer = document.getElementById('tocDrawer');
+                    const overlay = document.getElementById('tocOverlay');
+                    if (app.state.tocOpen) {
+                        overlay.classList.remove('hidden');
+                        setTimeout(() => overlay.classList.add('opacity-100'), 10);
+                        drawer.classList.add('open');
+                        this.updateTOCActive();
+                    } else {
+                        overlay.classList.remove('opacity-100');
+                        drawer.classList.remove('open');
+                        setTimeout(() => overlay.classList.add('hidden'), 300);
+                    }
+                },
+
                 triggerPeelAnimation(direction, DOMUpdateCallback) {
+
                     const wrapper = document.getElementById('paperWrapper');
                     const pageContainer = document.getElementById('pageContainer');
                     const leftZone = document.getElementById('leftClickZone');
                     const rightZone = document.getElementById('rightClickZone');
-                    
-                    // Temporarily disable click zones to prevent rapid fire
+
                     leftZone.style.pointerEvents = 'none';
                     rightZone.style.pointerEvents = 'none';
-                    
-                    // 1. Clone Old Page (The page we are moving away from)
-                    const oldPageClone = pageContainer.cloneNode(true);
-                    oldPageClone.id = 'oldPageClone';
-                    oldPageClone.className = `absolute inset-0 z-20 bg-paper-light dark:bg-paper-dark ${direction === 'next' ? 'peel-old-next' : 'peel-old-prev'}`;
-                    
-                    // 2. Create the folded "Flap" (The back of the page)
-                    const flap = document.createElement('div');
-                    flap.className = `absolute inset-0 z-30 ${direction === 'next' ? 'peel-flap-next' : 'peel-flap-prev'}`;
-                    
-                    // Sync the scroll/translation state for multi-column layout
-                    const oldRealContent = pageContainer.querySelector('#readerContent');
-                    const oldClonedContent = oldPageClone.querySelector('#readerContent');
-                    
-                    if (oldRealContent && oldClonedContent) {
-                        oldClonedContent.style.transform = oldRealContent.style.transform;
+
+                    /* Create flip stage */
+                    const stage = document.createElement('div');
+                    stage.className = 'page-flip-stage';
+
+                    /* Clone current page */
+                    const sheet = pageContainer.cloneNode(true);
+                    sheet.classList.add('page-sheet');
+
+                    if (direction === 'next') {
+                        sheet.classList.add('page-flip-next');
+                    } else {
+                        sheet.classList.add('page-flip-prev');
                     }
 
-                    // 3. Mount clones on top of the original container
-                    wrapper.appendChild(oldPageClone);
-                    wrapper.appendChild(flap);
+                    /* Sync content position */
+                    const real = pageContainer.querySelector('#readerContent');
+                    const clone = sheet.querySelector('#readerContent');
+                    if (real && clone) {
+                        clone.style.transform = real.style.transform;
+                    }
 
-                    // 4. Update the actual un-animated DOM underneath to the new page
+                    stage.appendChild(sheet);
+                    wrapper.appendChild(stage);
+
+                    /* Underlying DOM update */
                     DOMUpdateCallback();
 
-                    // 5. Clean up clones after CSS animation ends
+                    /* Cleanup */
                     setTimeout(() => {
-                        if (wrapper.contains(oldPageClone)) wrapper.removeChild(oldPageClone);
-                        if (wrapper.contains(flap)) wrapper.removeChild(flap);
-                        app.state.isAnimating = false;
+                        if (wrapper.contains(stage)) wrapper.removeChild(stage);
                         leftZone.style.pointerEvents = 'auto';
                         rightZone.style.pointerEvents = 'auto';
-                    }, 800); 
+                        app.state.isAnimating = false;
+                    }, 950);
                 },
-
                 renderChapter(direction = 'none') {
                     const book = app.state.currentBook;
                     const idx = app.state.currentChapterIdx;
@@ -584,14 +1162,16 @@
                     const internalDOMUpdate = () => {
                         document.getElementById('readerBookTitle').textContent = book.title;
                         document.getElementById('readerChapterTitle').textContent = chapter.title;
-                        
+
                         const contentDiv = document.getElementById('readerContent');
                         contentDiv.style.transform = `translateX(0px)`;
+                        contentDiv.style.transition = 'none'; // prevent slide animation on chapter change
                         contentDiv.innerHTML = chapter.content;
                         contentDiv.style.fontSize = `${app.state.fontSize}px`;
 
-                        // Give the browser 10ms to paint and calculate the new scrollWidth
+                        // Allow paint
                         setTimeout(() => {
+                            contentDiv.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)';
                             this.calcPages();
                             if (app.state.navigatingBackward) {
                                 app.state.currentPageIdx = app.state.totalPages - 1;
@@ -599,8 +1179,8 @@
                             } else if (app.state.currentPageIdx >= app.state.totalPages) {
                                 app.state.currentPageIdx = app.state.totalPages - 1;
                             }
-                            this.updatePageRender('none'); 
-                        }, 10);
+                            this.updatePageRender('none');
+                        }, 20);
                     };
 
                     if (direction !== 'none') {
@@ -612,12 +1192,13 @@
 
                 calcPages() {
                     const content = document.getElementById('readerContent');
-                    const gap = 40; 
+                    if (!content) return;
+                    const gap = 40;
                     const colWidth = content.clientWidth;
                     const totalWidth = content.scrollWidth;
-                    
+                    // Safely calculate pages
                     app.state.totalPages = Math.max(1, Math.ceil((totalWidth + gap) / (colWidth + gap) - 0.05));
-                    if(app.state.currentPageIdx >= app.state.totalPages) {
+                    if (app.state.currentPageIdx >= app.state.totalPages) {
                         app.state.currentPageIdx = app.state.totalPages - 1;
                     }
                 },
@@ -630,23 +1211,28 @@
 
                     const uiUpdate = () => {
                         content.style.transform = `translateX(-${shift}px)`;
-                        
-                        document.getElementById('pageIndicator').textContent = `Page ${app.state.currentPageIdx + 1} of ${app.state.totalPages}`;
-                        document.getElementById('chapterIndicator').textContent = `Chapter ${app.state.currentChapterIdx + 1}`;
-                        
+
                         const isFirst = app.state.currentChapterIdx === 0 && app.state.currentPageIdx === 0;
                         const isLast = app.state.currentChapterIdx === app.state.currentBook.chapters.length - 1 && app.state.currentPageIdx === app.state.totalPages - 1;
-                        
-                        // Show/Hide invisible corner clicking zones based on page position
+
                         const leftZone = document.getElementById('leftClickZone');
                         const rightZone = document.getElementById('rightClickZone');
                         if (leftZone) leftZone.style.display = isFirst ? 'none' : 'block';
                         if (rightZone) rightZone.style.display = isLast ? 'none' : 'block';
-                        
+
+                        // Calculate overall progress
                         const totalChapters = app.state.currentBook.chapters.length;
                         const chapterProg = app.state.currentChapterIdx;
                         const pageProg = app.state.totalPages > 1 ? (app.state.currentPageIdx / (app.state.totalPages - 1)) : 1;
-                        document.getElementById('progressBar').style.width = (((chapterProg + pageProg) / totalChapters) * 100) + "%";
+
+                        let percent = 0;
+                        if (totalChapters > 0) {
+                            percent = (((chapterProg + pageProg) / totalChapters) * 100).toFixed(0);
+                        }
+
+                        document.getElementById('progressBar').style.width = percent + "%";
+                        document.getElementById('pageIndicator').textContent = `Page ${app.state.currentPageIdx + 1} / ${app.state.totalPages}`;
+                        document.getElementById('percentIndicator').textContent = `${percent}%`;
 
                         localStorage.setItem(`lumina_prog_${app.state.currentBook.id}`, JSON.stringify({
                             chapter: app.state.currentChapterIdx,
@@ -707,33 +1293,155 @@
                         const progress = app.state.totalPages > 1 ? app.state.currentPageIdx / (app.state.totalPages - 1) : 0;
                         app.state.fontSize = newSize;
                         document.getElementById('readerContent').style.fontSize = `${newSize}px`;
+
                         setTimeout(() => {
                             app.reader.calcPages();
                             app.state.currentPageIdx = Math.round(progress * (app.state.totalPages - 1));
-                            app.reader.updatePageRender('none'); 
+                            app.reader.updatePageRender('none');
                         }, 50);
                     }
+                    this.resetUIHideTimer();
                 },
 
-                toggleTheme() {
+                toggleFontFamily() {
                     const html = document.documentElement;
-                    if (html.classList.contains('dark')) {
-                        html.classList.remove('dark');
-                        localStorage.setItem('lumina_theme', 'light');
+                    if (html.classList.contains('font-sans')) {
+                        html.classList.remove('font-sans');
+                        localStorage.setItem('lumina_font', 'serif');
                     } else {
-                        html.classList.add('dark');
-                        localStorage.setItem('lumina_theme', 'dark');
+                        html.classList.add('font-sans');
+                        localStorage.setItem('lumina_font', 'sans');
                     }
+                    setTimeout(() => {
+                        app.reader.calcPages();
+                        app.reader.updatePageRender('none');
+                    }, 50);
+                    this.resetUIHideTimer();
+                },
+
+                applyFontFamily(font) {
+                    const html = document.documentElement;
+                    if (font === 'sans') html.classList.add('font-sans');
+                    else html.classList.remove('font-sans');
+                },
+
+                cycleTheme() {
+                    const html = document.documentElement;
+                    const themes = ['light', 'sepia', 'dark'];
+
+                    let currentTheme = 'light';
+                    if (html.classList.contains('sepia')) currentTheme = 'sepia';
+                    else if (html.classList.contains('dark')) currentTheme = 'dark';
+
+                    const nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+                    this.applyTheme(nextTheme);
+                    this.resetUIHideTimer();
+                },
+
+                applyTheme(theme) {
+                    const html = document.documentElement;
+                    const icon = document.getElementById('themeIcon');
+
+                    html.classList.remove('dark', 'sepia');
+
+                    if (theme === 'dark') {
+                        html.classList.add('dark');
+                        icon.className = 'ph ph-moon text-xl';
+                    } else if (theme === 'sepia') {
+                        html.classList.add('sepia');
+                        icon.className = 'ph ph-coffee text-xl';
+                    } else {
+                        // Light
+                        icon.className = 'ph ph-sun text-xl';
+                    }
+                    localStorage.setItem('lumina_theme', theme);
                 },
 
                 toggleFullscreen() {
+                    const fsIcon = document.getElementById('fsIcon');
                     if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(() => {
+                        document.documentElement.requestFullscreen().then(() => {
+                            fsIcon.className = 'ph ph-corners-in text-xl';
+                        }).catch(() => {
                             app.showToast("Fullscreen disabled by browser.", "error");
                         });
                     } else {
-                        if (document.exitFullscreen) document.exitFullscreen();
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                            fsIcon.className = 'ph ph-corners-out text-xl';
+                        }
                     }
+                    this.resetUIHideTimer();
+                },
+
+                // UI Auto-hide logic for immersive reading
+                handleAreaClick(e) {
+                    // If clicking right in the center, toggle UI
+                    const w = window.innerWidth;
+                    if (e.clientX > w * 0.3 && e.clientX < w * 0.7) {
+                        this.toggleUI();
+                    }
+                },
+
+                toggleUI() {
+                    app.state.uiVisible = !app.state.uiVisible;
+                    const view = document.getElementById('view-reader');
+                    if (app.state.uiVisible) {
+                        view.classList.add('reader-ui-active');
+                        this.resetUIHideTimer();
+                    } else {
+                        view.classList.remove('reader-ui-active');
+                        if (app.state.uiTimeout) clearTimeout(app.state.uiTimeout);
+                    }
+                },
+
+                resetUIHideTimer() {
+                    const view = document.getElementById('view-reader');
+                    view.classList.add('reader-ui-active');
+                    app.state.uiVisible = true;
+
+                    if (app.state.uiTimeout) clearTimeout(app.state.uiTimeout);
+                    app.state.uiTimeout = setTimeout(() => {
+                        if (!app.state.tocOpen) {
+                            view.classList.remove('reader-ui-active');
+                            app.state.uiVisible = false;
+                        }
+                    }, 4000); // Hide after 4 seconds of inactivity
+                },
+
+                showHardboundCover(book) {
+                    const stage = document.getElementById('bookCoverStage');
+                    const title = document.getElementById('coverBookTitle');
+                    const author = document.getElementById('coverBookAuthor');
+                    const front = document.getElementById('bookFrontCover');
+
+                    title.textContent = book.title;
+                    author.textContent = book.author;
+
+                    // Generate gradient from title
+                    let hash = 0;
+                    for (let i = 0; i < book.title.length; i++) hash = book.title.charCodeAt(i) + ((hash << 5) - hash);
+                    const h1 = Math.abs(hash) % 360;
+                    const h2 = (h1 + 40) % 360;
+
+                    front.style.background = `linear-gradient(145deg, hsl(${h1}, 70%, 35%), hsl(${h2}, 80%, 20%))`;
+                    front.style.boxShadow = `0 20px 60px rgba(0, 0, 0, .8), inset 4px 0 10px rgba(255,255,255,0.1), inset 0 0 0 1px hsl(${h1}, 50%, 50%)`;
+
+                    stage.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        stage.classList.add('open');
+                    }, 100);
+
+                    setTimeout(() => {
+                        stage.classList.add('fade-out');
+                        this.renderChapter('none');
+                    }, 1600);
+
+                    setTimeout(() => {
+                        stage.classList.add('hidden');
+                        stage.classList.remove('open', 'fade-out');
+                    }, 2400);
                 }
             },
 
@@ -750,11 +1458,11 @@
                                     [{ 'header': [1, 2, 3, false] }],
                                     ['bold', 'italic', 'underline'],
                                     ['blockquote'],
-                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                                     ['clean']
                                 ]
                             },
-                            placeholder: 'Write the chapter content here...'
+                            placeholder: 'Write your chapter content here... The first letter of the first paragraph will be styled as a Drop Cap.'
                         });
                     }
 
@@ -770,17 +1478,17 @@
                     const secSelect = document.getElementById('bookSelectionSection');
 
                     if (mode === 'new') {
-                        tNew.className = "pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition";
-                        tAdd.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition cursor-pointer";
+                        tNew.className = "pb-3 border-b-2 border-indigo-600 font-semibold text-indigo-600 transition";
+                        tAdd.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white sepia:hover:text-ink-sepia transition cursor-pointer";
                         secDetails.style.display = 'block';
                         secSelect.style.display = 'none';
-                        
+
                         document.getElementById('adminBookTitle').required = true;
                         document.getElementById('adminBookAuthor').required = true;
                         document.getElementById('adminBookSelect').required = false;
                     } else {
-                        tAdd.className = "pb-3 border-b-2 border-indigo-600 font-medium text-indigo-600 transition";
-                        tNew.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition cursor-pointer";
+                        tAdd.className = "pb-3 border-b-2 border-indigo-600 font-semibold text-indigo-600 transition";
+                        tNew.className = "pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white sepia:hover:text-ink-sepia transition cursor-pointer";
                         secDetails.style.display = 'none';
                         secSelect.style.display = 'block';
 
@@ -806,7 +1514,7 @@
 
                     const btn = document.getElementById('adminSubmitBtn');
                     const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Processing...';
+                    btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-lg"></i> <span>Processing...</span>';
                     btn.disabled = true;
 
                     try {
@@ -824,7 +1532,7 @@
                                 coverImage: document.getElementById('adminBookCover').value || '',
                                 description: document.getElementById('adminBookDesc').value || '',
                                 createdAt: new Date().toISOString(),
-                                chapters: [ { title: chapTitle, content: chapContent } ]
+                                chapters: [{ title: chapTitle, content: chapContent }]
                             };
                             await addDoc(booksCollection, newBook);
                             app.showToast("Book published successfully!", "success");
@@ -832,15 +1540,15 @@
                         } else {
                             const bookId = document.getElementById('adminBookSelect').value;
                             if (!bookId) throw new Error("Please select a book.");
-                            
+
                             const bookRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId);
                             const bookSnap = await getDoc(bookRef);
-                            
+
                             if (bookSnap.exists()) {
                                 const bookData = bookSnap.data();
                                 const updatedChapters = bookData.chapters ? [...bookData.chapters] : [];
                                 updatedChapters.push({ title: chapTitle, content: chapContent });
-                                
+
                                 await updateDoc(bookRef, { chapters: updatedChapters });
                                 app.showToast("Chapter added successfully!", "success");
                             } else {
@@ -856,7 +1564,7 @@
                         console.error("Submit Error:", error);
                         let errMsg = error.message || "Failed to save data.";
                         if (error.code === 'permission-denied') {
-                            errMsg = "Permission Denied! Please set Firestore rules to allow read/write.";
+                            errMsg = "Permission Denied! Check Firestore security rules.";
                         }
                         app.showToast(errMsg, "error");
                     } finally {
@@ -868,66 +1576,75 @@
         };
 
         // ==========================================
-        // INITIALIZATION, LISTENERS & FIREBASE
+        // INITIALIZATION, LISTENERS & FIREBASE AUTH
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
-            
-            if (localStorage.getItem('lumina_theme') === 'dark') document.documentElement.classList.add('dark');
+            // Apply saved theme early
+            const savedTheme = localStorage.getItem('lumina_theme');
+            if (savedTheme) app.reader.applyTheme(savedTheme);
+            const savedFont = localStorage.getItem('lumina_font');
+            if (savedFont) app.reader.applyFontFamily(savedFont);
 
             app.library.init();
 
+            // Swipe Gestures
             let touchStartX = 0;
             let touchEndX = 0;
-            const pContainer = document.getElementById('pageContainer');
-            
+            const pContainer = document.getElementById('paperWrapper');
+
             pContainer.addEventListener('touchstart', e => {
                 touchStartX = e.changedTouches[0].screenX;
-            }, {passive: true});
-            
+            }, { passive: true });
+
             pContainer.addEventListener('touchend', e => {
                 touchEndX = e.changedTouches[0].screenX;
                 if (app.state.view !== 'reader' || app.state.isAnimating) return;
-                
+
                 if (touchEndX < touchStartX - 50) app.reader.nextPage();
                 if (touchEndX > touchStartX + 50) app.reader.prevPage();
-            }, {passive: true});
+            }, { passive: true });
+
+            pContainer.addEventListener('mousemove', () => app.reader.resetUIHideTimer());
 
             window.addEventListener('keydown', (e) => {
                 if (app.state.view !== 'reader' || app.state.isAnimating) return;
-                if (e.key === 'ArrowRight') app.reader.nextPage();
-                if (e.key === 'ArrowLeft') app.reader.prevPage();
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); app.reader.nextPage(); }
+                if (e.key === 'ArrowLeft') { e.preventDefault(); app.reader.prevPage(); }
+                if (e.key === 'Escape' && app.state.tocOpen) app.reader.toggleTOC();
             });
 
             window.addEventListener('resize', () => {
                 if (app.state.view === 'reader' && !app.state.isAnimating) {
+                    // Update wrapper height on resize for responsive design
+                    const wrapper = document.getElementById('paperWrapper');
+                    if (window.innerWidth < 640) {
+                        wrapper.style.height = '100vh';
+                        wrapper.style.borderRadius = '0';
+                    } else {
+                        wrapper.style.height = '85vh';
+                        wrapper.style.borderRadius = '0.75rem';
+                    }
                     app.reader.calcPages();
-                    app.reader.updatePageRender('none'); 
+                    app.reader.updatePageRender('none');
                 }
             });
 
-            if (!firebaseConfig) {
-                document.getElementById('loadingLibrary').innerHTML = `
-                    <div class="text-red-500 max-w-md mx-auto bg-red-50 p-4 rounded-lg border border-red-200">
-                        <i class="ph ph-warning-circle text-3xl mb-2 block"></i>
-                        Firebase Configuration Missing. App requires Canvas environment globals.
-                    </div>`;
-                return;
-            }
+            if (!firebaseConfig) return;
 
-            // Start fetching books directly without auth
             onSnapshot(booksCollection, (snapshot) => {
                 app.state.books = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 document.getElementById('loadingLibrary').classList.add('hidden');
-                
+
                 if (app.state.view === 'library') {
                     app.library.render(document.getElementById('searchInput').value.toLowerCase());
                 }
             }, (error) => {
                 console.error("Firestore Listen Error:", error);
-                app.showToast("Failed to load library sync. Check Firestore rules.", "error");
+                app.showToast("Failed to load library sync. Check connection.", "error");
             });
         });
 
     </script>
 </body>
+
 </html>
