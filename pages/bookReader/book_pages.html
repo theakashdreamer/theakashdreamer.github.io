@@ -46,7 +46,7 @@
 
     <!-- Quill Rich Text Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
@@ -688,6 +688,11 @@
                     title="Fullscreen">
                     <i id="fsIcon" class="ph ph-corners-out text-xl"></i>
                 </button>
+                <button onclick="app.reader.downloadPDF()"
+                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    title="Download PDF">
+                    <i class="ph ph-download-simple text-xl"></i>
+                </button>
             </div>
 
             <!-- Reader Main Area -->
@@ -849,7 +854,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
+    <!-- PDF Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -1443,6 +1449,83 @@
                         stage.classList.remove('open', 'fade-out');
                     }, 2400);
                 }
+
+                ,
+                downloadPDF() {
+
+                    const { jsPDF } = window.jspdf;
+
+                    const book = app.state.currentBook;
+
+                    if (!book) {
+                        app.showToast("No book loaded.", "error");
+                        return;
+                    }
+
+                    const pdf = new jsPDF({
+                        orientation: "portrait",
+                        unit: "mm",
+                        format: "a4"
+                    });
+
+                    const pageWidth = 180;
+                    let y = 20;
+
+                    // Title Page
+                    pdf.setFont("Times", "Bold");
+                    pdf.setFontSize(22);
+                    pdf.text(book.title, 105, y, { align: "center" });
+
+                    y += 10;
+
+                    pdf.setFont("Times", "Normal");
+                    pdf.setFontSize(14);
+                    pdf.text("by " + book.author, 105, y, { align: "center" });
+
+                    pdf.addPage();
+
+                    // Chapters
+                    book.chapters.forEach((chapter, index) => {
+
+                        y = 20;
+
+                        pdf.setFont("Times", "Bold");
+                        pdf.setFontSize(16);
+
+                        pdf.text(`Chapter ${index + 1}: ${chapter.title}`, 15, y);
+
+                        y += 10;
+
+                        pdf.setFont("Times", "Normal");
+                        pdf.setFontSize(12);
+
+                        // Convert HTML to text
+                        const temp = document.createElement("div");
+                        temp.innerHTML = chapter.content;
+                        const text = temp.innerText || temp.textContent || "";
+
+                        const lines = pdf.splitTextToSize(text, pageWidth);
+
+                        lines.forEach(line => {
+
+                            if (y > 280) {
+                                pdf.addPage();
+                                y = 20;
+                            }
+
+                            pdf.text(line, 15, y);
+                            y += 7;
+
+                        });
+
+                        pdf.addPage();
+
+                    });
+
+                    pdf.save(book.title + ".pdf");
+
+                }
+
             },
 
             // ==========================================

@@ -3,7 +3,8 @@
 
 # Donation
 /topics       /pages/bookReader/book_pages.html  301
-
+# Donation
+/requirement             /pages/projectRequirment/project_requirement.html  301
 # Contact
 /joinus      /pages/registrationpage/register.html         301
 
