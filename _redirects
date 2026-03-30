@@ -7,6 +7,7 @@
 /requirement             /pages/projectRequirment/project_requirement.html  301
 # Contact
 /joinus      /pages/registrationpage/register.html         301
-
+# parent
+/locksystem       /pages/lock/parentportal.html  301
 # Default fallback
 /*            /index.html                   200

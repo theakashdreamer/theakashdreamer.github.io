@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Parental Control Portal - Remote Lock System</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .auth-section {
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .device-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #10b981;
+            transition: all 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .device-card.locked {
+            border-left-color: #ef4444;
+            background: #fee;
+        }
+
+        .device-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .device-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .device-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-locked {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-unlocked {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-offline {
+            background: #9ca3af;
+            color: white;
+        }
+
+        .device-info {
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .device-info div {
+            margin-bottom: 5px;
+        }
+
+        .device-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-device-form {
+            margin-top: 20px;
+            display: none;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .form-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .activity-log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .log-entry {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .log-entry:hover {
+            background: #f3f4f6;
+        }
+
+        .log-time {
+            color: #6b7280;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .log-action {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .log-action.lock {
+            color: #ef4444;
+        }
+
+        .log-action.unlock {
+            color: #10b981;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.info {
+            background: #3b82f6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .devices-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .add-device-form {
+                flex-direction: column;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .device-actions {
+                flex-direction: column;
+            }
+
+            .device-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>📱</span>
+                Parental Control Portal
+            </h1>
+            <button id="logoutBtn" class="logout-btn" style="display: none;">🚪 Logout</button>
+        </div>
+
+        <!-- Auth Section -->
+        <div id="authSection">
+            <div class="auth-section">
+                <div class="card" style="max-width: 400px; width: 100%;">
+                    <h2 style="margin-bottom: 20px; text-align: center;">👨‍👩‍👧 Parent Login</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Email address" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="password" placeholder="Password" required
+                                autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn-primary">🔐 Login</button>
+                    </form>
+                    <button id="showRegisterBtn" class="btn-link">📝 Create new account</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>📱 Total Children</h3>
+                    <p id="totalChildren">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>🔒 Locked Devices</h3>
+                    <p id="lockedDevices">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>✅ Online Now</h3>
+                    <p id="onlineDevices">0</p>
+                </div>
+            </div>
+
+            <div style="padding: 0 30px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>➕ Add New Child Device</h2>
+                        <button id="addDeviceBtn" class="btn-success">+ Add Device</button>
+                    </div>
+                    <div id="addDeviceForm" class="add-device-form">
+                        <input type="text" id="childName" placeholder="Child's Name (e.g., John)" class="form-input">
+                        <input type="text" id="deviceId" placeholder="Device ID (from child's app)" class="form-input">
+                        <button id="saveDeviceBtn" class="btn-primary">💾 Save Device</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📱 My Children's Devices</h2>
+                    <div id="devicesList" class="devices-grid">
+                        <div class="loading">Loading devices...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📋 Activity Log</h2>
+                    <div id="activityLog" class="activity-log">
+                        <div class="loading">Loading activity...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== FIREBASE CONFIGURATION ====================
+        // REPLACE WITH YOUR FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiljXJwLO1oOuToS0ZxHacY95573nAqMM",
+            authDomain: "locksystem-235d1.firebaseapp.com",
+            projectId: "locksystem-235d1",
+            storageBucket: "locksystem-235d1.firebasestorage.app",
+            messagingSenderId: "813353508153",
+            appId: "1:813353508153:web:c95166b8ecbc496ba71ce8",
+            measurementId: "G-RMJH6P2894"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ==================== GLOBAL VARIABLES ====================
+        let currentUser = null;
+        let unsubscribeDevices = null;
+        let unsubscribeActivity = null;
+
+        // ==================== DOM ELEMENTS ====================
+        const authSection = document.getElementById('authSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const showRegisterBtn = document.getElementById('showRegisterBtn');
+        const addDeviceBtn = document.getElementById('addDeviceBtn');
+        const saveDeviceBtn = document.getElementById('saveDeviceBtn');
+        const addDeviceForm = document.getElementById('addDeviceForm');
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Never';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+            return date.toLocaleDateString();
+        }
+
+        function getActionIcon(action) {
+            const icons = {
+                'lock': '🔒',
+                'unlock': '🔓',
+                'device_added': '➕',
+                'device_removed': '🗑️',
+                'pin_changed': '🔐',
+                'emergency_unlock': '🚨'
+            };
+            return icons[action] || '📱';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ==================== ACTIVITY LOGGING ====================
+        async function logActivity(deviceId, deviceName, action, description) {
+            if (!currentUser) return;
+
+            try {
+                await db.collection('parents').doc(currentUser.uid)
+                    .collection('activity').add({
+                        deviceId: deviceId,
+                        deviceName: deviceName,
+                        action: action,
+                        description: description,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                // Keep only last 100 entries
+                const activityRef = db.collection('parents').doc(currentUser.uid)
+                    .collection('activity');
+                const snapshot = await activityRef.orderBy('timestamp', 'desc').limit(100).get();
+
+                if (snapshot.size >= 100) {
+                    const oldestDocs = await activityRef.orderBy('timestamp', 'asc').limit(snapshot.size - 90).get();
+                    oldestDocs.forEach(doc => doc.ref.delete());
+                }
+            } catch (error) {
+                console.error('Error logging activity:', error);
+            }
+        }
+
+        // ==================== DEVICE MANAGEMENT ====================
+        async function toggleLock(deviceId, deviceName, lock) {
+            const action = lock ? 'lock' : 'unlock';
+            const actionText = lock ? 'lock' : 'unlock';
+            const confirmMsg = `Are you sure you want to ${actionText} ${deviceName}?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                // Update Firestore
+                await db.collection('users').doc(deviceId).set({
+                    isLocked: lock,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastAction: action,
+                    triggeredBy: currentUser.uid,
+                    childName: deviceName
+                }, { merge: true });
+
+                // Update parent's children collection
+                await db.collection('parents').doc(currentUser.uid)
+                    .collection('children').doc(deviceId).set({
+                        isLocked: lock,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                // Log activity
+                await logActivity(deviceId, deviceName, action,
+                    `Device ${actionText}ed by parent`);
+
+                showToast(`${deviceName} ${actionText}ed successfully!`, 'success');
+
+                // Refresh devices list
+                await loadDevices();
+
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+                console.error('Toggle lock error:', error);
+            }
+        }
+
+        async function removeDevice(deviceId, deviceName) {
+            if (!confirm(`Remove ${deviceName}? This action cannot be undone.`)) return;
+
+            try {
+                // Remove from parent's collection
+                await db.collection('parents').doc(currentUser.uid)
+                    .collection('children').doc(deviceId).delete();
+
+                // Mark inactive in users collection
+                await db.collection('users').doc(deviceId).set({
+                    active: false,
+                    parentId: null,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                // Log activity
+                await logActivity(deviceId, deviceName, 'device_removed',
+                    `Device ${deviceName} was removed`);
+
+                showToast(`Device ${deviceName} removed`, 'success');
+                await loadDevices();
+
+            } catch (error) {
+                showToast('Error removing device: ' + error.message, 'error');
+                console.error('Remove device error:', error);
+            }
+        }
+
+        async function loadDevices() {
+            if (!currentUser) return;
+
+            try {
+                const devicesSnapshot = await db.collection('parents')
+                    .doc(currentUser.uid)
+                    .collection('children')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                const devicesList = document.getElementById('devicesList');
+
+                if (devicesSnapshot.empty) {
+                    devicesList.innerHTML = '<div class="empty-state">📭 No devices added yet. Click "Add Device" to get started.</div>';
+                    document.getElementById('totalChildren').textContent = '0';
+                    document.getElementById('lockedDevices').textContent = '0';
+                    return;
+                }
+
+                let lockedCount = 0;
+                let onlineCount = 0;
+                const devices = [];
+
+                for (const doc of devicesSnapshot.docs) {
+                    const device = doc.data();
+
+                    // Get latest lock state from users collection
+                    const userDoc = await db.collection('users').doc(device.deviceId).get();
+                    const isLocked = userDoc.exists ? userDoc.data().isLocked : false;
+                    const lastSeen = userDoc.exists ? userDoc.data().lastUpdated : device.lastUpdated;
+
+                    if (isLocked) lockedCount++;
+
+                    // Consider online if seen in last 5 minutes
+                    if (lastSeen) {
+                        const lastSeenDate = lastSeen.toDate ? lastSeen.toDate() : new Date(lastSeen);
+                        const minutesSinceSeen = (Date.now() - lastSeenDate) / 60000;
+                        if (minutesSinceSeen < 5) onlineCount++;
+                    }
+
+                    devices.push({ ...device, isLocked, lastSeen });
+                }
+
+                // Update stats
+                document.getElementById('totalChildren').textContent = devicesSnapshot.size;
+                document.getElementById('lockedDevices').textContent = lockedCount;
+                document.getElementById('onlineDevices').textContent = onlineCount;
+
+                // Render devices
+                devicesList.innerHTML = devices.map(device => `
+                    <div class="device-card ${device.isLocked ? 'locked' : ''}">
+                        <div class="device-header">
+                            <span class="device-name">${escapeHtml(device.name)}</span>
+                            <span class="device-status ${device.isLocked ? 'status-locked' : 'status-unlocked'}">
+                                ${device.isLocked ? '🔒 Locked' : '🔓 Unlocked'}
+                            </span>
+                        </div>
+                        <div class="device-info">
+                            <div>🆔 ID: ${device.deviceId.substring(0, 8)}...</div>
+                            <div>🕐 Last seen: ${formatDate(device.lastSeen)}</div>
+                            <div>📅 Added: ${formatDate(device.createdAt)}</div>
+                        </div>
+                        <div class="device-actions">
+                            <button onclick="window.toggleLock('${device.deviceId}', '${escapeHtml(device.name)}', ${!device.isLocked})" 
+                                    class="${!device.isLocked ? 'btn-danger' : 'btn-success'}">
+                                ${!device.isLocked ? '🔒 Lock Device' : '🔓 Unlock Device'}
+                            </button>
+                            <button onclick="window.removeDevice('${device.deviceId}', '${escapeHtml(device.name)}')" 
+                                    class="btn-danger">
+                                🗑️ Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading devices:', error);
+                document.getElementById('devicesList').innerHTML = '<div class="empty-state">❌ Error loading devices. Please refresh.</div>';
+            }
+        }
+
+        async function loadActivityLog() {
+            if (!currentUser) return;
+
+            try {
+                const activitySnapshot = await db.collection('parents')
+                    .doc(currentUser.uid)
+                    .collection('activity')
+                    .orderBy('timestamp', 'desc')
+                    .limit(20)
+                    .get();
+
+                const activityLog = document.getElementById('activityLog');
+
+                if (activitySnapshot.empty) {
+                    activityLog.innerHTML = '<div class="empty-state">📝 No activity yet</div>';
+                    return;
+                }
+
+                activityLog.innerHTML = activitySnapshot.docs.map(doc => {
+                    const activity = doc.data();
+                    return `
+                        <div class="log-entry">
+                            <span class="log-time">${formatDate(activity.timestamp)}</span>
+                            <span class="log-action ${activity.action === 'lock' ? 'lock' : (activity.action === 'unlock' ? 'unlock' : '')}">
+                                ${getActionIcon(activity.action)} ${activity.action.toUpperCase()}
+                            </span>
+                            <span>${escapeHtml(activity.description)}</span>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading activity:', error);
+                document.getElementById('activityLog').innerHTML = '<div class="empty-state">❌ Error loading activity</div>';
+            }
+        }
+
+        // ==================== SETUP REAL-TIME LISTENERS ====================
+        function setupRealtimeListeners() {
+            if (!currentUser) return;
+
+            // Listen for device changes
+            if (unsubscribeDevices) unsubscribeDevices();
+            unsubscribeDevices = db.collection('parents').doc(currentUser.uid)
+                .collection('children')
+                .onSnapshot(() => {
+                    loadDevices();
+                }, (error) => {
+                    console.error('Device listener error:', error);
+                });
+
+            // Listen for activity changes
+            if (unsubscribeActivity) unsubscribeActivity();
+            unsubscribeActivity = db.collection('parents').doc(currentUser.uid)
+                .collection('activity')
+                .onSnapshot(() => {
+                    loadActivityLog();
+                }, (error) => {
+                    console.error('Activity listener error:', error);
+                });
+        }
+
+        // ==================== AUTHENTICATION ====================
+        function setupAuthStateListener() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    authSection.style.display = 'none';
+                    dashboardSection.style.display = 'block';
+                    logoutBtn.style.display = 'block';
+
+                    showToast(`Welcome back, ${user.email}!`, 'success');
+
+                    await loadDevices();
+                    await loadActivityLog();
+                    setupRealtimeListeners();
+                } else {
+                    currentUser = null;
+                    authSection.style.display = 'flex';
+                    dashboardSection.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+
+                    if (unsubscribeDevices) unsubscribeDevices();
+                    if (unsubscribeActivity) unsubscribeActivity();
+                }
+            });
+        }
+
+        // ==================== EVENT HANDLERS ====================
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showToast('Login successful!', 'success');
+                loginForm.reset();
+            } catch (error) {
+                showToast('Login failed: ' + error.message, 'error');
+                console.error('Login error:', error);
+            }
+        });
+
+        showRegisterBtn.addEventListener('click', async () => {
+            const email = prompt('Enter your email address:');
+            if (!email) return;
+
+            const password = prompt('Enter a password (minimum 6 characters):');
+            if (!password || password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                showToast('Account created successfully! You are now logged in.', 'success');
+            } catch (error) {
+                showToast('Registration failed: ' + error.message, 'error');
+                console.error('Registration error:', error);
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                showToast('Logged out successfully', 'info');
+            } catch (error) {
+                showToast('Logout failed: ' + error.message, 'error');
+            }
+        });
+
+        addDeviceBtn.addEventListener('click', () => {
+            const isVisible = addDeviceForm.style.display === 'flex';
+            addDeviceForm.style.display = isVisible ? 'none' : 'flex';
+        });
+
+        saveDeviceBtn.addEventListener('click', async () => {
+            const childName = document.getElementById('childName').value.trim();
+            const deviceId = document.getElementById('deviceId').value.trim();
+
+            if (!childName || !deviceId) {
+                showToast('Please fill in both fields', 'error');
+                return;
+            }
+
+            if (deviceId.length < 10) {
+                showToast('Device ID seems too short. Please check the ID from the child\'s app.', 'error');
+                return;
+            }
+
+            try {
+                // Save to parent's children collection
+                await db.collection('parents').doc(currentUser.uid)
+                    .collection('children').doc(deviceId).set({
+                        name: childName,
+                        deviceId: deviceId,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        isLocked: false,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                // Initialize device state in users collection
+                await db.collection('users').doc(deviceId).set({
+                    isLocked: false,
+                    childId: deviceId,
+                    childName: childName,
+                    parentId: currentUser.uid,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    active: true
+                });
+
+                // Log activity
+                await logActivity(deviceId, childName, 'device_added',
+                    `Device ${childName} was added to your account`);
+
+                showToast(`Device "${childName}" added successfully!`, 'success');
+
+                // Reset form
+                document.getElementById('childName').value = '';
+                document.getElementById('deviceId').value = '';
+                addDeviceForm.style.display = 'none';
+
+                // Refresh devices
+                await loadDevices();
+
+            } catch (error) {
+                showToast('Error adding device: ' + error.message, 'error');
+                console.error('Add device error:', error);
+            }
+        });
+
+        // Make functions globally accessible
+        window.toggleLock = toggleLock;
+        window.removeDevice = removeDevice;
+
+        // Initialize
+        setupAuthStateListener();
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            if (currentUser) {
+                loadDevices();
+                loadActivityLog();
+            }
+        }, 30000);
+
+        console.log('Parental Control Portal initialized');
+    </script>
+</body>
+
+</html>
