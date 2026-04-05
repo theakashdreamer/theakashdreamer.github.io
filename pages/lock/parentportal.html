@@ -41,6 +41,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -230,6 +231,7 @@
                 opacity: 0;
                 transform: scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -403,6 +405,7 @@
                 opacity: 0;
                 transform: translateX(100px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -521,7 +524,8 @@
                         <button id="addDeviceBtn" class="btn-success">+ Enroll Device</button>
                     </div>
                     <div id="addDeviceForm" class="add-device-form">
-                        <input type="text" id="deviceName" placeholder="Device Name (e.g., Tablet, Phone)" class="form-input">
+                        <input type="text" id="deviceName" placeholder="Device Name (e.g., Tablet, Phone)"
+                            class="form-input">
                         <input type="text" id="serialNumber" placeholder="Serial Number / Device ID" class="form-input">
                         <button id="saveDeviceBtn" class="btn-primary">💾 Enroll</button>
                     </div>
@@ -547,13 +551,13 @@
     <script>
         // ==================== FIREBASE CONFIGURATION ====================
         const firebaseConfig = {
-            apiKey: "AIzaSyCiljXJwLO1oOuToS0ZxHacY95573nAqMM",
-            authDomain: "locksystem-235d1.firebaseapp.com",
-            projectId: "locksystem-235d1",
-            storageBucket: "locksystem-235d1.firebasestorage.app",
-            messagingSenderId: "813353508153",
-            appId: "1:813353508153:web:c95166b8ecbc496ba71ce8",
-            measurementId: "G-RMJH6P2894"
+            apiKey: "AIzaSyAbAkSQQ9NQlSap_jixWsnCVo6uG_WOXF4",
+            authDomain: "locksystem-f0971.firebaseapp.com",
+            projectId: "locksystem-f0971",
+            storageBucket: "locksystem-f0971.firebasestorage.app",
+            messagingSenderId: "141649865581",
+            appId: "1:141649865581:web:fe4742dd6deb99981dc864",
+            measurementId: "G-MVZ9JELPF3"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
