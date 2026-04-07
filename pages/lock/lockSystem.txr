@@ -1,0 +1,1381 @@
+# Android Kotlin flow: Splash -> Device Admin -> Runtime Permission -> Device Owner Info -> Dashboard
+
+This code uses package name:
+
+`com.skysoftsolutions.locksystem`
+
+It gives a proper splash screen
+
+* device admin activation
+* runtime permission handling
+* device owner status handling
+* dashboard with admin and owner actions
+
+---
+
+## 1) `AndroidManifest.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Lock System"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LockSystem">
+
+        <receiver
+            android:name=".admin.OrganizationDeviceAdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_receiver" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.dashboard.DashboardActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.owner.DeviceOwnerInfoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.permission.PermissionActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.admin.DeviceAdminActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.LockSystem.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>
+```
+
+---
+
+## 2) `res/xml/device_admin_receiver.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies>
+        <force-lock />
+        <reset-password />
+        <wipe-data />
+    </uses-policies>
+</device-admin>
+```
+
+---
+
+## 3) `admin/OrganizationDeviceAdminReceiver.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.admin
+
+import android.app.admin.DeviceAdminReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+
+class OrganizationDeviceAdminReceiver : DeviceAdminReceiver() {
+
+    override fun onEnabled(context: Context, intent: Intent) {
+        super.onEnabled(context, intent)
+        Toast.makeText(context, "Device admin enabled", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDisabled(context: Context, intent: Intent) {
+        super.onDisabled(context, intent)
+        Toast.makeText(context, "Device admin disabled", Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        fun getComponentName(context: Context): ComponentName {
+            return ComponentName(context, OrganizationDeviceAdminReceiver::class.java)
+        }
+    }
+}
+```
+
+---
+
+## 4) `device/DeviceOwnerManager.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.device
+
+import android.app.Activity
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
+import android.os.Build
+import android.os.UserManager
+import com.skysoftsolutions.locksystem.admin.OrganizationDeviceAdminReceiver
+
+class DeviceOwnerManager(private val context: Context) {
+
+    private val dpm: DevicePolicyManager =
+        context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+
+    private val admin: ComponentName = OrganizationDeviceAdminReceiver.getComponentName(context)
+
+    fun isAdminActive(): Boolean = dpm.isAdminActive(admin)
+
+    fun isDeviceOwner(): Boolean = dpm.isDeviceOwnerApp(context.packageName)
+
+    fun isProfileOwner(): Boolean = dpm.isProfileOwnerApp(context.packageName)
+
+    fun isFullyManaged(): Boolean = isAdminActive() && isDeviceOwner()
+
+    fun lockDeviceNow(): Result<Unit> {
+        return runCatching {
+            check(isAdminActive()) { "Device admin is not active" }
+            dpm.lockNow()
+        }
+    }
+
+    fun setLostMessage(message: String): Result<Unit> {
+        return runCatching {
+            check(isDeviceOwner()) { "Device owner is required" }
+            dpm.setDeviceOwnerLockScreenInfo(admin, message)
+        }
+    }
+
+    fun applyBaseRestrictions(): Result<Unit> {
+        return runCatching {
+            check(isDeviceOwner()) { "Device owner is required" }
+
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_SAFE_BOOT)
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_ADD_USER)
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                dpm.setStatusBarDisabled(admin, true)
+            }
+        }
+    }
+
+    fun clearBaseRestrictions(): Result<Unit> {
+        return runCatching {
+            check(isDeviceOwner()) { "Device owner is required" }
+
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_SAFE_BOOT)
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_ADD_USER)
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                dpm.setStatusBarDisabled(admin, false)
+            }
+        }
+    }
+
+    fun enableKioskMode(activity: Activity): Result<Unit> {
+        return runCatching {
+            check(isDeviceOwner()) { "Device owner is required" }
+            dpm.setLockTaskPackages(admin, arrayOf(context.packageName))
+            activity.startLockTask()
+        }
+    }
+
+    fun disableKioskMode(activity: Activity): Result<Unit> {
+        return runCatching {
+            if (isDeviceOwner()) {
+                dpm.setLockTaskPackages(admin, emptyArray())
+            }
+            activity.stopLockTask()
+        }
+    }
+}
+```
+
+---
+
+## 5) `data/SetupPreferences.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.data
+
+import android.content.Context
+
+class SetupPreferences(context: Context) {
+
+    private val prefs = context.getSharedPreferences("setup_prefs", Context.MODE_PRIVATE)
+
+    fun isOwnerInfoDismissed(): Boolean {
+        return prefs.getBoolean(KEY_OWNER_INFO_DISMISSED, false)
+    }
+
+    fun setOwnerInfoDismissed(value: Boolean) {
+        prefs.edit().putBoolean(KEY_OWNER_INFO_DISMISSED, value).apply()
+    }
+
+    companion object {
+        private const val KEY_OWNER_INFO_DISMISSED = "owner_info_dismissed"
+    }
+}
+```
+
+---
+
+## 6) `permission/PermissionHelper.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.permission
+
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.content.ContextCompat
+
+object PermissionHelper {
+
+    fun requiredRuntimePermissions(): Array<String> {
+        val permissions = mutableListOf<String>()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions += Manifest.permission.POST_NOTIFICATIONS
+        }
+
+        return permissions.toTypedArray()
+    }
+
+    fun missingRuntimePermissions(context: Context): List<String> {
+        return requiredRuntimePermissions().filter { permission ->
+            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    fun hasAllRuntimePermissions(context: Context): Boolean {
+        return missingRuntimePermissions(context).isEmpty()
+    }
+}
+```
+
+---
+
+## 7) `navigation/AppRouter.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.navigation
+
+import android.content.Context
+import android.content.Intent
+import com.skysoftsolutions.locksystem.data.SetupPreferences
+import com.skysoftsolutions.locksystem.device.DeviceOwnerManager
+import com.skysoftsolutions.locksystem.permission.PermissionHelper
+import com.skysoftsolutions.locksystem.ui.admin.DeviceAdminActivity
+import com.skysoftsolutions.locksystem.ui.dashboard.DashboardActivity
+import com.skysoftsolutions.locksystem.ui.owner.DeviceOwnerInfoActivity
+import com.skysoftsolutions.locksystem.ui.permission.PermissionActivity
+
+object AppRouter {
+
+    fun nextIntent(context: Context): Intent {
+        val manager = DeviceOwnerManager(context)
+        val prefs = SetupPreferences(context)
+
+        return when {
+            !manager.isAdminActive() -> Intent(context, DeviceAdminActivity::class.java)
+            !PermissionHelper.hasAllRuntimePermissions(context) -> Intent(context, PermissionActivity::class.java)
+            !manager.isDeviceOwner() && !prefs.isOwnerInfoDismissed() -> Intent(context, DeviceOwnerInfoActivity::class.java)
+            else -> Intent(context, DashboardActivity::class.java)
+        }
+    }
+}
+```
+
+---
+
+## 8) `receiver/BootCompletedReceiver.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.receiver
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.skysoftsolutions.locksystem.device.DeviceOwnerManager
+
+class BootCompletedReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+
+        val manager = DeviceOwnerManager(context)
+
+        if (manager.isDeviceOwner()) {
+            manager.applyBaseRestrictions()
+        }
+    }
+}
+```
+
+---
+
+## 9) `ui/splash/SplashActivity.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.ui.splash
+
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
+import com.skysoftsolutions.locksystem.R
+import com.skysoftsolutions.locksystem.navigation.AppRouter
+
+class SplashActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity(AppRouter.nextIntent(this).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
+            finish()
+        }, 1400)
+    }
+}
+```
+
+---
+
+## 10) `ui/admin/DeviceAdminActivity.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.ui.admin
+
+import android.app.Activity
+import android.app.admin.DevicePolicyManager
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.card.MaterialCardView
+import com.skysoftsolutions.locksystem.R
+import com.skysoftsolutions.locksystem.admin.OrganizationDeviceAdminReceiver
+import com.skysoftsolutions.locksystem.device.DeviceOwnerManager
+import com.skysoftsolutions.locksystem.navigation.AppRouter
+
+class DeviceAdminActivity : AppCompatActivity() {
+
+    private lateinit var statusText: TextView
+    private lateinit var ownerText: TextView
+    private lateinit var enableButton: Button
+    private lateinit var continueButton: Button
+    private lateinit var statusCard: MaterialCardView
+
+    private lateinit var manager: DeviceOwnerManager
+
+    private val adminLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        refreshUi()
+        if (result.resultCode == Activity.RESULT_OK && manager.isAdminActive()) {
+            routeNext()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_device_admin)
+
+        manager = DeviceOwnerManager(this)
+
+        statusText = findViewById(R.id.tvAdminStatus)
+        ownerText = findViewById(R.id.tvOwnerStatus)
+        enableButton = findViewById(R.id.btnEnableAdmin)
+        continueButton = findViewById(R.id.btnContinueAfterAdmin)
+        statusCard = findViewById(R.id.cardAdminStatus)
+
+        enableButton.setOnClickListener {
+            openAdminEnableScreen()
+        }
+
+        continueButton.setOnClickListener {
+            if (!manager.isAdminActive()) {
+                Toast.makeText(this, "Enable device admin first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            routeNext()
+        }
+
+        refreshUi()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshUi()
+    }
+
+    private fun openAdminEnableScreen() {
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+            putExtra(
+                DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+                OrganizationDeviceAdminReceiver.getComponentName(this@DeviceAdminActivity)
+            )
+            putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "Allow this app to manage lock, kiosk, and security actions on this device."
+            )
+        }
+        adminLauncher.launch(intent)
+    }
+
+    private fun refreshUi() {
+        val isAdmin = manager.isAdminActive()
+        val isOwner = manager.isDeviceOwner()
+
+        statusText.text = if (isAdmin) {
+            "Device Admin: Enabled"
+        } else {
+            "Device Admin: Not enabled"
+        }
+
+        ownerText.text = if (isOwner) {
+            "Device Owner: Active"
+        } else {
+            "Device Owner: Not active"
+        }
+
+        enableButton.isEnabled = !isAdmin
+        continueButton.isEnabled = isAdmin
+    }
+
+    private fun routeNext() {
+        startActivity(AppRouter.nextIntent(this))
+        finish()
+    }
+}
+```
+
+---
+
+## 11) `ui/permission/PermissionActivity.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.ui.permission
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import com.skysoftsolutions.locksystem.R
+import com.skysoftsolutions.locksystem.navigation.AppRouter
+import com.skysoftsolutions.locksystem.permission.PermissionHelper
+
+class PermissionActivity : AppCompatActivity() {
+
+    private lateinit var permissionSummary: TextView
+    private lateinit var grantButton: Button
+    private lateinit var continueButton: Button
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        refreshUi()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_permission)
+
+        permissionSummary = findViewById(R.id.tvPermissionSummary)
+        grantButton = findViewById(R.id.btnGrantPermissions)
+        continueButton = findViewById(R.id.btnContinueAfterPermission)
+
+        grantButton.setOnClickListener {
+            val missing = PermissionHelper.missingRuntimePermissions(this)
+            if (missing.isEmpty()) {
+                Toast.makeText(this, "All permissions already granted", Toast.LENGTH_SHORT).show()
+            } else {
+                permissionLauncher.launch(missing.toTypedArray())
+            }
+        }
+
+        continueButton.setOnClickListener {
+            if (!PermissionHelper.hasAllRuntimePermissions(this)) {
+                Toast.makeText(this, "Grant all required permissions first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            startActivity(AppRouter.nextIntent(this))
+            finish()
+        }
+
+        refreshUi()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshUi()
+    }
+
+    private fun refreshUi() {
+        val missing = PermissionHelper.missingRuntimePermissions(this)
+
+        permissionSummary.text = if (missing.isEmpty()) {
+            "All required runtime permissions are granted."
+        } else {
+            buildString {
+                append("Missing runtime permissions:\n\n")
+                missing.forEach { append("• ").append(it).append("\n") }
+            }
+        }
+
+        grantButton.isEnabled = missing.isNotEmpty()
+        continueButton.isEnabled = missing.isEmpty()
+    }
+}
+```
+
+---
+
+## 12) `ui/owner/DeviceOwnerInfoActivity.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.ui.owner
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.skysoftsolutions.locksystem.R
+import com.skysoftsolutions.locksystem.data.SetupPreferences
+import com.skysoftsolutions.locksystem.device.DeviceOwnerManager
+import com.skysoftsolutions.locksystem.ui.dashboard.DashboardActivity
+
+class DeviceOwnerInfoActivity : AppCompatActivity() {
+
+    private lateinit var manager: DeviceOwnerManager
+    private lateinit var prefs: SetupPreferences
+
+    private lateinit var statusText: TextView
+    private lateinit var commandText: TextView
+    private lateinit var copyButton: Button
+    private lateinit var refreshButton: Button
+    private lateinit var continueAdminModeButton: Button
+
+    private val adbCommand =
+        "adb shell dpm set-device-owner com.skysoftsolutions.locksystem/.admin.OrganizationDeviceAdminReceiver"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_device_owner_info)
+
+        manager = DeviceOwnerManager(this)
+        prefs = SetupPreferences(this)
+
+        statusText = findViewById(R.id.tvOwnerCurrentStatus)
+        commandText = findViewById(R.id.tvOwnerCommand)
+        copyButton = findViewById(R.id.btnCopyOwnerCommand)
+        refreshButton = findViewById(R.id.btnRefreshOwnerStatus)
+        continueAdminModeButton = findViewById(R.id.btnContinueAdminMode)
+
+        commandText.text = adbCommand
+
+        copyButton.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText("adb_command", adbCommand))
+            Toast.makeText(this, "ADB command copied", Toast.LENGTH_SHORT).show()
+        }
+
+        refreshButton.setOnClickListener {
+            if (manager.isDeviceOwner()) {
+                Toast.makeText(this, "Device owner is active", Toast.LENGTH_SHORT).show()
+                openDashboard()
+            } else {
+                refreshUi()
+                Toast.makeText(this, "Device owner is still not active", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        continueAdminModeButton.setOnClickListener {
+            prefs.setOwnerInfoDismissed(true)
+            openDashboard()
+        }
+
+        refreshUi()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshUi()
+    }
+
+    private fun refreshUi() {
+        statusText.text = if (manager.isDeviceOwner()) {
+            "Device Owner: Active"
+        } else {
+            "Device Owner: Not active"
+        }
+    }
+
+    private fun openDashboard() {
+        startActivity(Intent(this, DashboardActivity::class.java))
+        finish()
+    }
+}
+```
+
+---
+
+## 13) `ui/dashboard/DashboardActivity.kt`
+
+```kotlin
+package com.skysoftsolutions.locksystem.ui.dashboard
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.skysoftsolutions.locksystem.R
+import com.skysoftsolutions.locksystem.device.DeviceOwnerManager
+import com.skysoftsolutions.locksystem.permission.PermissionHelper
+import com.skysoftsolutions.locksystem.ui.admin.DeviceAdminActivity
+import com.skysoftsolutions.locksystem.ui.owner.DeviceOwnerInfoActivity
+import com.skysoftsolutions.locksystem.ui.permission.PermissionActivity
+
+class DashboardActivity : AppCompatActivity() {
+
+    private lateinit var manager: DeviceOwnerManager
+
+    private lateinit var tvAdminStatus: TextView
+    private lateinit var tvOwnerStatus: TextView
+    private lateinit var tvPermissionStatus: TextView
+    private lateinit var etLockMessage: EditText
+
+    private lateinit var btnEnableAdmin: Button
+    private lateinit var btnPermissions: Button
+    private lateinit var btnOwnerInfo: Button
+    private lateinit var btnLockNow: Button
+    private lateinit var btnSetMessage: Button
+    private lateinit var btnApplyRestrictions: Button
+    private lateinit var btnClearRestrictions: Button
+    private lateinit var btnEnterKiosk: Button
+    private lateinit var btnExitKiosk: Button
+    private lateinit var btnRefresh: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_dashboard)
+
+        manager = DeviceOwnerManager(this)
+
+        tvAdminStatus = findViewById(R.id.tvDashboardAdminStatus)
+        tvOwnerStatus = findViewById(R.id.tvDashboardOwnerStatus)
+        tvPermissionStatus = findViewById(R.id.tvDashboardPermissionStatus)
+        etLockMessage = findViewById(R.id.etLockMessage)
+
+        btnEnableAdmin = findViewById(R.id.btnDashboardEnableAdmin)
+        btnPermissions = findViewById(R.id.btnDashboardPermissions)
+        btnOwnerInfo = findViewById(R.id.btnDashboardOwnerInfo)
+        btnLockNow = findViewById(R.id.btnDashboardLockNow)
+        btnSetMessage = findViewById(R.id.btnDashboardSetMessage)
+        btnApplyRestrictions = findViewById(R.id.btnDashboardApplyRestrictions)
+        btnClearRestrictions = findViewById(R.id.btnDashboardClearRestrictions)
+        btnEnterKiosk = findViewById(R.id.btnDashboardEnterKiosk)
+        btnExitKiosk = findViewById(R.id.btnDashboardExitKiosk)
+        btnRefresh = findViewById(R.id.btnDashboardRefresh)
+
+        btnEnableAdmin.setOnClickListener {
+            startActivity(Intent(this, DeviceAdminActivity::class.java))
+        }
+
+        btnPermissions.setOnClickListener {
+            startActivity(Intent(this, PermissionActivity::class.java))
+        }
+
+        btnOwnerInfo.setOnClickListener {
+            startActivity(Intent(this, DeviceOwnerInfoActivity::class.java))
+        }
+
+        btnLockNow.setOnClickListener {
+            val result = manager.lockDeviceNow()
+            showResult(result, "Device locked")
+        }
+
+        btnSetMessage.setOnClickListener {
+            val message = etLockMessage.text.toString().trim()
+            if (message.isEmpty()) {
+                Toast.makeText(this, "Enter a message first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val result = manager.setLostMessage(message)
+            showResult(result, "Lock screen message updated")
+        }
+
+        btnApplyRestrictions.setOnClickListener {
+            val result = manager.applyBaseRestrictions()
+            showResult(result, "Base restrictions applied")
+        }
+
+        btnClearRestrictions.setOnClickListener {
+            val result = manager.clearBaseRestrictions()
+            showResult(result, "Base restrictions cleared")
+        }
+
+        btnEnterKiosk.setOnClickListener {
+            val result = manager.enableKioskMode(this)
+            showResult(result, "Kiosk mode started")
+        }
+
+        btnExitKiosk.setOnClickListener {
+            val result = manager.disableKioskMode(this)
+            showResult(result, "Kiosk mode stopped")
+        }
+
+        btnRefresh.setOnClickListener {
+            refreshStatus()
+        }
+
+        refreshStatus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshStatus()
+    }
+
+    private fun refreshStatus() {
+        tvAdminStatus.text = if (manager.isAdminActive()) {
+            "Device Admin: Enabled"
+        } else {
+            "Device Admin: Not enabled"
+        }
+
+        tvOwnerStatus.text = if (manager.isDeviceOwner()) {
+            "Device Owner: Active"
+        } else {
+            "Device Owner: Not active"
+        }
+
+        tvPermissionStatus.text = if (PermissionHelper.hasAllRuntimePermissions(this)) {
+            "Runtime Permissions: Granted"
+        } else {
+            "Runtime Permissions: Missing"
+        }
+
+        btnLockNow.isEnabled = manager.isAdminActive()
+        btnSetMessage.isEnabled = manager.isDeviceOwner()
+        btnApplyRestrictions.isEnabled = manager.isDeviceOwner()
+        btnClearRestrictions.isEnabled = manager.isDeviceOwner()
+        btnEnterKiosk.isEnabled = manager.isDeviceOwner()
+    }
+
+    private fun showResult(result: Result<Unit>, successMessage: String) {
+        result.onSuccess {
+            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
+            refreshStatus()
+        }.onFailure {
+            Toast.makeText(this, it.message ?: "Action failed", Toast.LENGTH_LONG).show()
+            refreshStatus()
+        }
+    }
+}
+```
+
+---
+
+## 14) `res/layout/activity_splash.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="App logo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Lock System"
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Checking admin, permissions and owner state"
+        android:textColor="#DDE3FF"
+        android:textSize="14sp" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp" />
+
+</LinearLayout>
+```
+
+---
+
+## 15) `res/layout/activity_device_admin.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Device Admin"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="This step allows the app to lock the screen and manage device-level actions that require admin access."
+            android:textSize="15sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAdminStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvAdminStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Device Admin: Not enabled"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOwnerStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Device Owner: Not active"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/btnEnableAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Enable Device Admin" />
+
+        <Button
+            android:id="@+id/btnContinueAfterAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Continue" />
+
+    </LinearLayout>
+</ScrollView>
+```
+
+---
+
+## 16) `res/layout/activity_permission.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grant Runtime Permissions"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Grant the runtime permissions required by the app. Notification permission is requested on Android 13 and above."
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvPermissionSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="16dp"
+            android:background="#EEF3FF"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnGrantPermissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Grant Permissions" />
+
+        <Button
+            android:id="@+id/btnContinueAfterPermission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Continue" />
+
+    </LinearLayout>
+</ScrollView>
+```
+
+---
+
+## 17) `res/layout/activity_device_owner_info.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device Owner Setup"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvOwnerCurrentStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Device Owner: Not active"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="For testing, make the app Device Owner from ADB on a clean device. This is required for kiosk mode, user restrictions and owner-only policies."
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvOwnerCommand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="#111827"
+            android:padding="16dp"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnCopyOwnerCommand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Copy ADB Command" />
+
+        <Button
+            android:id="@+id/btnRefreshOwnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="I Already Provisioned, Recheck" />
+
+        <Button
+            android:id="@+id/btnContinueAdminMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Continue In Admin Mode" />
+
+    </LinearLayout>
+</ScrollView>
+```
+
+---
+
+## 18) `res/layout/activity_dashboard.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Management Dashboard"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDashboardAdminStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="14dp"
+            android:background="#EEF3FF"
+            android:text="Device Admin: Not enabled"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvDashboardOwnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="14dp"
+            android:background="#EEF3FF"
+            android:text="Device Owner: Not active"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvDashboardPermissionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="14dp"
+            android:background="#EEF3FF"
+            android:text="Runtime Permissions: Missing"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/etLockMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="Enter lock screen message"
+            android:inputType="textCapSentences" />
+
+        <Button
+            android:id="@+id/btnDashboardEnableAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Open Device Admin Screen" />
+
+        <Button
+            android:id="@+id/btnDashboardPermissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Open Permission Screen" />
+
+        <Button
+            android:id="@+id/btnDashboardOwnerInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Open Device Owner Info" />
+
+        <Button
+            android:id="@+id/btnDashboardLockNow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Lock Device Now" />
+
+        <Button
+            android:id="@+id/btnDashboardSetMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Set Lock Message" />
+
+        <Button
+            android:id="@+id/btnDashboardApplyRestrictions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Apply Base Restrictions" />
+
+        <Button
+            android:id="@+id/btnDashboardClearRestrictions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Clear Base Restrictions" />
+
+        <Button
+            android:id="@+id/btnDashboardEnterKiosk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Enter Kiosk Mode" />
+
+        <Button
+            android:id="@+id/btnDashboardExitKiosk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Exit Kiosk Mode" />
+
+        <Button
+            android:id="@+id/btnDashboardRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Refresh Status" />
+
+    </LinearLayout>
+</ScrollView>
+```
+
+---
+
+## 19) `res/drawable/bg_splash.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="135"
+        android:startColor="#182848"
+        android:centerColor="#304878"
+        android:endColor="#4B6CB7" />
+</shape>
+```
+
+---
+
+## 20) `res/values/colors.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary_blue">#304878</color>
+    <color name="primary_blue_dark">#182848</color>
+</resources>
+```
+
+---
+
+## 21) `res/values/themes.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.LockSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/primary_blue_dark</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+
+    <style name="Theme.LockSystem.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+
+</resources>
+```
+
+---
+
+## 22) Optional `build.gradle.kts` module additions
+
+Add these if not already present in your app module:
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.skysoftsolutions.locksystem"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.skysoftsolutions.locksystem"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildFeatures {
+        viewBinding = false
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.9.0")
+}
+```
+
+---
+
+## 23) Real flow
+
+### First app launch
+
+1. `SplashActivity`
+2. If admin not active -> `DeviceAdminActivity`
+3. If runtime permission missing -> `PermissionActivity`
+4. If device owner not active and user has not dismissed info -> `DeviceOwnerInfoActivity`
+5. Then -> `DashboardActivity`
+
+### What works with Device Admin only
+
+* lock device now
+
+### What needs Device Owner
+
+* kiosk mode
+* lock task allowlist
+* user restrictions
+* lock screen owner message
+* full managed device policies
+
+---
+
+## 24) Test Device Owner on a clean test device
+
+Use this exact command after installing the app:
+
+```bash
+adb shell dpm set-device-owner com.skysoftsolutions.locksystem/.admin.OrganizationDeviceAdminReceiver
+```
+
+If it fails, remove all accounts from the device and use a fresh device or reset test device.
+
+---
+
+## 25) What to do next
+
+Best next upgrade after this flow:
+
+* connect this dashboard with Firebase command listener
+* auto-register device after admin + permission success
+* add uninstall protection flow for fully managed devices
+* add kiosk launcher/home screen
+* add PIN screen before sensitive actions
+
+If you want, the next step should be: **I can turn this into your Firebase-controlled device owner project with command execution and registration flow.**

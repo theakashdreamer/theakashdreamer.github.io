@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Device Admin Panel</title>
+    <title>Admin Panel</title>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -26,31 +20,18 @@
         }
 
         .container {
-            max-width: 1250px;
+            max-width: 1350px;
             margin: 0 auto;
             background: white;
-            border-radius: 22px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
             overflow: hidden;
-            animation: slideUp 0.4s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(25px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 22px 30px;
+            padding: 22px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -60,125 +41,82 @@
 
         .header h1 {
             font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 700;
         }
 
         .logout-btn {
-            background: rgba(255, 255, 255, 0.18);
-            border: none;
+            background: rgba(255,255,255,.16);
             color: white;
-            padding: 10px 18px;
-            border-radius: 10px;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
             cursor: pointer;
-            font-size: 14px;
-            transition: 0.25s;
+            transition: .2s;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.28);
-            transform: translateY(-2px);
-        }
+        .logout-btn:hover { transform: translateY(-2px); }
 
         .auth-section {
-            padding: 45px 20px;
+            min-height: 70vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 520px;
+            padding: 30px;
         }
 
         .card {
             background: white;
-            border-radius: 14px;
-            padding: 28px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            margin-bottom: 22px;
-            transition: 0.25s;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 8px 22px rgba(0,0,0,.08);
+            margin-bottom: 20px;
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
+        .card h2 {
             margin-bottom: 18px;
+            color: #111827;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 14px; }
 
-        .form-group input {
+        .form-group input, .search-input, .filter-select {
             width: 100%;
             padding: 13px 14px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 15px;
-            transition: 0.25s;
+            outline: none;
         }
 
-        .form-group input:focus {
-            outline: none;
+        .form-group input:focus, .search-input:focus, .filter-select:focus {
             border-color: #667eea;
         }
 
-        .btn-primary,
-        .btn-success,
-        .btn-danger,
-        .btn-warning,
-        .btn-info,
-        .btn-secondary {
+        .btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-secondary {
             border: none;
             color: white;
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 10px;
             cursor: pointer;
             font-size: 13px;
-            transition: 0.25s;
+            transition: .2s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             width: 100%;
-            padding: 13px 16px;
-            font-size: 15px;
+            padding: 13px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .btn-primary:hover,
-        .btn-success:hover,
-        .btn-danger:hover,
-        .btn-warning:hover,
-        .btn-info:hover,
-        .btn-secondary:hover {
+        .btn-success { background: #10b981; }
+        .btn-danger { background: #ef4444; }
+        .btn-warning { background: #f59e0b; }
+        .btn-info { background: #3b82f6; }
+        .btn-secondary { background: #6b7280; }
+
+        .btn-primary:hover, .btn-success:hover, .btn-danger:hover,
+        .btn-warning:hover, .btn-info:hover, .btn-secondary:hover {
             transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: #10b981;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-        }
-
-        .btn-warning {
-            background: #f59e0b;
-        }
-
-        .btn-info {
-            background: #3b82f6;
-        }
-
-        .btn-secondary {
-            background: #6b7280;
         }
 
         .btn-link {
@@ -186,53 +124,70 @@
             border: none;
             color: #667eea;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
             width: 100%;
             font-size: 14px;
         }
 
-        .btn-link:hover {
-            text-decoration: underline;
-        }
+        .dashboard-wrap { padding: 0 24px 24px; }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 18px;
-            padding: 28px;
+            padding: 24px;
         }
 
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 22px;
-            border-radius: 16px;
+            border-radius: 18px;
+            padding: 20px;
             text-align: center;
         }
 
         .stat-card h3 {
             font-size: 14px;
-            opacity: 0.92;
+            opacity: .92;
             margin-bottom: 10px;
         }
 
         .stat-card p {
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 700;
         }
 
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input { min-width: 250px; }
+        .filter-select { min-width: 180px; }
+
         .devices-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
             gap: 18px;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .device-card {
             background: #f8fafc;
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 20px;
             border-left: 5px solid #10b981;
+            transition: .2s;
         }
 
         .device-card.not-managed {
@@ -240,13 +195,18 @@
             background: #fff7f7;
         }
 
+        .device-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0,0,0,.08);
+        }
+
         .device-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
             gap: 10px;
             flex-wrap: wrap;
+            margin-bottom: 14px;
         }
 
         .device-name {
@@ -255,28 +215,25 @@
             color: #111827;
         }
 
-        .device-status {
-            padding: 5px 12px;
+        .status-chip {
+            padding: 6px 12px;
             border-radius: 999px;
             font-size: 12px;
             font-weight: 700;
-        }
-
-        .status-online {
-            background: #10b981;
             color: white;
         }
 
-        .status-offline {
-            background: #9ca3af;
-            color: white;
-        }
+        .status-online { background: #10b981; }
+        .status-offline { background: #9ca3af; }
+        .status-pending { background: #f59e0b; }
+        .status-done { background: #10b981; }
+        .status-failed { background: #ef4444; }
 
         .device-info {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #374151;
             margin-bottom: 16px;
-            font-size: 12px;
-            color: #4b5563;
-            line-height: 1.75;
         }
 
         .device-actions {
@@ -285,21 +242,11 @@
             gap: 10px;
         }
 
-        .action-note {
-            margin-top: 10px;
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: 12px;
-            color: #374151;
-            line-height: 1.65;
-            font-size: 14px;
-        }
-
         .activity-log {
-            max-height: 420px;
+            max-height: 450px;
             overflow-y: auto;
             background: #f8fafc;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px;
         }
 
@@ -307,201 +254,149 @@
             padding: 12px 10px;
             border-bottom: 1px solid #e5e7eb;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .log-left {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         .log-time {
             color: #6b7280;
             font-size: 12px;
-            margin-right: 10px;
         }
 
         .log-action {
             font-weight: 700;
-            margin-right: 10px;
-        }
-
-        .log-action.lock {
-            color: #ef4444;
-        }
-
-        .log-action.unlock {
-            color: #10b981;
         }
 
         .toast {
             position: fixed;
-            bottom: 20px;
             right: 20px;
+            bottom: 20px;
+            color: white;
             padding: 12px 18px;
             border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            z-index: 1000;
-            animation: slideInRight 0.25s ease;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+            z-index: 9999;
+            box-shadow: 0 10px 22px rgba(0,0,0,.18);
         }
 
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(80px);
-            }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.info { background: #3b82f6; }
 
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .toast.success {
-            background: #10b981;
-        }
-
-        .toast.error {
-            background: #ef4444;
-        }
-
-        .toast.info {
-            background: #3b82f6;
-        }
-
-        .loading,
-        .empty-state {
+        .loading, .empty-state {
             text-align: center;
-            padding: 24px;
             color: #6b7280;
-        }
-
-        .danger-box {
-            background: #fff7ed;
-            color: #9a3412;
-            padding: 14px 16px;
-            border-radius: 12px;
-            margin-top: 16px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .mini-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #4338ca;
-            font-size: 11px;
-            font-weight: 700;
-            margin-right: 6px;
-            margin-bottom: 6px;
+            padding: 24px;
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                padding: 18px;
-            }
-
-            .devices-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .device-actions {
-                flex-direction: column;
-            }
-
-            .device-actions button {
-                width: 100%;
-            }
-
-            .card-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            body { padding: 10px; }
+            .stats-grid { grid-template-columns: 1fr; padding: 18px; }
+            .devices-grid { grid-template-columns: 1fr; }
+            .device-actions { flex-direction: column; }
+            .device-actions button { width: 100%; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-left, .toolbar-right { width: 100%; }
+            .search-input, .filter-select { width: 100%; min-width: auto; }
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📱 Device Admin Panel</h1>
-            <button id="logoutBtn" class="logout-btn" style="display:none;">🚪 Logout</button>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1> Admin Panel</h1>
+        <button id="logoutBtn" class="logout-btn" style="display:none;">🚪 Logout</button>
+    </div>
 
-        <!-- AUTH -->
-        <div id="authSection">
-            <div class="auth-section">
-                <div class="card" style="max-width: 420px; width:100%;">
-                    <h2 style="margin-bottom: 18px; text-align:center;">🔐 Admin Login</h2>
+    <!-- AUTH -->
+    <div id="authSection">
+        <div class="auth-section">
+            <div class="card" style="max-width: 420px; width:100%;">
+                <h2 style="text-align:center;">🔐 Admin Login</h2>
 
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <input type="email" id="email" placeholder="Email address" required autocomplete="email">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" id="password" placeholder="Password" required
-                                autocomplete="current-password">
-                        </div>
-                        <button type="submit" class="btn-primary">🔑 Login</button>
-                    </form>
-
-                    <button id="showRegisterBtn" class="btn-link">📝 Create new admin account</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- DASHBOARD -->
-        <div id="dashboardSection" style="display:none;">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>📱 Total Devices</h3>
-                    <p id="totalDevices">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>🛡️ Managed Devices</h3>
-                    <p id="managedDevices">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>✅ Online Now</h3>
-                    <p id="onlineDevices">0</p>
-                </div>
-            </div>
-
-            <div style="padding: 0 28px 28px;">
-                <div class="card">
-                    <div class="card-header">
-
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <button id="refreshBtn" class="btn-success">↻ Refresh</button>
-                            <button id="clearOldCommandsBtn" class="btn-secondary">🧹 Clear Processed Commands</button>
-                        </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Email address" required autocomplete="email">
                     </div>
-
-                </div>
-
-                <div class="card">
-                    <h2>📱 Registered Devices</h2>
-                    <div id="devicesList" class="devices-grid">
-                        <div class="loading">Loading devices...</div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
                     </div>
-                </div>
+                    <button type="submit" class="btn-primary">🔑 Login</button>
+                </form>
 
-                <div class="card">
-                    <h2>📋 Recent Commands / Activity</h2>
-                    <div id="activityLog" class="activity-log">
-                        <div class="loading">Loading activity...</div>
-                    </div>
-                </div>
+                <button id="showRegisterBtn" class="btn-link">📝 Create new admin account</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // ==================== FIREBASE CONFIG ====================
-        const firebaseConfig = {
+    <!-- DASHBOARD -->
+    <div id="dashboardSection" style="display:none;">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📱 Total Devices</h3>
+                <p id="totalDevices">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>🛡️ Managed Devices</h3>
+                <p id="managedDevices">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Online Now</h3>
+                <p id="onlineDevices">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>⏳ Pending Commands</h3>
+                <p id="pendingCommands">0</p>
+            </div>
+        </div>
+
+        <div class="dashboard-wrap">
+            <div class="card">
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <button id="refreshBtn" class="btn-success">↻ Refresh</button>
+                        <button id="clearOldCommandsBtn" class="btn-secondary">🧹 Clear Processed</button>
+                    </div>
+                    <div class="toolbar-right">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search device name / ID / model">
+                        <select id="filterSelect" class="filter-select">
+                            <option value="all">All Devices</option>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="managed">Managed</option>
+                            <option value="not-managed">Not Managed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📱 Registered Devices</h2>
+                <div id="devicesList" class="devices-grid">
+                    <div class="loading">Loading devices...</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Recent Commands / Activity</h2>
+                <div id="activityLog" class="activity-log">
+                    <div class="loading">Loading activity...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+      const firebaseConfig = {
             apiKey: "AIzaSyAbAkSQQ9NQlSap_jixWsnCVo6uG_WOXF4",
             authDomain: "locksystem-f0971.firebaseapp.com",
             projectId: "locksystem-f0971",
@@ -511,543 +406,421 @@
             measurementId: "G-MVZ9JELPF3"
         };
 
-        firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
 
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-        // ==================== GLOBAL STATE ====================
-        let currentUser = null;
-        let currentDevicesMap = {};
-        let unsubscribeDevices = null;
-        let unsubscribeCommands = null;
+    let currentUser = null;
+    let unsubscribeDevices = null;
+    let unsubscribeCommands = null;
 
-        // ==================== DOM ====================
-        const authSection = document.getElementById("authSection");
-        const dashboardSection = document.getElementById("dashboardSection");
-        const loginForm = document.getElementById("loginForm");
-        const logoutBtn = document.getElementById("logoutBtn");
-        const showRegisterBtn = document.getElementById("showRegisterBtn");
-        const refreshBtn = document.getElementById("refreshBtn");
-        const clearOldCommandsBtn = document.getElementById("clearOldCommandsBtn");
+    let devicesState = new Map();
+    let commandsState = [];
 
-        // ==================== UTILITIES ====================
-        function showToast(message, type = "info") {
-            const toast = document.createElement("div");
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
+    const authSection = document.getElementById("authSection");
+    const dashboardSection = document.getElementById("dashboardSection");
+    const loginForm = document.getElementById("loginForm");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const showRegisterBtn = document.getElementById("showRegisterBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const clearOldCommandsBtn = document.getElementById("clearOldCommandsBtn");
+    const devicesList = document.getElementById("devicesList");
+    const activityLog = document.getElementById("activityLog");
+    const searchInput = document.getElementById("searchInput");
+    const filterSelect = document.getElementById("filterSelect");
 
-            setTimeout(() => {
-                toast.style.animation = "slideInRight 0.25s reverse";
-                setTimeout(() => toast.remove(), 250);
-            }, 3000);
+    function showToast(message, type = "info") {
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function formatDate(timestamp) {
+        if (!timestamp) return "Never";
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        const diff = Date.now() - date.getTime();
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (minutes < 1) return "Just now";
+        if (minutes < 60) return `${minutes} min ago`;
+        if (hours < 24) return `${hours} hr ago`;
+        if (days < 7) return `${days} day ago`;
+        return date.toLocaleString();
+    }
+
+    function getLastSeen(device) {
+        return device.lastSeen || device.updatedAt || null;
+    }
+
+    function isOnline(device) {
+        const lastSeen = getLastSeen(device);
+        if (!lastSeen) return false;
+        const date = lastSeen.toDate ? lastSeen.toDate() : new Date(lastSeen);
+        return ((Date.now() - date.getTime()) / 60000) < 7;
+    }
+
+    function getDeviceTitle(device, id) {
+        return device.deviceName || device.model || device.deviceId || id;
+    }
+
+    function getCommandStatusClass(status) {
+        if (status === "done") return "status-done";
+        if (status === "failed") return "status-failed";
+        return "status-pending";
+    }
+
+    async function isAuthorizedAdmin(uid) {
+        try {
+            const doc = await db.collection("admins").doc(uid).get();
+            return doc.exists && doc.data()?.active === true;
+        } catch {
+            return false;
         }
+    }
 
-        function escapeHtml(str) {
-            if (!str) return "";
-            const div = document.createElement("div");
-            div.textContent = str;
-            return div.innerHTML;
-        }
+    function setupAuthStateListener() {
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                currentUser = null;
+                authSection.style.display = "block";
+                dashboardSection.style.display = "none";
+                logoutBtn.style.display = "none";
 
-        function formatDate(timestamp) {
-            if (!timestamp) return "Never";
+                if (unsubscribeDevices) unsubscribeDevices();
+                if (unsubscribeCommands) unsubscribeCommands();
 
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            const now = new Date();
-            const diff = now - date;
-
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-
-            if (minutes < 1) return "Just now";
-            if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-            if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-            if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
-
-            return date.toLocaleString();
-        }
-
-        function getActionIcon(action) {
-            const icons = {
-                LOCK_DEVICE: "🔒",
-                UNLOCK_DEVICE: "🔓",
-                ENTER_KIOSK: "📌",
-                EXIT_KIOSK: "🚪",
-                SET_LOST_MESSAGE: "💬",
-                RESET_PIN: "🔐",
-                CLEAR_PIN: "🧹",
-                device_removed: "🗑️"
-            };
-            return icons[action] || "📱";
-        }
-
-        function getActionClass(action) {
-            if (action === "LOCK_DEVICE") return "lock";
-            if (
-                action === "UNLOCK_DEVICE" ||
-                action === "EXIT_KIOSK" ||
-                action === "CLEAR_PIN"
-            ) return "unlock";
-            return "";
-        }
-
-        function getDeviceTitle(device, deviceId) {
-            return device.deviceName || device.serialNumber || device.deviceId || deviceId;
-        }
-
-        function getLastSeen(device) {
-            return device.lastSeen || device.updatedAt || device.lastUpdated || device.timestamp || null;
-        }
-
-        function isOnline(device) {
-            const lastSeen = getLastSeen(device);
-            if (!lastSeen) return false;
-
-            const date = lastSeen.toDate ? lastSeen.toDate() : new Date(lastSeen);
-            const diffMinutes = (Date.now() - date.getTime()) / 60000;
-            return diffMinutes < 5;
-        }
-
-        function maskToken(token) {
-            if (!token) return "Missing";
-            if (token.length < 20) return token;
-            return token.substring(0, 12) + "..." + token.substring(token.length - 8);
-        }
-
-        async function isAuthorizedAdmin(uid) {
-            try {
-                const doc = await db.collection("admins").doc(uid).get();
-                return doc.exists && doc.data()?.active === true;
-            } catch (e) {
-                console.error("Admin check failed:", e);
-                return false;
-            }
-        }
-
-        // ==================== AUTH ====================
-        function setupAuthStateListener() {
-            auth.onAuthStateChanged(async (user) => {
-                if (!user) {
-                    currentUser = null;
-                    authSection.style.display = "block";
-                    dashboardSection.style.display = "none";
-                    logoutBtn.style.display = "none";
-
-                    if (unsubscribeDevices) {
-                        unsubscribeDevices();
-                        unsubscribeDevices = null;
-                    }
-
-                    if (unsubscribeCommands) {
-                        unsubscribeCommands();
-                        unsubscribeCommands = null;
-                    }
-                    return;
-                }
-
-                const allowed = await isAuthorizedAdmin(user.uid);
-
-                if (!allowed) {
-                    await auth.signOut();
-                    showToast("This account is not approved in Firestore admins collection.", "error");
-                    return;
-                }
-
-                currentUser = user;
-                authSection.style.display = "none";
-                dashboardSection.style.display = "block";
-                logoutBtn.style.display = "inline-block";
-
-                showToast(`Welcome ${user.email}`, "success");
-
-                subscribeDevices();
-                subscribeCommands();
-            });
-        }
-
-        loginForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                loginForm.reset();
-            } catch (error) {
-                console.error("Login error:", error);
-                showToast("Login failed: " + error.message, "error");
-            }
-        });
-
-        showRegisterBtn.addEventListener("click", async () => {
-            const email = prompt("Enter admin email:");
-            if (!email) return;
-
-            const password = prompt("Enter password (minimum 6 characters):");
-            if (!password || password.length < 6) {
-                showToast("Password must be at least 6 characters", "error");
+                devicesState.clear();
+                commandsState = [];
+                devicesList.innerHTML = `<div class="loading">Loading devices...</div>`;
+                activityLog.innerHTML = `<div class="loading">Loading activity...</div>`;
+                updateStats([]);
                 return;
             }
 
-            try {
-                const cred = await auth.createUserWithEmailAndPassword(email, password);
-                const uid = cred.user.uid;
-
-                showToast(`Account created. Now create Firestore doc: admins/${uid}`, "info");
-
-                alert(
-                    "Account created successfully.\n\n" +
-                    "Now go to Firebase Console -> Firestore -> admins\n\n" +
-                    "Create document:\n" +
-                    "Document ID = " + uid + "\n\n" +
-                    "Fields:\n" +
-                    "active = true\n" +
-                    "role = admin\n" +
-                    "email = " + email
-                );
-            } catch (error) {
-                console.error("Register error:", error);
-                showToast("Registration failed: " + error.message, "error");
-            }
-        });
-
-        logoutBtn.addEventListener("click", async () => {
-            try {
+            const allowed = await isAuthorizedAdmin(user.uid);
+            if (!allowed) {
                 await auth.signOut();
-                showToast("Logged out", "info");
-            } catch (error) {
-                console.error("Logout error:", error);
-                showToast("Logout failed: " + error.message, "error");
+                showToast("Admin not approved in Firestore admins collection", "error");
+                return;
             }
+
+            currentUser = user;
+            authSection.style.display = "none";
+            dashboardSection.style.display = "block";
+            logoutBtn.style.display = "inline-block";
+
+            showToast(`Welcome ${user.email}`, "success");
+
+            subscribeDevices();
+            subscribeCommands();
+        });
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            loginForm.reset();
+        } catch (error) {
+            showToast("Login failed: " + error.message, "error");
+        }
+    });
+
+    showRegisterBtn.addEventListener("click", async () => {
+        const email = prompt("Enter admin email:");
+        if (!email) return;
+
+        const password = prompt("Enter password (minimum 6 chars):");
+        if (!password || password.length < 6) {
+            showToast("Password must be at least 6 characters", "error");
+            return;
+        }
+
+        try {
+            const cred = await auth.createUserWithEmailAndPassword(email, password);
+            alert(
+                `Account created.\n\nNow create Firestore document:\nadmins/${cred.user.uid}\n\nFields:\nactive = true\nrole = admin\nemail = ${email}`
+            );
+            showToast("Account created successfully", "success");
+        } catch (error) {
+            showToast("Registration failed: " + error.message, "error");
+        }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+        await auth.signOut();
+        showToast("Logged out", "info");
+    });
+
+    async function queueDeviceCommand(deviceId, action, extra = {}) {
+        if (!currentUser) {
+            showToast("Please login first", "error");
+            return;
+        }
+
+        const ok = confirm(`Send command "${action}" to device?\n\nDevice ID: ${deviceId}`);
+        if (!ok) return;
+
+        try {
+            await db.collection("commands").add({
+                deviceId,
+                action,
+                value: extra.value || "",
+                token: extra.token || "",
+                newPin: extra.newPin || "",
+                status: "pending",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdByUid: currentUser.uid,
+                createdByEmail: currentUser.email || "",
+                source: "web_admin"
+            });
+
+            showToast(`Queued: ${action}`, "success");
+        } catch (error) {
+            showToast("Command failed: " + error.message, "error");
+        }
+    }
+
+    async function handleDeviceAction(deviceId, action) {
+        if (!deviceId) return;
+
+        if (action === "SET_LOST_MESSAGE") {
+            const value = prompt("Enter lock screen message:");
+            if (!value) return;
+            await queueDeviceCommand(deviceId, action, { value });
+            return;
+        }
+
+        if (action === "RESET_PIN") {
+            const token = prompt("Enter Base64 reset token:");
+            if (!token) return;
+            const newPin = prompt("Enter new PIN:");
+            if (!newPin) return;
+            await queueDeviceCommand(deviceId, action, { token, newPin });
+            return;
+        }
+
+        if (action === "CLEAR_PIN") {
+            const token = prompt("Enter Base64 reset token:");
+            if (!token) return;
+            await queueDeviceCommand(deviceId, action, { token });
+            return;
+        }
+
+        await queueDeviceCommand(deviceId, action);
+    }
+
+    async function removeDeviceRecord(deviceId) {
+        const ok = confirm(`Delete Firestore record for device ${deviceId}?`);
+        if (!ok) return;
+
+        try {
+            await db.collection("devices").doc(deviceId).delete();
+            showToast(`Deleted device record: ${deviceId}`, "success");
+        } catch (error) {
+            showToast("Delete failed: " + error.message, "error");
+        }
+    }
+
+    async function clearProcessedCommands() {
+        if (!confirm("Delete all done/failed commands?")) return;
+
+        try {
+            const snap = await db.collection("commands")
+                .where("status", "in", ["done", "failed"])
+                .get();
+
+            if (snap.empty) {
+                showToast("No processed commands found", "info");
+                return;
+            }
+
+            const batch = db.batch();
+            snap.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+
+            showToast(`Deleted ${snap.size} processed commands`, "success");
+        } catch (error) {
+            showToast("Clear failed: " + error.message, "error");
+        }
+    }
+
+    clearOldCommandsBtn.addEventListener("click", clearProcessedCommands);
+
+    function updateStats(devices) {
+        document.getElementById("totalDevices").textContent = devices.length;
+        document.getElementById("managedDevices").textContent = devices.filter(d => !!d.isDeviceOwner).length;
+        document.getElementById("onlineDevices").textContent = devices.filter(d => isOnline(d)).length;
+        document.getElementById("pendingCommands").textContent = commandsState.filter(c => c.status === "pending").length;
+    }
+
+    function renderDevices() {
+        let devices = [...devicesState.values()];
+
+        const query = searchInput.value.trim().toLowerCase();
+        const filter = filterSelect.value;
+
+        if (query) {
+            devices = devices.filter(d => {
+                const id = (d.id || "").toLowerCase();
+                const name = (getDeviceTitle(d, d.id) || "").toLowerCase();
+                const model = (d.model || "").toLowerCase();
+                return id.includes(query) || name.includes(query) || model.includes(query);
+            });
+        }
+
+        if (filter === "online") devices = devices.filter(isOnline);
+        if (filter === "offline") devices = devices.filter(d => !isOnline(d));
+        if (filter === "managed") devices = devices.filter(d => !!d.isDeviceOwner);
+        if (filter === "not-managed") devices = devices.filter(d => !d.isDeviceOwner);
+
+        devices.sort((a, b) => {
+            const aTime = getLastSeen(a);
+            const bTime = getLastSeen(b);
+            const aMs = aTime ? (aTime.toDate ? aTime.toDate().getTime() : new Date(aTime).getTime()) : 0;
+            const bMs = bTime ? (bTime.toDate ? bTime.toDate().getTime() : new Date(bTime).getTime()) : 0;
+            return bMs - aMs;
         });
 
-        // ==================== FIRESTORE COMMAND QUEUE ====================
-        async function queueDeviceCommand(deviceId, action, extra = {}) {
-            if (!currentUser) {
-                showToast("Please login first", "error");
-                return;
-            }
-
-            try {
-                const command = {
-                    deviceId: deviceId,
-                    action: action,
-                    value: extra.value || "",
-                    token: extra.token || "",
-                    newPin: extra.newPin || "",
-                    status: "pending",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdByUid: currentUser.uid,
-                    createdByEmail: currentUser.email || "",
-                    source: "web_admin"
-                };
-
-                await db.collection("commands").add(command);
-
-                await db.collection("activity").add({
-                    deviceId,
-                    action,
-                    description: `Queued ${action} from admin panel`,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    adminUid: currentUser.uid,
-                    adminEmail: currentUser.email || ""
-                });
-
-                showToast(`Queued: ${action}`, "success");
-            } catch (error) {
-                console.error("queueDeviceCommand error:", error);
-                showToast("Command failed: " + error.message, "error");
-            }
+        if (!devices.length) {
+            devicesList.innerHTML = `<div class="empty-state">📭 No devices found</div>`;
+            updateStats([]);
+            return;
         }
 
-        async function handleDeviceAction(deviceId, action) {
-            if (!deviceId) return;
+        devicesList.innerHTML = devices.map(device => {
+            const online = isOnline(device);
+            const managed = !!device.isDeviceOwner;
+            const lastSeen = formatDate(getLastSeen(device));
 
-            if (action === "SET_LOST_MESSAGE") {
-                const value = prompt("Enter lock screen message:");
-                if (!value) return;
-                await queueDeviceCommand(deviceId, action, { value });
-                return;
-            }
-
-            if (action === "RESET_PIN") {
-                const token = prompt("Enter Base64 reset token:");
-                if (!token) return;
-
-                const newPin = prompt("Enter new PIN:");
-                if (!newPin) return;
-
-                await queueDeviceCommand(deviceId, action, { token, newPin });
-                return;
-            }
-
-            if (action === "CLEAR_PIN") {
-                const token = prompt("Enter Base64 reset token:");
-                if (!token) return;
-
-                await queueDeviceCommand(deviceId, action, { token });
-                return;
-            }
-
-            if (action === "UNLOCK_DEVICE") {
-                const token = prompt("Enter Base64 reset token:");
-                if (!token) return;
-
-                await queueDeviceCommand(deviceId, action, { token });
-                return;
-            }
-
-            await queueDeviceCommand(deviceId, action);
-        }
-
-        async function removeDeviceRecord(deviceId) {
-            const device = currentDevicesMap[deviceId];
-            const deviceName = device ? getDeviceTitle(device, deviceId) : deviceId;
-
-            if (!confirm(`Delete Firestore record for ${deviceName}?`)) return;
-
-            try {
-                await db.collection("devices").doc(deviceId).delete();
-
-                await db.collection("activity").add({
-                    deviceId,
-                    action: "device_removed",
-                    description: `Deleted device record from admin panel`,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    adminUid: currentUser.uid,
-                    adminEmail: currentUser.email || ""
-                });
-
-                showToast(`Deleted device record: ${deviceName}`, "success");
-            } catch (error) {
-                console.error("removeDeviceRecord error:", error);
-                showToast("Delete failed: " + error.message, "error");
-            }
-        }
-
-        async function clearProcessedCommands() {
-            if (!confirm("Delete old processed commands (done/failed)?")) return;
-
-            try {
-                const snap = await db.collection("commands")
-                    .where("status", "in", ["done", "failed"])
-                    .get();
-
-                if (snap.empty) {
-                    showToast("No processed commands found", "info");
-                    return;
-                }
-
-                const batch = db.batch();
-                snap.forEach(doc => batch.delete(doc.ref));
-                await batch.commit();
-
-                showToast(`Deleted ${snap.size} processed commands`, "success");
-            } catch (error) {
-                console.error("clearProcessedCommands error:", error);
-                showToast("Clear failed: " + error.message, "error");
-            }
-        }
-
-        clearOldCommandsBtn.addEventListener("click", clearProcessedCommands);
-
-        // ==================== DEVICES ====================
-        function renderDevices(devices) {
-            const devicesList = document.getElementById("devicesList");
-
-            if (!devices.length) {
-                devicesList.innerHTML = `<div class="empty-state">📭 No registered devices found yet.</div>`;
-                document.getElementById("totalDevices").textContent = "0";
-                document.getElementById("managedDevices").textContent = "0";
-                document.getElementById("onlineDevices").textContent = "0";
-                return;
-            }
-
-            const totalCount = devices.length;
-            const managedCount = devices.filter(d => !!d.isDeviceOwner).length;
-            const onlineCount = devices.filter(d => isOnline(d)).length;
-
-            document.getElementById("totalDevices").textContent = totalCount;
-            document.getElementById("managedDevices").textContent = managedCount;
-            document.getElementById("onlineDevices").textContent = onlineCount;
-
-            devicesList.innerHTML = devices.map(device => {
-                const deviceId = device.id;
-                const deviceName = escapeHtml(getDeviceTitle(device, deviceId));
-                const online = isOnline(device);
-                const managed = !!device.isDeviceOwner;
-                const lastSeen = formatDate(getLastSeen(device));
-
-                return `
-                    <div class="device-card ${managed ? "" : "not-managed"}">
-                        <div class="device-header">
-                            <span class="device-name">${deviceName}</span>
-                            <span class="device-status ${online ? "status-online" : "status-offline"}">
-                                ${online ? "✅ Online" : "⚫ Offline"}
-                            </span>
-                        </div>
-
-                        <div class="device-info">
-                            <div>🆔 Device ID: ${escapeHtml(deviceId)}</div>
-                
-                            <div>📌 Status: ${escapeHtml(device.status || "installed")}</div>
-                            <div>🛡️ Device Owner: ${managed ? "Yes" : "No"}</div>
-                            <div>🔐 Admin Active: ${device.isAdminActive ? "Yes" : "No"}</div>
-                    
-                            <div>🕐 Last seen: ${lastSeen}</div>
-                            <div>⚙️ Last command: ${escapeHtml(device.lastCommand || "-")}</div>
-                        </div>
-
-                        <div class="device-actions">
-                            <button class="btn-danger cmd-btn" data-device-id="${deviceId}" data-action="LOCK_DEVICE">🔒 Lock Screen</button>
-                           <button class="btn-success cmd-btn" data-device-id="${deviceId}" data-action="UNLOCK_DEVICE">🔓 Unlock</button>
-                            <button class="btn-warning cmd-btn" data-device-id="${deviceId}" data-action="ENTER_KIOSK">📌 Enter Kiosk</button>
-                            <button class="btn-success cmd-btn" data-device-id="${deviceId}" data-action="EXIT_KIOSK">🚪 Exit Kiosk</button>
-                            <button class="btn-info cmd-btn" data-device-id="${deviceId}" data-action="SET_LOST_MESSAGE">💬 Lost Message</button>
-                            <button class="btn-warning cmd-btn" data-device-id="${deviceId}" data-action="RESET_PIN">🔐 Reset PIN</button>
-                            <button class="btn-success cmd-btn" data-device-id="${deviceId}" data-action="CLEAR_PIN">🧹 Clear PIN</button>
-                            <button class="btn-secondary delete-btn" data-device-id="${deviceId}">🗑️ Delete Record</button>
-                        </div>
+            return `
+                <div class="device-card ${managed ? "" : "not-managed"}">
+                    <div class="device-header">
+                        <span class="device-name">${escapeHtml(getDeviceTitle(device, device.id))}</span>
+                        <span class="status-chip ${online ? "status-online" : "status-offline"}">
+                            ${online ? "Online" : "Offline"}
+                        </span>
                     </div>
-                `;
-            }).join("");
 
-            bindDeviceButtons();
+                    <div class="device-info">
+                        <div><strong>Device ID:</strong> ${escapeHtml(device.id)}</div>
+                        <div><strong>Model:</strong> ${escapeHtml(device.model || "-")}</div>
+                        <div><strong>Brand:</strong> ${escapeHtml(device.brand || "-")}</div>
+                        <div><strong>Android:</strong> ${escapeHtml(device.androidVersion || "-")} (SDK ${escapeHtml(String(device.sdkInt || "-"))})</div>
+                        <div><strong>Device Owner:</strong> ${managed ? "Yes" : "No"}</div>
+                        <div><strong>Admin Active:</strong> ${device.isAdminActive ? "Yes" : "No"}</div>
+                        <div><strong>Last Seen:</strong> ${lastSeen}</div>
+                        <div><strong>Last Command:</strong> ${escapeHtml(device.lastCommand || "-")}</div>
+                    </div>
+
+                    <div class="device-actions">
+                        <button class="btn-danger cmd-btn" data-device-id="${device.id}" data-action="LOCK_DEVICE">🔒 Lock</button>
+                        <button class="btn-warning cmd-btn" data-device-id="${device.id}" data-action="ENTER_KIOSK">📌 Enter Kiosk</button>
+                        <button class="btn-success cmd-btn" data-device-id="${device.id}" data-action="EXIT_KIOSK">🚪 Exit Kiosk</button>
+                        <button class="btn-info cmd-btn" data-device-id="${device.id}" data-action="SET_LOST_MESSAGE">💬 Lost Msg</button>
+                        <button class="btn-warning cmd-btn" data-device-id="${device.id}" data-action="RESET_PIN">🔐 Reset PIN</button>
+                        <button class="btn-success cmd-btn" data-device-id="${device.id}" data-action="CLEAR_PIN">🧹 Clear PIN</button>
+                        <button class="btn-secondary delete-btn" data-device-id="${device.id}">🗑 Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        updateStats([...devicesState.values()]);
+    }
+
+    function renderCommands() {
+        if (!commandsState.length) {
+            activityLog.innerHTML = `<div class="empty-state">📝 No activity yet</div>`;
+            return;
         }
 
-        function bindDeviceButtons() {
-            document.querySelectorAll(".cmd-btn").forEach(button => {
-                button.addEventListener("click", async () => {
-                    const deviceId = button.dataset.deviceId;
-                    const action = button.dataset.action;
-                    await handleDeviceAction(deviceId, action);
-                });
+        activityLog.innerHTML = commandsState.map(item => `
+            <div class="log-entry">
+                <div class="log-left">
+                    <span class="log-time">${formatDate(item.createdAt || item.timestamp)}</span>
+                    <span class="log-action">${escapeHtml(item.action || "COMMAND")}</span>
+                    <span>Device: ${escapeHtml(item.deviceId || "-")}</span>
+                </div>
+                <div>
+                    <span class="status-chip ${getCommandStatusClass(item.status)}">${escapeHtml(item.status || "pending")}</span>
+                </div>
+            </div>
+        `).join("");
+
+        updateStats([...devicesState.values()]);
+    }
+
+    function subscribeDevices() {
+        if (unsubscribeDevices) unsubscribeDevices();
+
+        unsubscribeDevices = db.collection("devices").onSnapshot(snapshot => {
+            snapshot.forEach(doc => {
+                devicesState.set(doc.id, { id: doc.id, ...(doc.data() || {}) });
             });
-
-            document.querySelectorAll(".delete-btn").forEach(button => {
-                button.addEventListener("click", async () => {
-                    const deviceId = button.dataset.deviceId;
-                    await removeDeviceRecord(deviceId);
-                });
-            });
-        }
-
-        function subscribeDevices() {
-            if (unsubscribeDevices) unsubscribeDevices();
-
-            unsubscribeDevices = db.collection("devices")
-                .onSnapshot((snapshot) => {
-                    const devices = [];
-                    currentDevicesMap = {};
-
-                    snapshot.forEach(doc => {
-                        const data = doc.data() || {};
-                        const deviceId = doc.id;
-                        currentDevicesMap[deviceId] = data;
-                        devices.push({ id: deviceId, ...data });
-                    });
-
-                    devices.sort((a, b) => {
-                        const aTime = getLastSeen(a);
-                        const bTime = getLastSeen(b);
-
-                        const aMs = aTime ? (aTime.toDate ? aTime.toDate().getTime() : new Date(aTime).getTime()) : 0;
-                        const bMs = bTime ? (bTime.toDate ? bTime.toDate().getTime() : new Date(bTime).getTime()) : 0;
-
-                        return bMs - aMs;
-                    });
-
-                    renderDevices(devices);
-                }, (error) => {
-                    console.error("Device listener error:", error);
-                    document.getElementById("devicesList").innerHTML =
-                        `<div class="empty-state">❌ Error loading devices</div>`;
-                });
-        }
-
-        // ==================== COMMAND / ACTIVITY LOG ====================
-        function subscribeCommands() {
-            if (unsubscribeCommands) unsubscribeCommands();
-
-            unsubscribeCommands = db.collection("commands")
-                .orderBy("createdAt", "desc")
-                .limit(50)
-                .onSnapshot(async (snapshot) => {
-                    const activityLog = document.getElementById("activityLog");
-
-                    if (snapshot.empty) {
-                        // fallback to activity collection
-                        try {
-                            const fallback = await db.collection("activity")
-                                .orderBy("timestamp", "desc")
-                                .limit(50)
-                                .get();
-
-                            if (fallback.empty) {
-                                activityLog.innerHTML = `<div class="empty-state">📝 No activity yet</div>`;
-                                return;
-                            }
-
-                            activityLog.innerHTML = fallback.docs.map(doc => {
-                                const item = doc.data();
-                                return `
-                                    <div class="log-entry">
-                                        <span class="log-time">${formatDate(item.timestamp)}</span>
-                                        <span class="log-action ${getActionClass(item.action)}">
-                                            ${getActionIcon(item.action)} ${escapeHtml(item.action || "EVENT")}
-                                        </span>
-                                        <span>${escapeHtml(item.description || "-")}</span>
-                                    </div>
-                                `;
-                            }).join("");
-                        } catch (e) {
-                            console.error("Fallback activity load error:", e);
-                            activityLog.innerHTML = `<div class="empty-state">❌ Error loading activity</div>`;
-                        }
-                        return;
-                    }
-
-                    activityLog.innerHTML = snapshot.docs.map(doc => {
-                        const item = doc.data();
-
-                        const statusLabel = item.status ? `[${item.status}]` : "";
-                        const errorText = item.error ? ` - ${item.error}` : "";
-
-                        return `
-                            <div class="log-entry">
-                                <span class="log-time">${formatDate(item.createdAt)}</span>
-                                <span class="log-action ${getActionClass(item.action)}">
-                                    ${getActionIcon(item.action)} ${escapeHtml(item.action || "COMMAND")}
-                                </span>
-                                <span>
-                                    Device: ${escapeHtml(item.deviceId || "-")} 
-                                    ${escapeHtml(statusLabel)} 
-                                    ${escapeHtml(errorText)}
-                                </span>
-                            </div>
-                        `;
-                    }).join("");
-                }, (error) => {
-                    console.error("Command listener error:", error);
-                    document.getElementById("activityLog").innerHTML =
-                        `<div class="empty-state">❌ Error loading commands</div>`;
-                });
-        }
-
-        // ==================== REFRESH ====================
-        refreshBtn.addEventListener("click", () => {
-            showToast("Realtime listeners already active", "info");
+            renderDevices();
+        }, error => {
+            console.error(error);
+            devicesList.innerHTML = `<div class="empty-state">❌ Error loading devices</div>`;
         });
+    }
 
-        // ==================== START ====================
-        setupAuthStateListener();
+    function subscribeCommands() {
+        if (unsubscribeCommands) unsubscribeCommands();
 
-        console.log("Firestore command-mode admin panel loaded");
-    </script>
+        unsubscribeCommands = db.collection("commands")
+            .orderBy("createdAt", "desc")
+            .limit(50)
+            .onSnapshot(snapshot => {
+                commandsState = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+                renderCommands();
+            }, error => {
+                console.error(error);
+                activityLog.innerHTML = `<div class="empty-state">❌ Error loading commands</div>`;
+            });
+    }
+
+    devicesList.addEventListener("click", async (e) => {
+        const cmdBtn = e.target.closest(".cmd-btn");
+        const deleteBtn = e.target.closest(".delete-btn");
+
+        if (cmdBtn) {
+            const deviceId = cmdBtn.dataset.deviceId;
+            const action = cmdBtn.dataset.action;
+            await handleDeviceAction(deviceId, action);
+        }
+
+        if (deleteBtn) {
+            const deviceId = deleteBtn.dataset.deviceId;
+            await removeDeviceRecord(deviceId);
+        }
+    });
+
+    refreshBtn.addEventListener("click", () => {
+        renderDevices();
+        renderCommands();
+        showToast("Realtime view refreshed", "info");
+    });
+
+    searchInput.addEventListener("input", renderDevices);
+    filterSelect.addEventListener("change", renderDevices);
+
+    setupAuthStateListener();
+</script>
 </body>
-
 </html>
