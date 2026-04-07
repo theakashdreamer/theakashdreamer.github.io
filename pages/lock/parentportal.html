@@ -442,7 +442,8 @@
                             <input type="email" id="email" placeholder="Email address" required autocomplete="email">
                         </div>
                         <div class="form-group">
-                            <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                            <input type="password" id="password" placeholder="Password" required
+                                autocomplete="current-password">
                         </div>
                         <button type="submit" class="btn-primary">🔑 Login</button>
                     </form>
@@ -472,13 +473,13 @@
             <div style="padding: 0 28px 28px;">
                 <div class="card">
                     <div class="card-header">
-            
+
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
                             <button id="refreshBtn" class="btn-success">↻ Refresh</button>
                             <button id="clearOldCommandsBtn" class="btn-secondary">🧹 Clear Processed Commands</button>
                         </div>
                     </div>
-   
+
                 </div>
 
                 <div class="card">
@@ -572,6 +573,7 @@
         function getActionIcon(action) {
             const icons = {
                 LOCK_DEVICE: "🔒",
+                UNLOCK_DEVICE: "🔓",
                 ENTER_KIOSK: "📌",
                 EXIT_KIOSK: "🚪",
                 SET_LOST_MESSAGE: "💬",
@@ -584,7 +586,11 @@
 
         function getActionClass(action) {
             if (action === "LOCK_DEVICE") return "lock";
-            if (action === "EXIT_KIOSK" || action === "CLEAR_PIN") return "unlock";
+            if (
+                action === "UNLOCK_DEVICE" ||
+                action === "EXIT_KIOSK" ||
+                action === "CLEAR_PIN"
+            ) return "unlock";
             return "";
         }
 
@@ -787,6 +793,14 @@
                 return;
             }
 
+            if (action === "UNLOCK_DEVICE") {
+                const token = prompt("Enter Base64 reset token:");
+                if (!token) return;
+
+                await queueDeviceCommand(deviceId, action, { token });
+                return;
+            }
+
             await queueDeviceCommand(deviceId, action);
         }
 
@@ -890,6 +904,7 @@
 
                         <div class="device-actions">
                             <button class="btn-danger cmd-btn" data-device-id="${deviceId}" data-action="LOCK_DEVICE">🔒 Lock Screen</button>
+                           <button class="btn-success cmd-btn" data-device-id="${deviceId}" data-action="UNLOCK_DEVICE">🔓 Unlock</button>
                             <button class="btn-warning cmd-btn" data-device-id="${deviceId}" data-action="ENTER_KIOSK">📌 Enter Kiosk</button>
                             <button class="btn-success cmd-btn" data-device-id="${deviceId}" data-action="EXIT_KIOSK">🚪 Exit Kiosk</button>
                             <button class="btn-info cmd-btn" data-device-id="${deviceId}" data-action="SET_LOST_MESSAGE">💬 Lost Message</button>
