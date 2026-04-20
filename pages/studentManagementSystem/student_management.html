@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduManage Pro - Student Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .toast-slide-up { animation: toastSlideUp 0.3s ease-out forwards; }
+        @keyframes toastSlideUp {
+            from { opacity: 0; transform: translateY(100%); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Active Navigation */
+        .nav-active { background-color: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item:hover:not(.nav-active) { background-color: #f1f5f9; }
+        
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased overflow-hidden flex h-screen">
+
+    <!-- Global App Container -->
+    <div id="app" class="flex w-full h-full w-full">
+        <!-- Initial Loading State -->
+        <div class="flex-1 flex flex-col items-center justify-center h-full">
+            <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-blue-600 mb-4"></i>
+            <h2 class="text-xl font-semibold text-slate-700">Initializing EduManage Pro...</h2>
+            <p class="text-sm text-slate-500 mt-2">Connecting to Firebase Secure Data Environment</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Firebase SDKs & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- 1. CONFIGURATION & INIT ---
+             const firebaseConfig = {
+            apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+            authDomain: "registration-93e51.firebaseapp.com",
+            projectId: "registration-93e51",
+            storageBucket: "registration-93e51.firebasestorage.app",
+            messagingSenderId: "509440941274",
+            appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // --- 2. GLOBAL STATE ---
+        const state = {
+            user: null,
+            role: 'admin', // default, overridden by db
+            activeView: 'dashboard',
+            selectedStudentId: null,
+            searchQuery: '',
+            adminTab: 'student', // default admin tab
+            data: {
+                users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: []
+            },
+            unsubscribes: []
+        };
+
+        // UI Helpers
+        const showToast = (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+            toast.className = `${colors} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 toast-slide-up max-w-sm`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-5 h-5"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        };
+
+        // --- 3. FIREBASE DB HELPERS ---
+        const getColRef = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
+
+        const seedDatabase = async () => {
+            if (state.data.students.length > 0) return; // Only seed if empty
+            showToast("Generating sample database...", "info");
+            
+            const classes = [{ name: '10A' }, { name: '12B' }];
+            const subjects = [{ name: 'Mathematics' }, { name: 'Science' }, { name: 'English' }];
+            const students = [
+                { name: 'Alex Johnson', email: 'alex@student.com', class: '10A', rollNo: '101', phone: '555-0101' },
+                { name: 'Maria Garcia', email: 'maria@student.com', class: '10A', rollNo: '102', phone: '555-0102' },
+                { name: 'James Smith', email: 'james@student.com', class: '12B', rollNo: '201', phone: '555-0201' }
+            ];
+            const teachers = [
+                { name: 'Sarah Connor', email: 'sarah@teacher.com', subject: 'Science', phone: '555-1001' },
+                { name: 'John Keating', email: 'john@teacher.com', subject: 'English', phone: '555-1002' }
+            ];
+            const notices = [
+                { title: 'Welcome Back!', content: 'Welcome to the new academic year.', date: new Date().toISOString().split('T')[0], target: 'All' }
+            ];
+
+            try {
+                for(let c of classes) await addDoc(getColRef('classes'), c);
+                for(let s of subjects) await addDoc(getColRef('subjects'), s);
+                for(let st of students) await addDoc(getColRef('students'), st);
+                for(let t of teachers) await addDoc(getColRef('teachers'), t);
+                for(let n of notices) await addDoc(getColRef('notices'), n);
+                showToast("Sample data loaded successfully");
+            } catch (e) {
+                console.error("Seeding error:", e);
+                showToast("Failed to seed data", "error");
+            }
+        };
+
+        // --- 4. DATA SYNCHRONIZATION ---
+        const syncData = () => {
+            const collections = Object.keys(state.data);
+            
+            // Clear old listeners
+            state.unsubscribes.forEach(unsub => unsub());
+            state.unsubscribes = [];
+
+            collections.forEach(colName => {
+                const unsub = onSnapshot(getColRef(colName), (snap) => {
+                    state.data[colName] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderMainContent(); // Re-render active view on data change
+                }, (error) => {
+                    console.error(`Error syncing ${colName}:`, error);
+                });
+                state.unsubscribes.push(unsub);
+            });
+        };
+
+        // --- 5. AUTHENTICATION ---
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                document.getElementById('app').innerHTML = `<div class="p-8 text-red-600">Auth Failed: ${error.message}</div>`;
+            }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                state.user = user;
+                // Fetch or create user role doc
+                const userDocRef = doc(getColRef('users'), user.uid);
+                const userSnap = await getDoc(userDocRef);
+                
+                if (userSnap.exists()) {
+                    state.role = userSnap.data().role || 'admin';
+                } else {
+                    await setDoc(userDocRef, { email: user.email || 'anonymous', role: 'admin' });
+                    state.role = 'admin';
+                }
+
+                syncData();
+                setTimeout(() => {
+                    renderApp();
+                    if(state.role === 'admin' && state.data.students.length === 0) seedDatabase();
+                }, 1000); // Small delay to let initial sync happen
+            } else {
+                state.user = null;
+            }
+        });
+
+        // Start Auth flow
+        initAuth();
+
+        // --- 6. RENDER LOGIC ---
+        const switchView = (view, payload = null) => {
+            state.activeView = view;
+            if (payload && view === 'profile') state.selectedStudentId = payload;
+            renderApp();
+        };
+
+        window.appAPI = {
+            switchView,
+            setAdminTab: (tab) => { state.adminTab = tab; renderMainContent(); },
+            setSearch: (e) => { state.searchQuery = e.target.value.toLowerCase(); renderMainContent(); },
+            changeRole: async (e) => {
+                const newRole = e.target.value;
+                await setDoc(doc(getColRef('users'), state.user.uid), { role: newRole }, { merge: true });
+                state.role = newRole;
+                state.activeView = 'dashboard';
+                showToast(`Switched to ${newRole} view`);
+                renderApp();
+            },
+            // CRUD Actions
+            handleForm: async (e, colName) => {
+                e.preventDefault();
+                if(!state.user) return showToast("Unauthorized", "error");
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                
+                try {
+                    await addDoc(getColRef(colName), data);
+                    e.target.reset();
+                    showToast(`Record added successfully to ${colName}`);
+                } catch (err) {
+                    showToast(err.message, "error");
+                }
+            },
+            deleteRecord: async (colName, id) => {
+                try {
+                    await deleteDoc(doc(getColRef(colName), id));
+                    showToast("Record deleted");
+                } catch (err) {
+                    showToast(err.message, "error");
+                }
+            }
+        };
+
+        // Components
+        const SidebarItem = (icon, label, viewId, allowedRoles) => {
+            if (!allowedRoles.includes(state.role)) return '';
+            const isActive = state.activeView === viewId;
+            return `
+                <a href="#" onclick="window.appAPI.switchView('${viewId}')" 
+                   class="nav-item flex items-center gap-3 px-4 py-3 mx-2 rounded-lg text-sm font-medium ${isActive ? 'nav-active' : 'text-slate-600'}">
+                    <i data-lucide="${icon}" class="w-5 h-5"></i>
+                    ${label}
+                </a>
+            `;
+        };
+
+        const renderSidebar = () => `
+            <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm hidden md:flex z-10">
+                <div class="h-16 flex items-center px-6 border-b border-slate-100">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="text-lg font-bold text-slate-800 tracking-tight">EduManage</span>
+                </div>
+                <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+                    ${SidebarItem('layout-dashboard', 'Dashboard', 'dashboard', ['admin', 'teacher', 'student'])}
+                    ${SidebarItem('users', 'Students Directory', 'students', ['admin', 'teacher'])}
+                    ${SidebarItem('settings', 'Admin Panel', 'admin', ['admin', 'teacher'])}
+                </nav>
+                <div class="p-4 border-t border-slate-100">
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Simulate Role</p>
+                        <select onchange="window.appAPI.changeRole(event)" class="w-full text-sm bg-white border-slate-200 rounded p-1">
+                            <option value="admin" ${state.role === 'admin' ? 'selected' : ''}>Admin View</option>
+                            <option value="teacher" ${state.role === 'teacher' ? 'selected' : ''}>Teacher View</option>
+                            <option value="student" ${state.role === 'student' ? 'selected' : ''}>Student View</option>
+                        </select>
+                    </div>
+                </div>
+            </aside>
+        `;
+
+        const renderHeader = () => `
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10">
+                <div class="flex items-center gap-4">
+                    <button class="md:hidden text-slate-500 hover:text-slate-700">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-slate-800 capitalize">
+                        ${state.activeView.replace('-', ' ')}
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative hidden sm:block">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                        <input type="text" placeholder="Quick search..." oninput="window.appAPI.setSearch(event)"
+                               class="pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 transition-all">
+                    </div>
+                    <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
+                            ${state.role.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="hidden md:block text-sm">
+                            <p class="font-medium text-slate-700 capitalize">${state.role}</p>
+                            <p class="text-xs text-slate-500 truncate w-24">${state.user?.uid.substring(0,6)}...</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        `;
+
+        // VIEWS
+        const ViewDashboard = () => {
+            const pendingFees = state.data.fees.filter(f => f.status === 'Pending').reduce((acc, curr) => acc + Number(curr.amount), 0);
+            
+            const StatCard = (title, val, icon, color) => `
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center ${color} bg-opacity-10">
+                        <i data-lucide="${icon}" class="${color.replace('bg-', 'text-')} w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">${title}</p>
+                        <h3 class="text-2xl font-bold text-slate-800">${val}</h3>
+                    </div>
+                </div>
+            `;
+
+            const noticesHtml = state.data.notices.slice(0,5).map(n => `
+                <div class="py-3 border-b border-slate-100 last:border-0">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="text-sm font-semibold text-slate-800">${n.title}</h4>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${n.date}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 line-clamp-2">${n.content}</p>
+                    <span class="text-[10px] uppercase font-bold text-blue-500 mt-1 block">To: ${n.target}</span>
+                </div>
+            `).join('') || '<p class="text-sm text-slate-500 py-4">No recent notices.</p>';
+
+            return `
+                <div class="fade-in max-w-7xl mx-auto w-full">
+                    ${state.role !== 'student' ? `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        ${StatCard('Total Students', state.data.students.length, 'users', 'bg-blue-600')}
+                        ${StatCard('Total Teachers', state.data.teachers.length, 'user-check', 'bg-emerald-500')}
+                        ${StatCard('Active Classes', state.data.classes.length, 'book-open', 'bg-purple-500')}
+                        ${StatCard('Pending Fees', '$'+pendingFees, 'credit-card', 'bg-orange-500')}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Welcome to EduManage Pro</h3>
+                            <div class="aspect-video bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center flex-col text-slate-400">
+                                <i data-lucide="bar-chart-3" class="w-16 h-16 mb-4 opacity-50"></i>
+                                <p class="text-sm">Activity graphs will appear here</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 flex flex-col h-[400px]">
+                            <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                                <i data-lucide="bell" class="w-5 h-5 text-blue-500"></i>
+                                <h3 class="text-lg font-semibold text-slate-800">Notice Board</h3>
+                            </div>
+                            <div class="flex-1 overflow-y-auto pr-2">
+                                ${noticesHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const ViewStudents = () => {
+            let filtered = state.data.students;
+            if (state.searchQuery) {
+                filtered = filtered.filter(s => 
+                    s.name?.toLowerCase().includes(state.searchQuery) || 
+                    s.class?.toLowerCase().includes(state.searchQuery) ||
+                    s.rollNo?.toLowerCase().includes(state.searchQuery)
+                );
+            }
+
+            const rows = filtered.map(s => `
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                                ${s.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-slate-800">${s.name}</p>
+                                <p class="text-xs text-slate-500">${s.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${s.class}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${s.rollNo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="window.appAPI.switchView('profile', '${s.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors">
+                            View Profile
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="fade-in max-w-6xl mx-auto w-full">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                            <h2 class="text-lg font-semibold text-slate-800">Student Directory</h2>
+                            <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Roll No</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-slate-200">
+                                    ${rows.length ? rows : '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500 text-sm">No students found</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const ViewProfile = () => {
+            if (!state.selectedStudentId && state.role !== 'student') {
+                return `<div class="text-center py-10 text-slate-500 fade-in">No student selected.</div>`;
+            }
+            
+            // If student role, they can only see their own (mocked by picking first student if linked, or specific ID)
+            const sId = state.role === 'student' && !state.selectedStudentId && state.data.students.length ? state.data.students[0].id : state.selectedStudentId;
+            const student = state.data.students.find(s => s.id === sId);
+            
+            if (!student) return `<div class="text-center py-10 text-slate-500 fade-in">Student not found.</div>`;
+
+            const sMarks = state.data.marks.filter(m => m.studentId === sId);
+            const sAtt = state.data.attendance.filter(a => a.studentId === sId);
+            const sFees = state.data.fees.filter(f => f.studentId === sId);
+
+            const marksHtml = sMarks.length ? sMarks.map(m => `
+                <div class="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
+                    <span class="text-sm font-medium text-slate-700">${m.subject} <span class="text-xs text-slate-400">(${m.exam})</span></span>
+                    <span class="text-sm font-bold ${Number(m.score) < 40 ? 'text-red-500' : 'text-green-600'}">${m.score}/${m.maxScore}</span>
+                </div>
+            `).join('') : '<p class="text-sm text-slate-500">No marks recorded.</p>';
+
+            const attHtml = sAtt.length ? sAtt.slice(-5).map(a => `
+                <div class="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
+                    <span class="text-sm text-slate-600">${a.date}</span>
+                    <span class="text-xs font-semibold px-2 py-1 rounded ${a.status === 'Present' ? 'bg-green-100 text-green-700' : a.status === 'Absent' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}">${a.status}</span>
+                </div>
+            `).join('') : '<p class="text-sm text-slate-500">No attendance recorded.</p>';
+
+            const feesHtml = sFees.length ? sFees.map(f => `
+                <div class="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
+                    <div>
+                        <p class="text-sm font-medium text-slate-700">$${f.amount}</p>
+                        <p class="text-xs text-slate-400">Due: ${f.dueDate}</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-1 rounded ${f.status === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${f.status}</span>
+                </div>
+            `).join('') : '<p class="text-sm text-slate-500">No fee records.</p>';
+
+            return `
+                <div class="fade-in max-w-5xl mx-auto w-full space-y-6">
+                    ${state.role !== 'student' ? `<button onclick="window.appAPI.switchView('students')" class="text-sm text-blue-600 hover:underline mb-2 flex items-center gap-1"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Directory</button>` : ''}
+                    
+                    <!-- Profile Header -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-lg">
+                            ${student.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h2 class="text-2xl font-bold text-slate-800">${student.name}</h2>
+                            <p class="text-slate-500 mb-4">${student.email} | Phone: ${student.phone || 'N/A'}</p>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                                <span class="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-sm font-medium">Class: ${student.class}</span>
+                                <span class="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-sm font-medium">Roll No: ${student.rollNo}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Marks -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                            <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                                <i data-lucide="award" class="w-5 h-5 text-indigo-500"></i>
+                                <h3 class="font-semibold text-slate-800">Academic Marks</h3>
+                            </div>
+                            <div class="space-y-1">${marksHtml}</div>
+                        </div>
+                        
+                        <!-- Attendance -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                            <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                                <i data-lucide="calendar-check" class="w-5 h-5 text-emerald-500"></i>
+                                <h3 class="font-semibold text-slate-800">Recent Attendance</h3>
+                            </div>
+                            <div class="space-y-1">${attHtml}</div>
+                        </div>
+
+                        <!-- Fees -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                            <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                                <i data-lucide="credit-card" class="w-5 h-5 text-orange-500"></i>
+                                <h3 class="font-semibold text-slate-800">Fee Status</h3>
+                            </div>
+                            <div class="space-y-1">${feesHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const ViewAdmin = () => {
+            if (state.role === 'student') return `<div class="p-8 text-center text-red-500">Access Denied</div>`;
+
+            const tabs = [
+                { id: 'student', label: 'Add Student', icon: 'user-plus', roles: ['admin', 'teacher'] },
+                { id: 'attendance', label: 'Mark Attendance', icon: 'clipboard-check', roles: ['admin', 'teacher'] },
+                { id: 'marks', label: 'Enter Marks', icon: 'pen-tool', roles: ['admin', 'teacher'] },
+                { id: 'notice', label: 'Add Notice', icon: 'bell-plus', roles: ['admin', 'teacher'] },
+                { id: 'teacher', label: 'Add Teacher', icon: 'users', roles: ['admin'] },
+                { id: 'class', label: 'Add Class', icon: 'layout-template', roles: ['admin'] },
+                { id: 'subject', label: 'Add Subject', icon: 'book', roles: ['admin'] },
+                { id: 'fee', label: 'Add Fee', icon: 'dollar-sign', roles: ['admin'] }
+            ].filter(t => t.roles.includes(state.role));
+
+            // Ensure active tab is allowed
+            if (!tabs.find(t => t.id === state.adminTab)) state.adminTab = tabs[0].id;
+
+            const tabBtns = tabs.map(t => `
+                <button onclick="window.appAPI.setAdminTab('${t.id}')" 
+                        class="flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${state.adminTab === t.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}">
+                    <i data-lucide="${t.icon}" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">${t.label}</span>
+                </button>
+            `).join('');
+
+            // Common Selectors
+            const studentOptions = state.data.students.map(s => `<option value="${s.id}">${s.name} (${s.class})</option>`).join('');
+            const classOptions = state.data.classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            const subjectOptions = state.data.subjects.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+
+            // Forms Generation Map
+            const forms = {
+                'student': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'students')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Class</label><select required name="class" class="w-full px-3 py-2 border border-slate-300 rounded-md">${classOptions}</select></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Roll No</label><input required name="rollNo" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        </div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Phone</label><input name="phone" type="tel" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Student</button>
+                    </form>`,
+                'attendance': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'attendance')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label><select required name="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-md">${studentOptions}</select></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Date</label><input required name="date" type="date" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="status" value="Present" checked class="mr-2 text-blue-600"> Present</label>
+                                <label class="flex items-center"><input type="radio" name="status" value="Absent" class="mr-2 text-blue-600"> Absent</label>
+                                <label class="flex items-center"><input type="radio" name="status" value="Late" class="mr-2 text-blue-600"> Late</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Save Attendance</button>
+                    </form>`,
+                'marks': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'marks')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label><select required name="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-md">${studentOptions}</select></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Subject</label><select required name="subject" class="w-full px-3 py-2 border border-slate-300 rounded-md">${subjectOptions}</select></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Exam Name</label><input required name="exam" type="text" placeholder="e.g. Mid Term" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Score Obtained</label><input required name="score" type="number" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Maximum Score</label><input required name="maxScore" type="number" value="100" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Save Marks</button>
+                    </form>`,
+                'notice': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'notices')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Notice Title</label><input required name="title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Content</label><textarea required name="content" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-md"></textarea></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Date</label><input required name="date" type="date" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Target Audience</label>
+                                <select required name="target" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+                                    <option>All</option><option>Teachers</option><option>Students</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Publish Notice</button>
+                    </form>`,
+                'fee': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'fees')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label><select required name="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-md">${studentOptions}</select></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Amount ($)</label><input required name="amount" type="number" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Due Date</label><input required name="dueDate" type="date" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        </div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                            <select required name="status" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+                                <option value="Pending">Pending</option><option value="Paid">Paid</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Fee Record</button>
+                    </form>`,
+                'teacher': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'teachers')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Specialization/Subject</label><input required name="subject" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Phone</label><input name="phone" type="tel" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Teacher</button>
+                    </form>`,
+                'class': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'classes')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Class Name (e.g. 10A)</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Create Class</button>
+                    </form>`,
+                'subject': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'subjects')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Subject Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Subject</button>
+                    </form>`
+            };
+
+            return `
+                <div class="fade-in max-w-6xl mx-auto w-full bg-white rounded-xl shadow-sm border border-slate-200 min-h-[500px] flex flex-col">
+                    <div class="border-b border-slate-200 px-2 flex overflow-x-auto hide-scrollbar">
+                        ${tabBtns}
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col items-center justify-center bg-slate-50">
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm w-full max-w-2xl">
+                            <h3 class="text-lg font-semibold text-slate-800 mb-4 pb-2 border-b border-slate-100 capitalize">
+                                ${tabs.find(t => t.id === state.adminTab)?.label || 'Administration'}
+                            </h3>
+                            ${forms[state.adminTab] || '<p class="text-slate-500">Select an action</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderMainContent = () => {
+            const container = document.getElementById('view-container');
+            if (!container) return;
+            
+            let html = '';
+            switch (state.activeView) {
+                case 'dashboard': html = ViewDashboard(); break;
+                case 'students': html = ViewStudents(); break;
+                case 'profile': html = ViewProfile(); break;
+                case 'admin': html = ViewAdmin(); break;
+                default: html = ViewDashboard();
+            }
+            container.innerHTML = html;
+            lucide.createIcons();
+        };
+
+        const renderApp = () => {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                ${renderSidebar()}
+                <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+                    ${renderHeader()}
+                    <main class="flex-1 overflow-y-auto p-4 md:p-8">
+                        <div id="view-container" class="w-full h-full"></div>
+                    </main>
+                </div>
+            `;
+            renderMainContent();
+        };
+
+    </script>
+</body>
+</html>

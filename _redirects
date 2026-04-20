@@ -9,5 +9,9 @@
 /joinus      /pages/registrationpage/register.html         301
 # parent
 /locksystem       /pages/lock/parentportal.html  301
+
+# Student Management system
+/studentmgt       /pages\studentManagementSystem\student_management.html  301
+
 # Default fallback
 /*            /index.html                   200
