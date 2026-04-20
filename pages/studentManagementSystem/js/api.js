@@ -8,6 +8,7 @@ import { doc, setDoc, addDoc, deleteDoc, updateDoc, getDoc } from "https://www.g
 const switchView = (view, payload = null) => {
     state.activeView = view;
     if (payload && view === 'profile') state.selectedStudentId = payload;
+    if (state.isSidebarOpen) state.isSidebarOpen = false;
     renderApp();
 };
 
@@ -138,5 +139,40 @@ window.appAPI = {
         } catch (err) {
             showToast(err.message, "error");
         }
+    },
+
+    markFeePaid: async (feeId) => {
+        try {
+            await updateDoc(doc(getColRef('fees'), feeId), { status: 'Paid' });
+            showToast("Fee marked as paid");
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    exportCSV: (colName) => {
+        const data = state.data[colName];
+        if (!data || data.length === 0) return showToast("No data to export", "info");
+        const keys = Object.keys(data[0]).filter(k => k !== 'id' && k !== 'authId' && k !== 'password');
+        const csvRows = [keys.join(',')];
+        
+        data.forEach(row => {
+            const values = keys.map(k => {
+                let val = row[k] || '';
+                if (Array.isArray(val)) val = val.join('; ');
+                return `"${val.toString().replace(/"/g, '""')}"`;
+            });
+            csvRows.push(values.join(','));
+        });
+        
+        const blob = new Blob([csvRows.join('\\n')], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${colName}_export.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 };

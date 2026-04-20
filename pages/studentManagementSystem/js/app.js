@@ -6,6 +6,77 @@ import { onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebas
 import { onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import './api.js'; // Ensure appAPI is registered to window
 
+let feeChartInstance = null;
+let enrollmentChartInstance = null;
+
+const initCharts = () => {
+    if (typeof Chart === 'undefined') return;
+
+    const feeCanvas = document.getElementById('feeChart');
+    if (feeCanvas) {
+        if (feeChartInstance) feeChartInstance.destroy();
+        const fees = state.data.fees || [];
+        const paid = fees.filter(f => f.status === 'Paid').length;
+        const pending = fees.filter(f => f.status === 'Pending').length;
+
+        feeChartInstance = new Chart(feeCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Paid', 'Pending'],
+                datasets: [{
+                    data: [paid, pending],
+                    backgroundColor: ['#22c55e', '#f97316'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    const enrollmentCanvas = document.getElementById('enrollmentChart');
+    if (enrollmentCanvas) {
+        if (enrollmentChartInstance) enrollmentChartInstance.destroy();
+        const students = state.data.students || [];
+        const classCounts = {};
+        students.forEach(s => {
+            const c = s.class || 'Unassigned';
+            classCounts[c] = (classCounts[c] || 0) + 1;
+        });
+
+        const labels = Object.keys(classCounts);
+        const data = Object.values(classCounts);
+
+        enrollmentChartInstance = new Chart(enrollmentCanvas, {
+            type: 'bar',
+            data: {
+                labels: labels.length ? labels : ['No Data'],
+                datasets: [{
+                    label: 'Students',
+                    data: data.length ? data : [0],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+};
+
 export const renderMainContent = () => {
     const container = document.getElementById('view-container');
     if (!container) return;
@@ -21,6 +92,10 @@ export const renderMainContent = () => {
     }
     container.innerHTML = html;
     if (window.lucide) window.lucide.createIcons();
+    
+    if (state.activeView === 'dashboard' && state.role !== 'student') {
+        setTimeout(initCharts, 100);
+    }
 };
 
 export const renderApp = () => {

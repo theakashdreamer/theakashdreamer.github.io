@@ -77,10 +77,16 @@ export const ViewDashboard = () => {
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Welcome to EduManage Pro</h3>
-                    <div class="aspect-video bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center flex-col text-slate-400">
-                        <i data-lucide="bar-chart-3" class="w-16 h-16 mb-4 opacity-50"></i>
-                        <p class="text-sm">Activity graphs will appear here</p>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Overview Analytics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col">
+                            <h4 class="text-sm font-medium text-slate-600 mb-4 text-center">Fee Collection Status</h4>
+                            <div class="relative w-full h-48 flex justify-center"><canvas id="feeChart"></canvas></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col">
+                            <h4 class="text-sm font-medium text-slate-600 mb-4 text-center">Class Enrollment</h4>
+                            <div class="relative w-full h-48"><canvas id="enrollmentChart"></canvas></div>
+                        </div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 flex flex-col h-[400px]">
@@ -123,9 +129,12 @@ export const ViewStudents = () => {
             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${s.class}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${s.rollNo}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button onclick="window.appAPI.switchView('profile', '${s.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors">
-                    View Profile
+                <button onclick="window.appAPI.switchView('profile', '${s.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors inline-flex items-center gap-1 mr-2">
+                    <i data-lucide="user" class="w-4 h-4"></i> Profile
                 </button>
+                ${state.role === 'admin' ? `<button onclick="if(confirm('Delete student?')) window.appAPI.deleteRecord('students', '${s.id}')" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1.5 rounded-md hover:bg-red-100 transition-colors inline-flex items-center gap-1">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                </button>` : ''}
             </td>
         </tr>
     `).join('');
@@ -134,8 +143,13 @@ export const ViewStudents = () => {
         <div class="fade-in max-w-6xl mx-auto w-full">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                    <h2 class="text-lg font-semibold text-slate-800">Student Directory</h2>
-                    <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-lg font-semibold text-slate-800">Student Directory</h2>
+                        <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                    </div>
+                    <button onclick="window.appAPI.exportCSV('students')" class="flex items-center gap-2 text-sm bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 transition">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                    </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
@@ -331,43 +345,114 @@ export const ViewAdmin = () => {
                 <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Save Marks</button>
             </form>`,
         'notice': `
-            <form onsubmit="window.appAPI.handleForm(event, 'notices')" class="space-y-4 max-w-lg">
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Notice Title</label><input required name="title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Content</label><textarea required name="content" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-md"></textarea></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Date</label><input required name="date" type="date" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Target Audience</label>
-                        <select required name="target" class="w-full px-3 py-2 border border-slate-300 rounded-md">
-                            <option>All</option><option>Teachers</option><option>Students</option>
-                        </select>
+            <div class="w-full max-w-lg mx-auto">
+                <form onsubmit="window.appAPI.handleForm(event, 'notices')" class="space-y-4 mb-8">
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Notice Title</label><input required name="title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Content</label><textarea required name="content" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-md"></textarea></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Date</label><input required name="date" type="date" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Target Audience</label>
+                            <select required name="target" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+                                <option>All</option><option>Teachers</option><option>Students</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Publish Notice</button>
+                </form>
+                <div class="border-t border-slate-200 pt-6">
+                    <h4 class="font-semibold text-slate-800 mb-4">Manage Active Notices</h4>
+                    <div class="space-y-2">
+                        ${state.data.notices.map(n => `
+                            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                <div><p class="font-medium text-sm text-slate-800">${n.title}</p><p class="text-xs text-slate-500">${n.date}</p></div>
+                                <button onclick="window.appAPI.deleteRecord('notices', '${n.id}')" class="text-red-500 hover:text-red-700 bg-white p-1 rounded border border-slate-200"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        `).join('') || '<p class="text-sm text-slate-500">No active notices.</p>'}
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Publish Notice</button>
-            </form>`,
+            </div>`,
         'fee': `
-            <form onsubmit="window.appAPI.handleForm(event, 'fees')" class="space-y-4 max-w-lg">
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label><select required name="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-md">${studentOptions}</select></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Amount ($)</label><input required name="amount" type="number" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Due Date</label><input required name="dueDate" type="date" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+            <div class="w-full max-w-2xl mx-auto">
+                <form onsubmit="window.appAPI.handleForm(event, 'fees')" class="space-y-4 mb-8">
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label><select required name="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-md">${studentOptions}</select></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Amount ($)</label><input required name="amount" type="number" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Due Date</label><input required name="dueDate" type="date" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                    </div>
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                        <select required name="status" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+                            <option value="Pending">Pending</option><option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Fee Record</button>
+                </form>
+                <div class="border-t border-slate-200 pt-6">
+                    <h4 class="font-semibold text-slate-800 mb-4">Fee Records Overview</h4>
+                    <div class="overflow-x-auto bg-white border border-slate-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left font-medium text-slate-500">Student</th>
+                                    <th class="px-4 py-2 text-left font-medium text-slate-500">Amt</th>
+                                    <th class="px-4 py-2 text-left font-medium text-slate-500">Status</th>
+                                    <th class="px-4 py-2 text-right font-medium text-slate-500">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${state.data.fees.map(f => {
+                                    const studentName = state.data.students.find(s => s.id === f.studentId)?.name || 'Unknown';
+                                    return `
+                                    <tr>
+                                        <td class="px-4 py-3">${studentName}</td>
+                                        <td class="px-4 py-3">$${f.amount}</td>
+                                        <td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded ${f.status === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${f.status}</span></td>
+                                        <td class="px-4 py-3 text-right">
+                                            ${f.status !== 'Paid' ? `<button onclick="window.appAPI.markFeePaid('${f.id}')" class="text-xs bg-green-50 border border-green-200 text-green-700 px-2 py-1 rounded hover:bg-green-100 mr-2">Mark Paid</button>` : ''}
+                                            <button onclick="if(confirm('Delete fee record?')) window.appAPI.deleteRecord('fees', '${f.id}')" class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                                        </td>
+                                    </tr>
+                                `}).join('') || '<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">No fee records.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                    <select required name="status" class="w-full px-3 py-2 border border-slate-300 rounded-md">
-                        <option value="Pending">Pending</option><option value="Paid">Paid</option>
-                    </select>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Fee Record</button>
-            </form>`,
+            </div>`,
         'class': `
-            <form onsubmit="window.appAPI.handleForm(event, 'classes')" class="space-y-4 max-w-lg">
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Class Name (e.g. 10A)</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Create Class</button>
-            </form>`,
+            <div class="w-full max-w-md mx-auto">
+                <form onsubmit="window.appAPI.handleForm(event, 'classes')" class="space-y-4 mb-8">
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Class Name (e.g. 10A)</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Create Class</button>
+                </form>
+                <div class="border-t border-slate-200 pt-6">
+                    <h4 class="font-semibold text-slate-800 mb-4">Manage Classes</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${state.data.classes.map(c => `
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-sm font-medium">
+                                ${c.name}
+                                <button onclick="window.appAPI.deleteRecord('classes', '${c.id}')" class="text-red-400 hover:text-red-600"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                            </span>
+                        `).join('') || '<p class="text-sm text-slate-500">No classes found.</p>'}
+                    </div>
+                </div>
+            </div>`,
         'subject': `
-            <form onsubmit="window.appAPI.handleForm(event, 'subjects')" class="space-y-4 max-w-lg">
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Subject Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Subject</button>
-            </form>`
+            <div class="w-full max-w-md mx-auto">
+                <form onsubmit="window.appAPI.handleForm(event, 'subjects')" class="space-y-4 mb-8">
+                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Subject Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Subject</button>
+                </form>
+                <div class="border-t border-slate-200 pt-6">
+                    <h4 class="font-semibold text-slate-800 mb-4">Manage Subjects</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${state.data.subjects.map(s => `
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-sm font-medium">
+                                ${s.name}
+                                <button onclick="window.appAPI.deleteRecord('subjects', '${s.id}')" class="text-red-400 hover:text-red-600"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                            </span>
+                        `).join('') || '<p class="text-sm text-slate-500">No subjects found.</p>'}
+                    </div>
+                </div>
+            </div>`
     };
 
     return `
@@ -443,8 +528,13 @@ export const ViewTeachers = () => {
         <div class="fade-in max-w-6xl mx-auto w-full">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                    <h2 class="text-lg font-semibold text-slate-800">Teachers Directory</h2>
-                    <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-lg font-semibold text-slate-800">Teachers Directory</h2>
+                        <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                    </div>
+                    <button onclick="window.appAPI.exportCSV('teachers')" class="flex items-center gap-2 text-sm bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 transition">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                    </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
