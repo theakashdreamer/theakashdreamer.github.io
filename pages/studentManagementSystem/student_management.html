@@ -55,11 +55,18 @@
     <!-- Firebase SDKs & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, addDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- 1. CONFIGURATION & INIT ---
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvvZQjQTbvM-l1CrfeAmXO-vykBnJOexk",
+            authDomain: "registration-93e51.firebaseapp.com",
+            projectId: "registration-93e51",
+            storageBucket: "registration-93e51.firebasestorage.app",
+            messagingSenderId: "509440941274",
+            appId: "1:509440941274:web:ae0ebbd4ceadca0a4dd9e3"
+        };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -69,6 +76,7 @@
         const state = {
             user: null,
             role: 'admin', // default, overridden by db
+            isLoginView: true, // Defaults to Login view
             activeView: 'dashboard',
             selectedStudentId: null,
             searchQuery: '',
@@ -108,15 +116,6 @@
             
             const classes = [{ name: '10A' }, { name: '12B' }];
             const subjects = [{ name: 'Mathematics' }, { name: 'Science' }, { name: 'English' }];
-            const students = [
-                { name: 'Alex Johnson', email: 'alex@student.com', class: '10A', rollNo: '101', phone: '555-0101' },
-                { name: 'Maria Garcia', email: 'maria@student.com', class: '10A', rollNo: '102', phone: '555-0102' },
-                { name: 'James Smith', email: 'james@student.com', class: '12B', rollNo: '201', phone: '555-0201' }
-            ];
-            const teachers = [
-                { name: 'Sarah Connor', email: 'sarah@teacher.com', subject: 'Science', phone: '555-1001' },
-                { name: 'John Keating', email: 'john@teacher.com', subject: 'English', phone: '555-1002' }
-            ];
             const notices = [
                 { title: 'Welcome Back!', content: 'Welcome to the new academic year.', date: new Date().toISOString().split('T')[0], target: 'All' }
             ];
@@ -124,8 +123,6 @@
             try {
                 for(let c of classes) await addDoc(getColRef('classes'), c);
                 for(let s of subjects) await addDoc(getColRef('subjects'), s);
-                for(let st of students) await addDoc(getColRef('students'), st);
-                for(let t of teachers) await addDoc(getColRef('teachers'), t);
                 for(let n of notices) await addDoc(getColRef('notices'), n);
                 showToast("Sample data loaded successfully");
             } catch (e) {
@@ -155,15 +152,12 @@
 
         // --- 5. AUTHENTICATION ---
         const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try {
                     await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.warn("Custom token sign-in failed. Showing standard login.", e);
                 }
-            } catch (error) {
-                console.error("Auth error:", error);
-                document.getElementById('app').innerHTML = `<div class="p-8 text-red-600">Auth Failed: ${error.message}</div>`;
             }
         };
 
@@ -175,19 +169,23 @@
                 const userSnap = await getDoc(userDocRef);
                 
                 if (userSnap.exists()) {
-                    state.role = userSnap.data().role || 'admin';
+                    state.role = userSnap.data().role || 'student';
                 } else {
-                    await setDoc(userDocRef, { email: user.email || 'anonymous', role: 'admin' });
+                    // Fallback just in case, but typically handled by account creation API
+                    await setDoc(userDocRef, { email: user.email, role: 'admin' });
                     state.role = 'admin';
                 }
 
                 syncData();
                 setTimeout(() => {
                     renderApp();
-                    if(state.role === 'admin' && state.data.students.length === 0) seedDatabase();
-                }, 1000); // Small delay to let initial sync happen
+                    if(state.role === 'admin' && state.data.classes.length === 0) seedDatabase();
+                }, 1000);
             } else {
                 state.user = null;
+                // Clear any cached data on logout
+                state.data = { users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: [] };
+                renderApp();
             }
         });
 
@@ -205,14 +203,54 @@
             switchView,
             setAdminTab: (tab) => { state.adminTab = tab; renderMainContent(); },
             setSearch: (e) => { state.searchQuery = e.target.value.toLowerCase(); renderMainContent(); },
-            changeRole: async (e) => {
-                const newRole = e.target.value;
-                await setDoc(doc(getColRef('users'), state.user.uid), { role: newRole }, { merge: true });
-                state.role = newRole;
-                state.activeView = 'dashboard';
-                showToast(`Switched to ${newRole} view`);
+            // Auth Actions
+            handleAuth: async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const email = formData.get('email');
+                const password = formData.get('password');
+
+                try {
+                    if (state.isLoginView) {
+                        await signInWithEmailAndPassword(auth, email, password);
+                        showToast("Logged in successfully");
+                    } else {
+                        // Create initial Admin setup account
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await setDoc(doc(getColRef('users'), userCredential.user.uid), { 
+                            email: email, 
+                            role: 'admin' 
+                        });
+                        showToast("Admin account created successfully");
+                    }
+                } catch (err) {
+                    showToast(err.message.replace('Firebase: ', ''), "error");
+                }
+            },
+            toggleAuthMode: () => {
+                state.isLoginView = !state.isLoginView;
                 renderApp();
             },
+            handleLogout: async () => {
+                await signOut(auth);
+                state.activeView = 'dashboard';
+                showToast("Logged out successfully");
+            },
+            
+            // Helper function to create an account in the background without logging out the current admin/teacher
+            createAccountREST: async (email, password, role) => {
+                const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, returnSecureToken: false })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message.replace(/_/g, ' '));
+                
+                await setDoc(doc(getColRef('users'), data.localId), { email, role });
+                return data.localId;
+            },
+
             // CRUD Actions
             handleForm: async (e, colName) => {
                 e.preventDefault();
@@ -221,9 +259,25 @@
                 const data = Object.fromEntries(formData.entries());
                 
                 try {
+                    // Provision accounts for Teachers and Students securely
+                    if (colName === 'teachers') {
+                        if (state.role !== 'admin') throw new Error("Only admins can add teachers.");
+                        showToast("Creating Teacher account...", "info");
+                        const uid = await window.appAPI.createAccountREST(data.email, data.password, 'teacher');
+                        delete data.password; // Do not store passwords in Firestore database
+                        data.authId = uid;
+                    } 
+                    else if (colName === 'students') {
+                        if (state.role !== 'admin' && state.role !== 'teacher') throw new Error("Only teachers or admins can add students.");
+                        showToast("Creating Student account...", "info");
+                        const uid = await window.appAPI.createAccountREST(data.email, data.password, 'student');
+                        delete data.password;
+                        data.authId = uid;
+                    }
+
                     await addDoc(getColRef(colName), data);
                     e.target.reset();
-                    showToast(`Record added successfully to ${colName}`);
+                    showToast(`Record added successfully`);
                 } catch (err) {
                     showToast(err.message, "error");
                 }
@@ -264,16 +318,6 @@
                     ${SidebarItem('users', 'Students Directory', 'students', ['admin', 'teacher'])}
                     ${SidebarItem('settings', 'Admin Panel', 'admin', ['admin', 'teacher'])}
                 </nav>
-                <div class="p-4 border-t border-slate-100">
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <p class="text-xs text-slate-500 font-medium mb-1">Simulate Role</p>
-                        <select onchange="window.appAPI.changeRole(event)" class="w-full text-sm bg-white border-slate-200 rounded p-1">
-                            <option value="admin" ${state.role === 'admin' ? 'selected' : ''}>Admin View</option>
-                            <option value="teacher" ${state.role === 'teacher' ? 'selected' : ''}>Teacher View</option>
-                            <option value="student" ${state.role === 'student' ? 'selected' : ''}>Student View</option>
-                        </select>
-                    </div>
-                </div>
             </aside>
         `;
 
@@ -299,14 +343,55 @@
                         </div>
                         <div class="hidden md:block text-sm">
                             <p class="font-medium text-slate-700 capitalize">${state.role}</p>
-                            <p class="text-xs text-slate-500 truncate w-24">${state.user?.uid.substring(0,6)}...</p>
+                            <p class="text-xs text-slate-500 truncate w-32">${state.user?.email || 'User'}</p>
                         </div>
+                        <button onclick="window.appAPI.handleLogout()" class="ml-2 text-slate-400 hover:text-red-600 transition-colors" title="Logout">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
             </header>
         `;
 
         // VIEWS
+        const ViewLogin = () => `
+            <div class="flex-1 flex flex-col items-center justify-center h-full p-4 bg-slate-50 w-full">
+                <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden fade-in">
+                    <div class="bg-blue-600 p-6 text-center">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <i data-lucide="graduation-cap" class="text-blue-600 w-8 h-8"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white tracking-tight">EduManage Pro</h2>
+                        <p class="text-blue-100 text-sm mt-1">${state.isLoginView ? 'Sign in to your account' : 'Initial Admin Account Setup'}</p>
+                    </div>
+                    <div class="p-8">
+                        <form onsubmit="window.appAPI.handleAuth(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                                <input required name="email" type="email" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                                <input required name="password" type="password" minlength="6" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm">
+                                ${state.isLoginView ? 'Sign In' : 'Register Admin Account'}
+                            </button>
+                        </form>
+                        <div class="mt-6 text-center text-sm text-slate-600">
+                            ${state.isLoginView ? 'System Setup?' : 'Already set up?'} 
+                            <button type="button" onclick="window.appAPI.toggleAuthMode()" class="text-blue-600 font-semibold hover:underline">
+                                ${state.isLoginView ? 'Create Admin Owner' : 'Sign in'}
+                            </button>
+                        </div>
+                        <div class="mt-4 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
+                            <strong>Note:</strong> Teachers are added by Admins. Students are added by Teachers or Admins from within the Dashboard.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
         const ViewDashboard = () => {
             const pendingFees = state.data.fees.filter(f => f.status === 'Pending').reduce((acc, curr) => acc + Number(curr.amount), 0);
             
@@ -431,11 +516,13 @@
                 return `<div class="text-center py-10 text-slate-500 fade-in">No student selected.</div>`;
             }
             
-            // If student role, they can only see their own (mocked by picking first student if linked, or specific ID)
-            const sId = state.role === 'student' && !state.selectedStudentId && state.data.students.length ? state.data.students[0].id : state.selectedStudentId;
+            // Map logged-in student to their record automatically
+            const loggedInStudentRecord = state.data.students.find(s => s.authId === state.user.uid || s.email === state.user.email);
+            const sId = state.role === 'student' && !state.selectedStudentId && loggedInStudentRecord ? loggedInStudentRecord.id : state.selectedStudentId;
+            
             const student = state.data.students.find(s => s.id === sId);
             
-            if (!student) return `<div class="text-center py-10 text-slate-500 fade-in">Student not found.</div>`;
+            if (!student) return `<div class="text-center py-10 text-slate-500 fade-in">Student profile not found. Please contact administration.</div>`;
 
             const sMarks = state.data.marks.filter(m => m.studentId === sId);
             const sAtt = state.data.attendance.filter(a => a.studentId === sId);
@@ -552,13 +639,23 @@
                 'student': `
                     <form onsubmit="window.appAPI.handleForm(event, 'students')" class="space-y-4 max-w-lg">
                         <div><label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email (Login ID)</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Initial Password</label><input required name="password" type="text" placeholder="e.g. Pass123!" minlength="6" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></div>
                         <div class="grid grid-cols-2 gap-4">
                             <div><label class="block text-sm font-medium text-slate-700 mb-1">Class</label><select required name="class" class="w-full px-3 py-2 border border-slate-300 rounded-md">${classOptions}</select></div>
                             <div><label class="block text-sm font-medium text-slate-700 mb-1">Roll No</label><input required name="rollNo" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
                         </div>
                         <div><label class="block text-sm font-medium text-slate-700 mb-1">Phone</label><input name="phone" type="tel" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Student</button>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium flex justify-center items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i> Create Student Account</button>
+                    </form>`,
+                'teacher': `
+                    <form onsubmit="window.appAPI.handleForm(event, 'teachers')" class="space-y-4 max-w-lg">
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email (Login ID)</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Initial Password</label><input required name="password" type="text" placeholder="e.g. Teach123!" minlength="6" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Specialization/Subject</label><input required name="subject" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Phone</label><input name="phone" type="tel" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium flex justify-center items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i> Create Teacher Account</button>
                     </form>`,
                 'attendance': `
                     <form onsubmit="window.appAPI.handleForm(event, 'attendance')" class="space-y-4 max-w-lg">
@@ -615,14 +712,6 @@
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Fee Record</button>
                     </form>`,
-                'teacher': `
-                    <form onsubmit="window.appAPI.handleForm(event, 'teachers')" class="space-y-4 max-w-lg">
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email</label><input required name="email" type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Specialization/Subject</label><input required name="subject" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Phone</label><input name="phone" type="tel" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-medium">Add Teacher</button>
-                    </form>`,
                 'class': `
                     <form onsubmit="window.appAPI.handleForm(event, 'classes')" class="space-y-4 max-w-lg">
                         <div><label class="block text-sm font-medium text-slate-700 mb-1">Class Name (e.g. 10A)</label><input required name="name" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md"></div>
@@ -670,6 +759,13 @@
 
         const renderApp = () => {
             const app = document.getElementById('app');
+            
+            if (!state.user) {
+                app.innerHTML = ViewLogin();
+                lucide.createIcons();
+                return;
+            }
+
             app.innerHTML = `
                 ${renderSidebar()}
                 <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
