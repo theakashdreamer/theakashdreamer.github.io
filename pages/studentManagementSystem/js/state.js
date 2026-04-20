@@ -8,7 +8,7 @@ export const state = {
     searchQuery: '',
     adminTab: 'student', // default admin tab
     data: {
-        users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: []
+        users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: [], assignments: []
     },
     unsubscribes: []
 };

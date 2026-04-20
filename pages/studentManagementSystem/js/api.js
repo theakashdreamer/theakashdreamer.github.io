@@ -18,8 +18,9 @@ window.appAPI = {
         state.isSidebarOpen = !state.isSidebarOpen;
         renderApp();
     },
-    setAdminTab: (tab) => { state.adminTab = tab; renderMainContent(); },
+    setAdminTab: (tab) => { state.adminTab = tab; state.activeReport = null; renderMainContent(); },
     setSearch: (e) => { state.searchQuery = e.target.value.toLowerCase(); renderMainContent(); },
+    previewReport: (colName) => { state.activeReport = colName; renderMainContent(); },
     
     // Auth Actions
     handleAuth: async (e) => {
@@ -91,6 +92,13 @@ window.appAPI = {
                 delete data.password;
                 data.authId = uid;
             }
+            else if (colName === 'users_custom') {
+                if (state.role !== 'admin') throw new Error("Only admins can create other admins.");
+                showToast("Creating Admin account...", "info");
+                await window.appAPI.createAccountREST(data.email, data.password, data.role);
+                e.target.reset();
+                return showToast(`Admin created successfully`);
+            }
 
             await addDoc(getColRef(colName), data);
             e.target.reset();
@@ -107,6 +115,51 @@ window.appAPI = {
         } catch (err) {
             showToast(err.message, "error");
         }
+    },
+
+    updateRecord: async (colName, id, field, value) => {
+        try {
+            await updateDoc(doc(getColRef(colName), id), { [field]: value });
+            showToast(`Record updated successfully`);
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    resetPassword: async (email) => {
+        try {
+            const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+            await sendPasswordResetEmail(auth, email);
+            showToast("Password reset email sent to " + email);
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    toggleUserStatus: async (uid, currentStatus) => {
+        try {
+            const newStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
+            await updateDoc(doc(getColRef('users'), uid), { status: newStatus });
+            showToast(`User status set to ${newStatus}`);
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    generateMarksheet: (markId) => {
+        const mark = state.data.marks.find(m => m.id === markId);
+        if (!mark) return;
+        const student = state.data.students.find(s => s.id === mark.studentId);
+        const w = window.open('', '_blank');
+        w.document.write(`<html><body style="font-family: sans-serif; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #ccc; text-align: center;"><h2>Official Marksheet</h2><p>Student: ${student?.name || 'Unknown'}</p><p>Exam: ${mark.exam}</p><p>Subject: ${mark.subject}</p><h1>Score: ${mark.score}/${mark.maxScore}</h1><button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button></body></html>`);
+    },
+
+    generateReceipt: (feeId) => {
+        const fee = state.data.fees.find(f => f.id === feeId);
+        if (!fee) return;
+        const student = state.data.students.find(s => s.id === fee.studentId);
+        const w = window.open('', '_blank');
+        w.document.write(`<html><body style="font-family: sans-serif; padding: 40px; max-width: 400px; margin: auto; border: 1px solid #ccc; text-align: center;"><h2>Payment Receipt</h2><p>Student: ${student?.name || 'Unknown'}</p><p>Date: ${new Date().toLocaleDateString()}</p><h1>Amount Paid: $${fee.amount}</h1><p style="color: green; font-weight: bold;">Status: PAID</p><button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button></body></html>`);
     },
 
     assignClass: async (teacherId, className) => {
@@ -151,8 +204,26 @@ window.appAPI = {
     },
 
     exportCSV: (colName) => {
-        const data = state.data[colName];
+        let data = state.data[colName];
         if (!data || data.length === 0) return showToast("No data to export", "info");
+
+        if (state.role === 'teacher') {
+            const loggedInTeacher = state.data.teachers.find(t => t.authId === state.user.uid || t.email === state.user.email) || {};
+            const assignedClasses = loggedInTeacher.assignedClasses || [];
+            if (colName === 'students') {
+                data = data.filter(s => assignedClasses.includes(s.class));
+            } else if (colName === 'attendance' || colName === 'marks') {
+                data = data.filter(item => {
+                    const s = state.data.students.find(st => st.id === item.studentId);
+                    return s && assignedClasses.includes(s.class);
+                });
+            } else {
+                return showToast("Access Denied", "error");
+            }
+        }
+
+        if (!data || data.length === 0) return showToast("No data to export", "info");
+        
         const keys = Object.keys(data[0]).filter(k => k !== 'id' && k !== 'authId' && k !== 'password');
         const csvRows = [keys.join(',')];
         
