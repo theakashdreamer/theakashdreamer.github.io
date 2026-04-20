@@ -367,9 +367,9 @@ onAuthStateChanged(auth, async (user) => {
         if (userSnap.exists()) {
             state.role = userSnap.data().role || 'student';
         } else {
-            // Fallback just in case, but typically handled by account creation API
-            await setDoc(userDocRef, { email: user.email, role: 'admin' });
-            state.role = 'admin';
+            // Fallback to student for safety
+            await setDoc(userDocRef, { email: user.email, role: 'student' });
+            state.role = 'student';
         }
 
         syncData();
@@ -379,7 +379,13 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         state.user = null;
         // Clear any cached data on logout
-        state.data = { users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: [], assignments: [] };
+        state.data = { 
+            users: [], students: [], teachers: [], classes: [], subjects: [], 
+            attendance: [], marks: [], fees: [], notices: [], assignments: [],
+            departments: [], courses: [], semesters: [], sections: [], 
+            academicSessions: [], timetable: [], exams: [], feeStructure: [], 
+            auditLog: [], documentRequests: []
+        };
         renderApp();
     }
 });

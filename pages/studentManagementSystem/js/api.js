@@ -18,9 +18,49 @@ window.appAPI = {
         state.isSidebarOpen = !state.isSidebarOpen;
         renderApp();
     },
-    setAdminTab: (tab) => { state.adminTab = tab; state.activeReport = null; renderMainContent(); },
-    setSearch: (e) => { state.searchQuery = e.target.value.toLowerCase(); renderMainContent(); },
-    previewReport: (colName) => { state.activeReport = colName; renderMainContent(); },
+    setAdminTab: (tab) => { 
+        state.adminTab = tab; 
+        state.activeReport = null; 
+        renderMainContent(); 
+    },
+    setSearch: (e) => { 
+        state.searchQuery = e.target.value.toLowerCase(); 
+        renderMainContent(); 
+    },
+    previewReport: (colName) => { 
+        state.activeReport = colName; 
+        renderMainContent(); 
+    },
+
+    // --- Advanced Admin Utilities ---
+    
+    generateAdmissionNo: () => {
+        const year = new Date().getFullYear().toString().slice(-2);
+        const count = (state.data.students.length + 1).toString().padStart(4, '0');
+        return `ADM${year}${count}`;
+    },
+
+    logAudit: async (action, details) => {
+        try {
+            await addDoc(getColRef('auditLog'), {
+                userId: state.user?.uid,
+                userEmail: state.user?.email,
+                action,
+                details,
+                timestamp: new Date().toISOString()
+            });
+        } catch (err) {
+            console.error("Audit log failed", err);
+        }
+    },
+
+    checkTimetableConflict: (newEntry) => {
+        return state.data.timetable.some(t => 
+            t.day === newEntry.day && 
+            t.period === newEntry.period && 
+            (t.teacherId === newEntry.teacherId || t.roomId === newEntry.roomId || (t.classId === newEntry.classId && t.sectionId === newEntry.sectionId))
+        );
+    },
     
     // Auth Actions
     handleAuth: async (e) => {
@@ -78,12 +118,15 @@ window.appAPI = {
         const data = Object.fromEntries(formData.entries());
         
         try {
-            if (colName === 'teachers') {
-                if (state.role !== 'admin') throw new Error("Only admins can add teachers.");
-                showToast("Creating Teacher account...", "info");
-                const uid = await window.appAPI.createAccountREST(data.email, data.password, 'teacher');
+            if (colName === 'teachers' || colName === 'hods' || colName === 'accountants') {
+                if (state.role !== 'admin') throw new Error("Only admins can perform this action.");
+                // Use data.role if provided in form (e.g. for Access Control), otherwise use colName mapping
+                const role = data.role || (colName === 'teachers' ? 'teacher' : colName === 'hods' ? 'hod' : 'accountant');
+                showToast(`Creating ${role} account...`, "info");
+                const uid = await window.appAPI.createAccountREST(data.email, data.password, role);
                 delete data.password; 
                 data.authId = uid;
+                data.role = role;
             } 
             else if (colName === 'students') {
                 if (state.role !== 'admin' && state.role !== 'teacher') throw new Error("Only teachers or admins can add students.");
@@ -91,18 +134,56 @@ window.appAPI = {
                 const uid = await window.appAPI.createAccountREST(data.email, data.password, 'student');
                 delete data.password;
                 data.authId = uid;
+                data.role = 'student';
+                data.admissionNo = data.admissionNo || window.appAPI.generateAdmissionNo();
+                data.status = 'Active';
             }
-            else if (colName === 'users_custom') {
-                if (state.role !== 'admin') throw new Error("Only admins can create other admins.");
-                showToast("Creating Admin account...", "info");
-                await window.appAPI.createAccountREST(data.email, data.password, data.role);
-                e.target.reset();
-                return showToast(`Admin created successfully`);
+            else if (colName === 'timetable') {
+                if (window.appAPI.checkTimetableConflict(data)) {
+                    throw new Error("Scheduling conflict detected for this room, teacher, or class.");
+                }
             }
 
-            await addDoc(getColRef(colName), data);
+            const docRef = await addDoc(getColRef(colName), {
+                ...data,
+                createdAt: new Date().toISOString()
+            });
+            
+            await window.appAPI.logAudit(`CREATE_${colName.toUpperCase()}`, `ID: ${docRef.id}`);
             e.target.reset();
             showToast(`Record added successfully`);
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    promoteStudent: async (studentId, nextClass, nextSemester) => {
+        try {
+            const studentRef = doc(getColRef('students'), studentId);
+            await updateDoc(studentRef, {
+                class: nextClass,
+                semester: nextSemester,
+                promotionHistory: [
+                    ...(state.data.students.find(s => s.id === studentId).promotionHistory || []),
+                    { from: state.data.students.find(s => s.id === studentId).class, to: nextClass, date: new Date().toISOString() }
+                ]
+            });
+            await window.appAPI.logAudit('STUDENT_PROMOTION', `Student: ${studentId} to ${nextClass}`);
+            showToast("Student promoted successfully");
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    updateLifecycle: async (studentId, status, reason) => {
+        try {
+            await updateDoc(doc(getColRef('students'), studentId), { 
+                status,
+                lifecycleNote: reason,
+                updatedAt: new Date().toISOString()
+            });
+            await window.appAPI.logAudit('LIFECYCLE_UPDATE', `Student: ${studentId} set to ${status}`);
+            showToast(`Student status updated to ${status}`);
         } catch (err) {
             showToast(err.message, "error");
         }

@@ -7,8 +7,30 @@ export const state = {
     selectedStudentId: null,
     searchQuery: '',
     adminTab: 'student', // default admin tab
+    activeReport: null,
     data: {
-        users: [], students: [], teachers: [], classes: [], subjects: [], attendance: [], marks: [], fees: [], notices: [], assignments: []
+        users: [], 
+        students: [], 
+        teachers: [], 
+        departments: [],
+        courses: [],
+        semesters: [],
+        classes: [], 
+        sections: [],
+        subjects: [], 
+        attendance: [], 
+        marks: [], 
+        fees: [], 
+        notices: [], 
+        assignments: [],
+        timetable: [],
+        exams: [],
+        examSchedule: [],
+        feeStructure: [],
+        documentRequests: [],
+        auditLog: [],
+        academicSessions: [],
+        rooms: []
     },
     unsubscribes: []
 };
