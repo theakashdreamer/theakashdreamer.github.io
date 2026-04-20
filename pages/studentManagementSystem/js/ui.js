@@ -51,6 +51,7 @@ export const renderSidebar = () => `
         <nav class="flex-1 overflow-y-auto py-4 space-y-1">
             ${SidebarItem('layout-dashboard', 'Dashboard', 'dashboard', ['admin', 'teacher', 'student'])}
             ${SidebarItem('users', 'Students Directory', 'students', ['admin', 'teacher'])}
+            ${SidebarItem('user-check', 'Teachers Directory', 'teachers', ['admin'])}
             ${SidebarItem('settings', 'Admin Panel', 'admin', ['admin', 'teacher'])}
         </nav>
     </aside>

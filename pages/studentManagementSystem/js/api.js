@@ -3,7 +3,7 @@ import { showToast } from './ui.js';
 import { auth, db, getColRef, firebaseConfig } from './firebase-config.js';
 import { renderApp, renderMainContent } from './app.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { doc, setDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { doc, setDoc, addDoc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const switchView = (view, payload = null) => {
     state.activeView = view;
@@ -103,6 +103,38 @@ window.appAPI = {
         try {
             await deleteDoc(doc(getColRef(colName), id));
             showToast("Record deleted");
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    assignClass: async (teacherId, className) => {
+        try {
+            const teacherDoc = doc(getColRef('teachers'), teacherId);
+            const teacherRef = await getDoc(teacherDoc);
+            if (!teacherRef.exists()) return;
+            const classes = teacherRef.data().assignedClasses || [];
+            if (!classes.includes(className)) {
+                classes.push(className);
+                await updateDoc(teacherDoc, { assignedClasses: classes });
+                showToast("Class assigned successfully");
+            } else {
+                showToast("Class already assigned", "info");
+            }
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    },
+
+    removeClass: async (teacherId, className) => {
+        try {
+            const teacherDoc = doc(getColRef('teachers'), teacherId);
+            const teacherRef = await getDoc(teacherDoc);
+            if (!teacherRef.exists()) return;
+            let classes = teacherRef.data().assignedClasses || [];
+            classes = classes.filter(c => c !== className);
+            await updateDoc(teacherDoc, { assignedClasses: classes });
+            showToast("Class removed");
         } catch (err) {
             showToast(err.message, "error");
         }

@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { auth, getColRef } from './firebase-config.js';
 import { renderSidebar, renderHeader } from './ui.js';
-import { ViewLogin, ViewDashboard, ViewStudents, ViewProfile, ViewAdmin } from './views.js';
+import { ViewLogin, ViewDashboard, ViewStudents, ViewProfile, ViewAdmin, ViewTeachers } from './views.js';
 import { onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import './api.js'; // Ensure appAPI is registered to window
@@ -16,6 +16,7 @@ export const renderMainContent = () => {
         case 'students': html = ViewStudents(); break;
         case 'profile': html = ViewProfile(); break;
         case 'admin': html = ViewAdmin(); break;
+        case 'teachers': html = ViewTeachers(); break;
         default: html = ViewDashboard();
     }
     container.innerHTML = html;

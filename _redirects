@@ -11,7 +11,7 @@
 /locksystem       /pages/lock/parentportal.html  301
 
 # Student Management system
-/studentmgt       /pages\studentManagementSystem\student_management.html  301
+/studentmgt       /pages/studentmanagementsystem/student_management  301
 
 # Default fallback
 /*            /index.html                   200

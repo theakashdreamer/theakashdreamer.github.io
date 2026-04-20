@@ -386,3 +386,82 @@ export const ViewAdmin = () => {
         </div>
     `;
 };
+
+export const ViewTeachers = () => {
+    let filtered = state.data.teachers;
+    if (state.searchQuery) {
+        filtered = filtered.filter(t => 
+            t.name?.toLowerCase().includes(state.searchQuery) || 
+            t.subject?.toLowerCase().includes(state.searchQuery)
+        );
+    }
+
+    const classOptions = state.data.classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+    const rows = filtered.map(t => {
+        const assignedClasses = t.assignedClasses || [];
+        const classBadges = assignedClasses.map(c => `
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
+                ${c}
+                <button onclick="window.appAPI.removeClass('${t.id}', '${c}')" class="hover:text-red-500"><i data-lucide="x" class="w-3 h-3"></i></button>
+            </span>
+        `).join(' ');
+
+        return `
+        <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
+                        ${t.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800">${t.name}</p>
+                        <p class="text-xs text-slate-500">${t.email}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${t.subject || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-normal text-sm text-slate-600">
+                <div class="flex flex-wrap gap-1 mb-2">${classBadges || '<span class="text-xs text-slate-400">No classes assigned</span>'}</div>
+                <div class="flex items-center gap-2">
+                    <select id="assign-class-${t.id}" class="text-xs border border-slate-300 rounded px-2 py-1 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <option value="">Select Class</option>
+                        ${classOptions}
+                    </select>
+                    <button onclick="const sel = document.getElementById('assign-class-${t.id}'); if(sel.value) window.appAPI.assignClass('${t.id}', sel.value);" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition">Assign</button>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button onclick="if(confirm('Are you sure you want to delete this teacher?')) window.appAPI.deleteRecord('teachers', '${t.id}')" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1.5 rounded-md hover:bg-red-100 transition-colors flex items-center gap-1 inline-flex">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                </button>
+            </td>
+        </tr>
+    `}).join('');
+
+    return `
+        <div class="fade-in max-w-6xl mx-auto w-full">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <h2 class="text-lg font-semibold text-slate-800">Teachers Directory</h2>
+                    <span class="text-xs font-medium bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-slate-600">Total: ${filtered.length}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Teacher Info</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Subject</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned Classes</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            ${rows.length ? rows : '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500 text-sm">No teachers found</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+};
