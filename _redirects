@@ -3,15 +3,21 @@
 
 # Donation
 /topics       /pages/bookReader/book_pages.html  301
-# Donation
-/requirement             /pages/projectRequirment/project_requirement.html  301
+
+# Requirement
+/requirement  /pages/projectRequirment/project_requirement.html  301
+
 # Contact
-/joinus      /pages/registrationpage/register.html         301
-# parent
-/locksystem       /pages/lock/parentportal.html  301
+/joinus       /pages/registrationpage/register.html  301
+
+# Parent
+/locksystem   /pages/lock/parentportal.html  301
 
 # Student Management system
-/studentmgt       /pages/studentmanagementsystem/student_management  301
+/studentmgt   /pages/studentmanagementsystem/student_management  301
+
+# APK direct file
+/app/sekcustomer.apk   /app/sekcustomer.apk   200
 
 # Default fallback
 /*            /index.html                   200
