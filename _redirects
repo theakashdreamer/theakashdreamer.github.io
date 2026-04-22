@@ -17,7 +17,7 @@
 /studentmgt   /pages/studentmanagementsystem/student_management  301
 
 # APK direct file
-/app/sekcustomer.apk  assets\app\sekcustomer.apk   200
+/app/sekcustomer.apk  /assets\app\sekcustomer.apk   200
 
 # Default fallback
 /*            /index.html                   200
