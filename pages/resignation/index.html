@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resignation Sender - Akash Singh</title>
+
+  <link rel="shortcut icon" href="../../assets/images/akash_profile_pic.png" type="image/x-icon" />
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function () {
+      // Initialize EmailJS with your Public Key
+      // emailjs.init("YOUR_PUBLIC_KEY"); 
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-gradient-onyx: linear-gradient(to bottom right, hsl(240, 1%, 25%) 3%, hsl(0, 0%, 19%) 97%);
+      --orange-yellow-crayola: hsl(45, 100%, 72%);
+    }
+
+    body {
+      background: var(--smoky-black);
+      color: var(--light-gray);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .particles-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    .resignation-card {
+      background: var(--eerie-black-2);
+      border: 1px solid var(--jet);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow-5);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: var(--fs-1);
+      color: var(--white-2);
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .header h1::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--text-gradient-yellow);
+      border-radius: 3px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      color: var(--white-2);
+      font-size: var(--fs-6);
+      margin-bottom: 8px;
+      font-weight: var(--fw-500);
+    }
+
+    .form-input,
+    .form-select {
+      background: var(--eerie-black-1);
+      border: 1px solid var(--jet);
+      color: var(--white-2);
+      padding: 12px 16px;
+      border-radius: 12px;
+      width: 100%;
+      font-size: var(--fs-6);
+      transition: var(--transition-1);
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffdb70' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--orange-yellow-crayola);
+    }
+
+    .email-preview {
+      background: var(--smoky-black);
+      border: 1px solid var(--jet);
+      border-radius: 12px;
+      padding: 20px;
+      color: var(--light-gray);
+      font-size: var(--fs-6);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: var(--fs-6);
+      font-weight: var(--fw-600);
+      cursor: pointer;
+      transition: var(--transition-1);
+    }
+
+    .btn-primary {
+      background: var(--text-gradient-yellow);
+      color: var(--smoky-black);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background: var(--onyx);
+      color: var(--orange-yellow-crayola);
+      border: 1px solid var(--jet);
+    }
+
+    .btn-secondary:hover {
+      background: var(--jet);
+    }
+
+    .btn-success {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .btn-success:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      font-size: var(--fs-7);
+      text-align: center;
+      display: none;
+    }
+
+    .status-success { color: #2ecc71; }
+    .status-error { color: #e74c3c; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--orange-yellow-crayola);
+      font-size: var(--fs-7);
+      margin-bottom: 20px;
+      text-decoration: none;
+      transition: var(--transition-1);
+    }
+
+    .back-link:hover {
+      filter: brightness(1.2);
+    }
+
+    /* Custom Scrollbar */
+    .email-preview::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .email-preview::-webkit-scrollbar-track {
+      background: var(--onyx);
+      border-radius: 5px;
+    }
+
+    .email-preview::-webkit-scrollbar-thumb {
+      background: var(--orange-yellow-crayola);
+      border-radius: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .btn-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles-background" id="particles-js"></div>
+
+  <div class="container">
+    <a href="../../index.html" class="back-link">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+      Back to Portfolio
+    </a>
+
+    <div class="resignation-card">
+      <div class="header">
+        <h1>Resignation Portal</h1>
+        <p>Send resignation from akash.tsscommunity@gmail.com</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="recipient-select">Select Recipient</label>
+        <select id="recipient-select" class="form-select">
+          <option value="hr@technosys.com">HR Manager (hr@technosys.com)</option>
+          <option value="manager@technosys.com">Project Manager (manager@technosys.com)</option>
+          <option value="custom">Enter Custom Email...</option>
+        </select>
+      </div>
+
+      <div id="custom-email-group" class="form-group" style="display: none;">
+        <label class="form-label" for="custom-email">Recipient Email</label>
+        <input type="email" id="custom-email" class="form-input" placeholder="example@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resignation-date">Resignation Date</label>
+        <input type="date" id="resignation-date" class="form-input">
+      </div>
+
+      <div class="form-label">Email Content Preview</div>
+      <div id="email-preview" class="email-preview"></div>
+
+      <div class="btn-container">
+        <button id="direct-send-btn" class="btn btn-success">
+          <div class="loading-spinner" id="spinner"></div>
+          <ion-icon name="paper-plane-outline" id="send-icon"></ion-icon>
+          Direct Send
+        </button>
+        <button id="send-gmail-btn" class="btn btn-primary">
+          <ion-icon name="logo-google"></ion-icon>
+          Gmail Web
+        </button>
+        <button id="copy-btn" class="btn btn-secondary">
+          <ion-icon name="copy-outline"></ion-icon>
+          Copy
+        </button>
+      </div>
+
+      <div id="status-msg" class="status-msg"></div>
+    </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  <script>
+    // Initialize particles.js
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.3, random: true },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.2, width: 1 },
+        move: { enable: true, speed: 1, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+      },
+      retina_detect: true
+    });
+
+    const recipientSelect = document.getElementById('recipient-select');
+    const customEmailGroup = document.getElementById('custom-email-group');
+    const customEmailInput = document.getElementById('custom-email');
+    const resignationDateInput = document.getElementById('resignation-date');
+    const emailPreview = document.getElementById('email-preview');
+    const sendGmailBtn = document.getElementById('send-gmail-btn');
+    const directSendBtn = document.getElementById('direct-send-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const spinner = document.getElementById('spinner');
+    const sendIcon = document.getElementById('send-icon');
+    const statusMsg = document.getElementById('status-msg');
+
+    // Set today's date as default
+    const today = new Date().toISOString().split('T')[0];
+    resignationDateInput.value = today;
+
+    function formatDisplayDate(dateStr) {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('en-GB', options);
+    }
+
+    function updatePreview() {
+      const selectedDate = resignationDateInput.value ? formatDisplayDate(resignationDateInput.value) : '[Insert Date]';
+
+      const content = `Date: ${selectedDate}
+
+To
+The HR Manager
+Technosys Technologies Pvt. Ltd.
+Lucknow, Uttar Pradesh
+
+Subject: Resignation from the Position of Junior Trainee (Android Developer)
+
+Dear Sir/Madam,
+
+I am writing to formally submit my resignation from my position as Junior Trainee (Android Developer) at Technosys Technologies Pvt. Ltd., Lucknow. I joined the organization on 15 May 2023.
+
+I sincerely appreciate the opportunities and professional experience I have gained during my time with the company. Working here has helped me strengthen my skills in Android development and software engineering.
+
+I will ensure a smooth transition by completing my current responsibilities and assisting with the proper handover of my tasks.
+
+Thank you for your guidance and support during my tenure. I wish the organization continued growth and success.
+
+Sincerely,
+Akash Singh
+Junior Trainee (Android Developer)
+Technosys Technologies Pvt. Ltd.
+Joining Date: 15 May 2023`;
+
+      emailPreview.textContent = content;
+      return content;
+    }
+
+    recipientSelect.addEventListener('change', () => {
+      if (recipientSelect.value === 'custom') {
+        customEmailGroup.style.display = 'block';
+      } else {
+        customEmailGroup.style.display = 'none';
+      }
+    });
+
+    resignationDateInput.addEventListener('input', updatePreview);
+
+    sendGmailBtn.addEventListener('click', () => {
+      const recipient = recipientSelect.value === 'custom' ? customEmailInput.value : recipientSelect.value;
+      if (!recipient) {
+        alert('Please enter a recipient email.');
+        return;
+      }
+
+      const subject = "Resignation - Akash Singh - Junior Trainee (Android Developer)";
+      const body = updatePreview();
+
+      // Gmail compose URL
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      window.open(gmailUrl, '_blank');
+    });
+
+    directSendBtn.addEventListener('click', async () => {
+      const recipient = recipientSelect.value === 'custom' ? customEmailInput.value : recipientSelect.value;
+      if (!recipient) {
+        alert('Please enter a recipient email.');
+        return;
+      }
+
+      // Check if initialized
+      // if (typeof emailjs === 'undefined') {
+      //   alert('EmailJS is not configured.');
+      //   return;
+      // }
+
+      const body = updatePreview();
+
+      // Loading state
+      directSendBtn.disabled = true;
+      spinner.style.display = 'block';
+      sendIcon.style.display = 'none';
+      statusMsg.style.display = 'none';
+
+      try {
+        // NOTE: Replace with your actual IDs from emailjs.com
+        // await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        //   to_email: recipient,
+        //   subject: "Resignation - Akash Singh",
+        //   message: body,
+        //   from_name: "Akash Singh"
+        // });
+
+        // For now, since I don't have your keys, I'll show a prompt
+        setTimeout(() => {
+          showStatus("Please configure your EmailJS keys in the code to enable direct sending.", false);
+          directSendBtn.disabled = false;
+          spinner.style.display = 'none';
+          sendIcon.style.display = 'block';
+        }, 1500);
+
+      } catch (error) {
+        showStatus("Failed to send: " + error.text, false);
+        directSendBtn.disabled = false;
+        spinner.style.display = 'none';
+        sendIcon.style.display = 'block';
+      }
+    });
+
+    function showStatus(msg, isSuccess) {
+      statusMsg.textContent = msg;
+      statusMsg.className = `status-msg ${isSuccess ? 'status-success' : 'status-error'}`;
+      statusMsg.style.display = 'block';
+    }
+
+    copyBtn.addEventListener('click', () => {
+      const content = updatePreview();
+      navigator.clipboard.writeText(content).then(() => {
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon> Copied!';
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 2000);
+      });
+    });
+
+    // Initial preview
+    updatePreview();
+  </script>
+</body>
+
+</html>
