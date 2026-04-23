@@ -11,14 +11,14 @@
   <link rel="stylesheet" href="../../assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function () {
-      // Initialize EmailJS with your Public Key
-      // emailjs.init("YOUR_PUBLIC_KEY"); 
+      // Initialize EmailJS with the provided public key
+      emailjs.init("fVgfG7vadbALBC7xr");
     })();
   </script>
 
@@ -29,9 +29,17 @@
     }
 
     body {
-      background: var(--smoky-black);
-      color: var(--light-gray);
-      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #2b2b3d);
+      color: #e0e0e0;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
       margin: 0;
       padding: 0;
       display: flex;
@@ -58,11 +66,12 @@
     }
 
     .resignation-card {
-      background: var(--eerie-black-2);
-      border: 1px solid var(--jet);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 20px;
       padding: 30px;
-      box-shadow: var(--shadow-5);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
       animation: fadeIn 0.8s ease-out;
     }
 
@@ -172,35 +181,43 @@
       font-size: var(--fs-6);
       font-weight: var(--fw-600);
       cursor: pointer;
-      transition: var(--transition-1);
+      transition: all 0.3s ease;
+      background: transparent;
     }
 
     .btn-primary {
-      background: var(--text-gradient-yellow);
-      color: var(--smoky-black);
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .btn-primary:hover {
-      filter: brightness(1.1);
+      filter: brightness(1.2);
+      transform: translateY(-2px);
     }
 
     .btn-secondary {
-      background: var(--onyx);
-      color: var(--orange-yellow-crayola);
-      border: 1px solid var(--jet);
+      background: rgba(255,255,255,0.05);
+      color: #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(6px);
     }
 
     .btn-secondary:hover {
-      background: var(--jet);
+      background: rgba(255,255,255,0.15);
     }
 
     .btn-success {
-      background: #2ecc71;
-      color: white;
+      background: linear-gradient(135deg, #00b09b, #96c93d);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .btn-success:hover {
-      filter: brightness(1.1);
+      filter: brightness(1.2);
+      transform: translateY(-2px);
     }
 
     .btn:disabled {
@@ -219,7 +236,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .status-msg {
@@ -229,8 +248,13 @@
       display: none;
     }
 
-    .status-success { color: #2ecc71; }
-    .status-error { color: #e74c3c; }
+    .status-success {
+      color: #2ecc71;
+    }
+
+    .status-error {
+      color: #e74c3c;
+    }
 
     .back-link {
       display: inline-flex;
@@ -288,8 +312,8 @@
       <div class="form-group">
         <label class="form-label" for="recipient-select">Select Recipient</label>
         <select id="recipient-select" class="form-select">
-          <option value="hr@technosys.com">HR Manager (hr@technosys.com)</option>
-          <option value="manager@technosys.com">Project Manager (manager@technosys.com)</option>
+          <option value="ashutosh@technosysservices.com">HR Manager (hr@technosys.com)</option>
+          <option value="theakashdreamer@gmail.com">Project Manager (manager@technosys.com)</option>
           <option value="custom">Enter Custom Email...</option>
         </select>
       </div>
@@ -325,7 +349,7 @@
 
       <div id="status-msg" class="status-msg"></div>
     </div>
-    </div>
+  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -453,13 +477,13 @@ Joining Date: 15 May 2023`;
       statusMsg.style.display = 'none';
 
       try {
-        // NOTE: Replace with your actual IDs from emailjs.com
-        // await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-        //   to_email: recipient,
-        //   subject: "Resignation - Akash Singh",
-        //   message: body,
-        //   from_name: "Akash Singh"
-        // });
+       // NOTE: Replace with your actual IDs from emailjs.com
+        await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+          to_email: recipient,
+          subject: "Resignation - Akash Singh",
+          message: body,
+          from_name: "Akash Singh"
+        });
 
         // For now, since I don't have your keys, I'll show a prompt
         setTimeout(() => {

@@ -63,3 +63,37 @@
         transform: translateY(-5px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       }
+
+      /* Resignation floating icon */
+      .resignation-fab {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .resignation-fab:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Move buttons up on mobile to avoid overlap with bottom navbar */
+      @media (max-width: 580px) {
+        .resignation-fab, .back-to-top {
+          bottom: 80px;
+        }
+      }
+
+
