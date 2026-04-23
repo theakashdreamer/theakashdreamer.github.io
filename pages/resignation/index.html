@@ -11,228 +11,286 @@
   <link rel="stylesheet" href="../../assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script type="text/javascript">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
     (function () {
-      // Initialize EmailJS with the provided public key
-      emailjs.init("fVgfG7vadbALBC7xr");
+      emailjs.init({
+        publicKey: "fVgfG7vadbALBC7xr"
+      });
     })();
   </script>
 
   <style>
     :root {
-      --bg-gradient-onyx: linear-gradient(to bottom right, hsl(240, 1%, 25%) 3%, hsl(0, 0%, 19%) 97%);
-      --orange-yellow-crayola: hsl(45, 100%, 72%);
+      --gold: #d4af37;
+      --gold-soft: #f5e7a1;
+      --navy: #0f172a;
+      --navy-2: #16213a;
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #e5e7eb;
+      --muted: #aeb6c3;
+      --panel: rgba(255, 255, 255, 0.08);
+      --input: rgba(10, 16, 30, 0.9);
+      --success: #22c55e;
+      --error: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      background: linear-gradient(135deg, #1e1e2f, #2b2b3d);
-      color: #e0e0e0;
+      margin: 0;
+      min-height: 100vh;
       font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
+      background:
+        radial-gradient(circle at top left, rgba(212, 175, 55, 0.10), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 32%),
+        linear-gradient(135deg, #0b1020, #10192d 42%, #151f36 100%);
+      color: var(--text);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       overflow-x: hidden;
-    }
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow-x: hidden;
+      padding: 28px 16px;
     }
 
     .particles-background {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
+      inset: 0;
+      z-index: 0;
     }
 
     .container {
       width: 100%;
-      max-width: 800px;
-      padding: 20px;
+      max-width: 920px;
+      position: relative;
       z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #f3d97a;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 18px;
+      transition: 0.25s ease;
+    }
+
+    .back-link:hover {
+      transform: translateX(-2px);
+      filter: brightness(1.08);
     }
 
     .resignation-card {
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      animation: fadeIn 0.8s ease-out;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .card-topbar {
+      height: 6px;
+      background: linear-gradient(90deg, #0f3d91, #d4af37, #0f3d91);
     }
 
     .header {
-      margin-bottom: 30px;
-      text-align: center;
+      padding: 30px 28px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
     }
 
     .header h1 {
-      font-size: var(--fs-1);
-      color: var(--white-2);
-      margin-bottom: 10px;
-      position: relative;
-      display: inline-block;
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.2px;
     }
 
-    .header h1::after {
-      content: "";
-      position: absolute;
-      bottom: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 3px;
-      background: var(--text-gradient-yellow);
-      border-radius: 3px;
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 22px;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
     }
 
     .form-label {
-      display: block;
-      color: var(--white-2);
-      font-size: var(--fs-6);
-      margin-bottom: 8px;
-      font-weight: var(--fw-500);
+      font-size: 13px;
+      font-weight: 600;
+      color: #f8fafc;
+      letter-spacing: 0.2px;
     }
 
     .form-input,
-    .form-select {
-      background: var(--eerie-black-1);
-      border: 1px solid var(--jet);
-      color: var(--white-2);
-      padding: 12px 16px;
-      border-radius: 12px;
+    .form-select,
+    .form-textarea {
       width: 100%;
-      font-size: var(--fs-6);
-      transition: var(--transition-1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--input);
+      color: #fff;
+      border-radius: 14px;
+      padding: 13px 15px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.25s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: rgba(212, 175, 55, 0.9);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12);
     }
 
     .form-select {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffdb70' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 18px;
+      background-position: right 14px center;
+      padding-right: 44px;
     }
 
-    .form-input:focus,
-    .form-select:focus {
-      outline: none;
-      border-color: var(--orange-yellow-crayola);
-    }
-
-    .email-preview {
-      background: var(--smoky-black);
-      border: 1px solid var(--jet);
-      border-radius: 12px;
-      padding: 20px;
-      color: var(--light-gray);
-      font-size: var(--fs-6);
+    .helper-text {
+      font-size: 12px;
+      color: var(--muted);
       line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .section-title {
+      margin: 28px 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.2px;
+    }
+
+    .two-preview {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .email-preview-box,
+    .plain-preview-box {
+      background: rgba(8, 13, 25, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .email-preview-box {
+      padding: 18px;
+    }
+
+    .email-preview-box iframe {
+      width: 100%;
+      min-height: 760px;
+      border: 0;
+      background: #fff;
+      border-radius: 12px;
+    }
+
+    .plain-preview-box {
+      padding: 20px;
+      color: #d7dce5;
       white-space: pre-wrap;
-      max-height: 400px;
+      line-height: 1.9;
+      font-size: 14px;
+      max-height: 460px;
       overflow-y: auto;
-      margin-bottom: 20px;
     }
 
     .btn-container {
       display: flex;
-      gap: 15px;
-      margin-top: 30px;
+      gap: 14px;
+      margin-top: 22px;
+      flex-wrap: wrap;
     }
 
     .btn {
       flex: 1;
-      display: flex;
-      justify-content: center;
+      min-width: 180px;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      padding: 14px 20px;
+      border: none;
       border-radius: 14px;
-      font-size: var(--fs-6);
-      font-weight: var(--fw-600);
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
-      background: transparent;
+      transition: 0.25s ease;
+      font-family: inherit;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #ff7e5f, #feb47b);
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.2);
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.05);
-      color: #e0e0e0;
-      border: 1px solid rgba(255,255,255,0.3);
-      backdrop-filter: blur(6px);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.15);
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #00b09b, #96c93d);
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .btn-success:hover {
-      filter: brightness(1.2);
+    .btn:hover {
       transform: translateY(-2px);
     }
 
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 0.65;
       cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #0ea271, #39c17f);
+      color: white;
+      box-shadow: 0 10px 24px rgba(14, 162, 113, 0.28);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1f4b99, #306fd0);
+      color: white;
+      box-shadow: 0 10px 24px rgba(48, 111, 208, 0.28);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
     }
 
     .loading-spinner {
       display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.35);
       border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
@@ -242,53 +300,38 @@
     }
 
     .status-msg {
-      margin-top: 15px;
-      font-size: var(--fs-7);
-      text-align: center;
       display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.6;
     }
 
     .status-success {
-      color: #2ecc71;
+      display: block;
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      color: #d7ffe3;
     }
 
     .status-error {
-      color: #e74c3c;
+      display: block;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      color: #ffe0e0;
     }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      color: var(--orange-yellow-crayola);
-      font-size: var(--fs-7);
-      margin-bottom: 20px;
-      text-decoration: none;
-      transition: var(--transition-1);
-    }
+    @media (max-width: 860px) {
 
-    .back-link:hover {
-      filter: brightness(1.2);
-    }
+      .grid,
+      .two-preview {
+        grid-template-columns: 1fr;
+      }
 
-    /* Custom Scrollbar */
-    .email-preview::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    .email-preview::-webkit-scrollbar-track {
-      background: var(--onyx);
-      border-radius: 5px;
-    }
-
-    .email-preview::-webkit-scrollbar-thumb {
-      background: var(--orange-yellow-crayola);
-      border-radius: 5px;
-    }
-
-    @media (max-width: 600px) {
-      .btn-container {
-        flex-direction: column;
+      .email-preview-box iframe {
+        min-height: 900px;
       }
     }
   </style>
@@ -304,52 +347,144 @@
     </a>
 
     <div class="resignation-card">
+      <div class="card-topbar"></div>
+
       <div class="header">
-        <h1>Resignation Portal</h1>
-        <p>Send resignation from akash.tsscommunity@gmail.com</p>
+        <h1>Corporate Resignation Portal</h1>
+        <p>Create and send a polished HR-style resignation email with premium corporate formatting.</p>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="recipient-select">Select Recipient</label>
-        <select id="recipient-select" class="form-select">
-          <option value="ashutosh@technosysservices.com">HR Manager (hr@technosys.com)</option>
-          <option value="theakashdreamer@gmail.com">Project Manager (manager@technosys.com)</option>
-          <option value="custom">Enter Custom Email...</option>
-        </select>
+      <div class="content">
+        <div class="grid">
+          <div class="form-group">
+            <label class="form-label" for="recipient-select">Select Recipient</label>
+            <select id="recipient-select" class="form-select">
+              <option value="ashutosh@technosysservices.com">HR Manager (ashutosh@technosysservices.com)</option>
+              <option value="theakashdreamer@gmail.com">Project Manager (theakashdreamer@gmail.com)</option>
+              <option value="custom">Enter Custom Email...</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="custom-email-group" style="display:none;">
+            <label class="form-label" for="custom-email">Custom Recipient Email</label>
+            <input type="email" id="custom-email" class="form-input" placeholder="example@gmail.com" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="resignation-date">Resignation Date</label>
+            <input type="date" id="resignation-date" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="employee-name">Employee Name</label>
+            <input type="text" id="employee-name" class="form-input" value="Akash Singh" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="designation">Designation</label>
+            <input type="text" id="designation" class="form-input" value="Junior Trainee (Android Developer)" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="joining-date">Joining Date</label>
+            <input type="text" id="joining-date" class="form-input" value="15 May 2023" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="company-name">Company Name</label>
+            <input type="text" id="company-name" class="form-input" value="Technosys Technologies Pvt. Ltd." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="company-city">Company City</label>
+            <input type="text" id="company-city" class="form-input" value="Lucknow, Uttar Pradesh" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="recipient-name">Recipient Name / Role</label>
+            <input type="text" id="recipient-name" class="form-input" value="The HR Manager" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="sender-email">Sender Email</label>
+            <input type="email" id="sender-email" class="form-input" value="akash.tsscommunity@gmail.com" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="phone-number">Phone Number</label>
+            <input type="text" id="phone-number" class="form-input" value="+91-XXXXXXXXXX" />
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="subject-line">Subject Line</label>
+            <input type="text" id="subject-line" class="form-input"
+              value="Resignation from the Position of Junior Trainee (Android Developer)" />
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="letter-body-1">Paragraph 1</label>
+            <textarea id="letter-body-1" class="form-textarea"
+              rows="3">I am writing to formally submit my resignation from my position as Junior Trainee (Android Developer) at Technosys Technologies Pvt. Ltd., Lucknow. I joined the organization on 15 May 2023.</textarea>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="letter-body-2">Paragraph 2</label>
+            <textarea id="letter-body-2" class="form-textarea"
+              rows="3">I sincerely appreciate the opportunities and professional experience I have gained during my time with the company. Working here has helped me strengthen my skills in Android development and software engineering.</textarea>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="letter-body-3">Paragraph 3</label>
+            <textarea id="letter-body-3" class="form-textarea"
+              rows="3">I will ensure a smooth transition by completing my current responsibilities and assisting with the proper handover of my tasks.</textarea>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="letter-body-4">Paragraph 4</label>
+            <textarea id="letter-body-4" class="form-textarea"
+              rows="3">Thank you for your guidance and support during my tenure. I wish the organization continued growth and success.</textarea>
+          </div>
+        </div>
+
+        <div class="section-title">Live Preview</div>
+
+        <div class="two-preview">
+          <div class="email-preview-box">
+            <iframe id="email-preview-frame" title="Corporate Email Preview"></iframe>
+          </div>
+          <div class="plain-preview-box" id="plain-preview"></div>
+        </div>
+
+        <div class="btn-container">
+          <button id="direct-send-btn" class="btn btn-success" type="button">
+            <div class="loading-spinner" id="spinner"></div>
+            <ion-icon name="paper-plane-outline" id="send-icon"></ion-icon>
+            Direct Send
+          </button>
+
+          <button id="send-gmail-btn" class="btn btn-primary" type="button">
+            <ion-icon name="logo-google"></ion-icon>
+            Gmail Web
+          </button>
+
+          <button id="copy-btn" class="btn btn-secondary" type="button">
+            <ion-icon name="copy-outline"></ion-icon>
+            Copy Letter
+          </button>
+        </div>
+
+        <div id="status-msg" class="status-msg"></div>
+
+        <div class="helper-text">
+          EmailJS template variables: <strong>{{to_email}}</strong>, <strong>{{subject}}</strong>,
+          <strong>{{employee_name}}</strong>, <strong>{{sender_email}}</strong>, <strong>{{resignation_date}}</strong>,
+          <strong>{{designation}}</strong>, <strong>{{company_name}}</strong>, <strong>{{company_city}}</strong>,
+          <strong>{{joining_date}}</strong>, <strong>{{recipient_name}}</strong>, <strong>{{phone_number}}</strong>,
+          <strong>{{letter_body_1}}</strong>, <strong>{{letter_body_2}}</strong>, <strong>{{letter_body_3}}</strong>,
+          <strong>{{letter_body_4}}</strong>.
+        </div>
       </div>
-
-      <div id="custom-email-group" class="form-group" style="display: none;">
-        <label class="form-label" for="custom-email">Recipient Email</label>
-        <input type="email" id="custom-email" class="form-input" placeholder="example@gmail.com">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="resignation-date">Resignation Date</label>
-        <input type="date" id="resignation-date" class="form-input">
-      </div>
-
-      <div class="form-label">Email Content Preview</div>
-      <div id="email-preview" class="email-preview"></div>
-
-      <div class="btn-container">
-        <button id="direct-send-btn" class="btn btn-success">
-          <div class="loading-spinner" id="spinner"></div>
-          <ion-icon name="paper-plane-outline" id="send-icon"></ion-icon>
-          Direct Send
-        </button>
-        <button id="send-gmail-btn" class="btn btn-primary">
-          <ion-icon name="logo-google"></ion-icon>
-          Gmail Web
-        </button>
-        <button id="copy-btn" class="btn btn-secondary">
-          <ion-icon name="copy-outline"></ion-icon>
-          Copy
-        </button>
-      </div>
-
-      <div id="status-msg" class="status-msg"></div>
     </div>
-  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -357,30 +492,27 @@
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
   <script>
-    // Initialize particles.js
-    particlesJS('particles-js', {
-      particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.3, random: true },
-        size: { value: 3, random: true },
-        line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.2, width: 1 },
-        move: { enable: true, speed: 1, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
-        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
-      },
-      retina_detect: true
-    });
-
+    // Elements
     const recipientSelect = document.getElementById('recipient-select');
     const customEmailGroup = document.getElementById('custom-email-group');
     const customEmailInput = document.getElementById('custom-email');
     const resignationDateInput = document.getElementById('resignation-date');
-    const emailPreview = document.getElementById('email-preview');
+    const employeeNameInput = document.getElementById('employee-name');
+    const designationInput = document.getElementById('designation');
+    const joiningDateInput = document.getElementById('joining-date');
+    const companyNameInput = document.getElementById('company-name');
+    const companyCityInput = document.getElementById('company-city');
+    const recipientNameInput = document.getElementById('recipient-name');
+    const senderEmailInput = document.getElementById('sender-email');
+    const phoneNumberInput = document.getElementById('phone-number');
+    const subjectLineInput = document.getElementById('subject-line');
+    const body1Input = document.getElementById('letter-body-1');
+    const body2Input = document.getElementById('letter-body-2');
+    const body3Input = document.getElementById('letter-body-3');
+    const body4Input = document.getElementById('letter-body-4');
+
+    const previewFrame = document.getElementById('email-preview-frame');
+    const plainPreview = document.getElementById('plain-preview');
     const sendGmailBtn = document.getElementById('send-gmail-btn');
     const directSendBtn = document.getElementById('direct-send-btn');
     const copyBtn = document.getElementById('copy-btn');
@@ -388,120 +520,117 @@
     const sendIcon = document.getElementById('send-icon');
     const statusMsg = document.getElementById('status-msg');
 
-    // Set today's date as default
-    const today = new Date().toISOString().split('T')[0];
-    resignationDateInput.value = today;
+    // Default Date
+    resignationDateInput.value = new Date().toISOString().split('T')[0];
+
+    // Helper Functions
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
     function formatDisplayDate(dateStr) {
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      return new Date(dateStr).toLocaleDateString('en-GB', options);
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '';
+      return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function getRecipient() {
+      return recipientSelect.value === 'custom' ? customEmailInput.value.trim() : recipientSelect.value.trim();
+    }
+
+    function getTemplateParams() {
+      return {
+        to_email: getRecipient(),
+        subject: subjectLineInput.value.trim(),
+        resignation_date: formatDisplayDate(resignationDateInput.value),
+        employee_name: employeeNameInput.value.trim(),
+        designation: designationInput.value.trim(),
+        company_name: companyNameInput.value.trim(),
+        company_city: companyCityInput.value.trim(),
+        joining_date: joiningDateInput.value.trim(),
+        recipient_name: recipientNameInput.value.trim(),
+        sender_email: senderEmailInput.value.trim(),
+        phone_number: phoneNumberInput.value.trim(),
+        letter_body_1: body1Input.value.trim(),
+        letter_body_2: body2Input.value.trim(),
+        letter_body_3: body3Input.value.trim(),
+        letter_body_4: body4Input.value.trim()
+      };
+    }
+
+    function buildPlainLetter(params) {
+      return `Date: ${params.resignation_date}\n\nTo\n${params.recipient_name}\n${params.company_name}\n${params.company_city}\n\nSubject: ${params.subject}\n\nDear Sir/Madam,\n\n${params.letter_body_1}\n\n${params.letter_body_2}\n\n${params.letter_body_3}\n\n${params.letter_body_4}\n\nSincerely,\n${params.employee_name}\n${params.designation}\n${params.company_name}\nJoining Date: ${params.joining_date}\nEmail: ${params.sender_email}\nContact: ${params.phone_number}`;
+    }
+
+    function buildPreviewHtml(params) {
+      return `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { margin:0; padding:24px 12px; background:#f4f6f8; font-family:Arial, sans-serif; color:#1f2937; }
+  .wrapper { max-width:700px; margin:0 auto; background:#fff; border:1px solid #d1d5db; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+  .accent { height:4px; background:#d4af37; }
+  .header { padding:24px; background:#0f172a; color:#fff; }
+  .body { padding:32px; line-height:1.6; }
+  .meta { background:#f8fafc; border:1px solid #e2e8f0; padding:16px; margin-bottom:24px; border-radius:6px; font-size:13px; }
+  .meta table { width:100%; }
+  .meta td { padding:4px 0; }
+  .label { color:#64748b; font-weight:600; width:120px; }
+  .value { color:#0f172a; font-weight:700; text-align:right; }
+  .subject { background:#fffbeb; border-left:4px solid #d4af37; padding:12px 16px; margin-bottom:24px; font-weight:700; }
+  .sig { margin-top:40px; padding-top:20px; border-top:1px solid #e2e8f0; }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="accent"></div>
+    <div class="header">
+      <div style="font-size:20px; font-weight:700;">Formal Resignation Notice</div>
+    </div>
+    <div class="body">
+      <div class="meta">
+        <table>
+          <tr><td class="label">Date</td><td class="value">${escapeHtml(params.resignation_date)}</td></tr>
+          <tr><td class="label">Employee</td><td class="value">${escapeHtml(params.employee_name)}</td></tr>
+          <tr><td class="label">Designation</td><td class="value">${escapeHtml(params.designation)}</td></tr>
+        </table>
+      </div>
+      <div style="margin-bottom:20px;">
+        <strong>${escapeHtml(params.recipient_name)}</strong><br>
+        ${escapeHtml(params.company_name)}<br>
+        ${escapeHtml(params.company_city)}
+      </div>
+      <div class="subject">Subject: ${escapeHtml(params.subject)}</div>
+      <p>Dear Sir/Madam,</p>
+      <p>${escapeHtml(params.letter_body_1)}</p>
+      <p>${escapeHtml(params.letter_body_2)}</p>
+      <p>${escapeHtml(params.letter_body_3)}</p>
+      <p>${escapeHtml(params.letter_body_4)}</p>
+      <div class="sig">
+        <strong>${escapeHtml(params.employee_name)}</strong><br>
+        ${escapeHtml(params.designation)}<br>
+        ${escapeHtml(params.company_name)}<br>
+        <span style="font-size:12px; color:#64748b;">Contact: ${escapeHtml(params.phone_number)} | Email: ${escapeHtml(params.sender_email)}</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
     }
 
     function updatePreview() {
-      const selectedDate = resignationDateInput.value ? formatDisplayDate(resignationDateInput.value) : '[Insert Date]';
-
-      const content = `Date: ${selectedDate}
-
-To
-The HR Manager
-Technosys Technologies Pvt. Ltd.
-Lucknow, Uttar Pradesh
-
-Subject: Resignation from the Position of Junior Trainee (Android Developer)
-
-Dear Sir/Madam,
-
-I am writing to formally submit my resignation from my position as Junior Trainee (Android Developer) at Technosys Technologies Pvt. Ltd., Lucknow. I joined the organization on 15 May 2023.
-
-I sincerely appreciate the opportunities and professional experience I have gained during my time with the company. Working here has helped me strengthen my skills in Android development and software engineering.
-
-I will ensure a smooth transition by completing my current responsibilities and assisting with the proper handover of my tasks.
-
-Thank you for your guidance and support during my tenure. I wish the organization continued growth and success.
-
-Sincerely,
-Akash Singh
-Junior Trainee (Android Developer)
-Technosys Technologies Pvt. Ltd.
-Joining Date: 15 May 2023`;
-
-      emailPreview.textContent = content;
-      return content;
+      const params = getTemplateParams();
+      previewFrame.srcdoc = buildPreviewHtml(params);
+      plainPreview.textContent = buildPlainLetter(params);
     }
-
-    recipientSelect.addEventListener('change', () => {
-      if (recipientSelect.value === 'custom') {
-        customEmailGroup.style.display = 'block';
-      } else {
-        customEmailGroup.style.display = 'none';
-      }
-    });
-
-    resignationDateInput.addEventListener('input', updatePreview);
-
-    sendGmailBtn.addEventListener('click', () => {
-      const recipient = recipientSelect.value === 'custom' ? customEmailInput.value : recipientSelect.value;
-      if (!recipient) {
-        alert('Please enter a recipient email.');
-        return;
-      }
-
-      const subject = "Resignation - Akash Singh - Junior Trainee (Android Developer)";
-      const body = updatePreview();
-
-      // Gmail compose URL
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-      window.open(gmailUrl, '_blank');
-    });
-
-    directSendBtn.addEventListener('click', async () => {
-      const recipient = recipientSelect.value === 'custom' ? customEmailInput.value : recipientSelect.value;
-      if (!recipient) {
-        alert('Please enter a recipient email.');
-        return;
-      }
-
-      // Check if initialized
-      // if (typeof emailjs === 'undefined') {
-      //   alert('EmailJS is not configured.');
-      //   return;
-      // }
-
-      const body = updatePreview();
-
-      // Loading state
-      directSendBtn.disabled = true;
-      spinner.style.display = 'block';
-      sendIcon.style.display = 'none';
-      statusMsg.style.display = 'none';
-
-      try {
-       // NOTE: Replace with your actual IDs from emailjs.com
-        await emailjs.send(
-              "service_9lr2pdn",
-              "template_uiepphb", {
-          to_email: recipient,
-          subject: "Resignation - Akash Singh",
-          message: body,
-          from_name: "Akash Singh"
-        });
-
-        // For now, since I don't have your keys, I'll show a prompt
-        setTimeout(() => {
-          showStatus("Please configure your EmailJS keys in the code to enable direct sending.", false);
-          directSendBtn.disabled = false;
-          spinner.style.display = 'none';
-          sendIcon.style.display = 'block';
-        }, 1500);
-
-      } catch (error) {
-        showStatus("Failed to send: " + error.text, false);
-        directSendBtn.disabled = false;
-        spinner.style.display = 'none';
-        sendIcon.style.display = 'block';
-      }
-    });
 
     function showStatus(msg, isSuccess) {
       statusMsg.textContent = msg;
@@ -509,18 +638,92 @@ Joining Date: 15 May 2023`;
       statusMsg.style.display = 'block';
     }
 
-    copyBtn.addEventListener('click', () => {
-      const content = updatePreview();
-      navigator.clipboard.writeText(content).then(() => {
-        const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon> Copied!';
-        setTimeout(() => {
-          copyBtn.innerHTML = originalText;
-        }, 2000);
-      });
+    function clearStatus() {
+      statusMsg.style.display = 'none';
+    }
+
+    // Event Listeners
+    recipientSelect.addEventListener('change', () => {
+      customEmailGroup.style.display = recipientSelect.value === 'custom' ? 'block' : 'none';
+      updatePreview();
     });
 
-    // Initial preview
+    [
+      customEmailInput, resignationDateInput, employeeNameInput, designationInput,
+      joiningDateInput, companyNameInput, companyCityInput, recipientNameInput,
+      senderEmailInput, phoneNumberInput, subjectLineInput, body1Input, body2Input,
+      body3Input, body4Input
+    ].forEach(el => {
+      el.addEventListener('input', updatePreview);
+    });
+
+    sendGmailBtn.addEventListener('click', () => {
+      const recipient = getRecipient();
+      if (!isValidEmail(recipient)) { showStatus('Invalid recipient email.', false); return; }
+      const params = getTemplateParams();
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(params.subject)}&body=${encodeURIComponent(buildPlainLetter(params))}`;
+      window.open(gmailUrl, '_blank');
+    });
+
+    directSendBtn.addEventListener('click', async () => {
+      const recipient = getRecipient();
+      if (!isValidEmail(recipient)) { showStatus('Invalid recipient email.', false); return; }
+
+      directSendBtn.disabled = true;
+      spinner.style.display = 'block';
+      sendIcon.style.display = 'none';
+      clearStatus();
+
+      try {
+        await emailjs.send("service_9lr2pdn", "template_udr19sl", getTemplateParams());
+        showStatus('Email sent successfully!', true);
+      } catch (e) {
+        showStatus('Failed to send: ' + (e.text || e.message || 'Error'), false);
+      } finally {
+        directSendBtn.disabled = false;
+        spinner.style.display = 'none';
+        sendIcon.style.display = 'block';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(buildPlainLetter(getTemplateParams()));
+        const old = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon> Copied!';
+        setTimeout(() => copyBtn.innerHTML = old, 2000);
+        showStatus('Copied to clipboard!', true);
+      } catch (e) {
+        showStatus('Copy failed.', false);
+      }
+    });
+
+    // Initialize Particles
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 70, density: { enable: true, value_area: 900 } },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.25, random: true },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.12, width: 1 },
+        move: { enable: true, speed: 1.1, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          repulse: { distance: 90, duration: 0.4 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
     updatePreview();
   </script>
 </body>
