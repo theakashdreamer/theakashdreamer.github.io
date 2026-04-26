@@ -18,6 +18,7 @@
 
 # APK direct file
 /app/sekcustomer.apk  /assets\app\sekcustomer.apk   200
-
+#Policy pages 
+/policy     /pages/privacy-policy.html   301
 # Default fallback
 /*            /index.html                   200
