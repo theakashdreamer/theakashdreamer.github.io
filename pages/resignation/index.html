@@ -713,10 +713,14 @@
   .label { color:#64748b; font-weight:600; width:140px; }
   .value { color:#0f172a; font-weight:700; text-align:right; }
   .subject { background:#fffbeb; border-left:4px solid #d4af37; padding:16px 20px; margin-bottom:30px; font-weight:700; font-size:16px; color:#1e293b; border-radius: 0 8px 8px 0; }
-  .sig { margin-top:40px; padding-top:24px; border-top:1px solid #e2e8f0; }
+  .sig { margin-top:40px; padding-top:24px; border-top:1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: flex-end; }
+  .sig-details { flex: 1; }
   .sig strong { font-size: 16px; color: #0f172a; }
+  .signature-block { display: none; text-align: center; padding-bottom: 4px; }
+  .signature-line { width: 220px; height: 60px; border-bottom: 1px solid #000; margin-bottom: 8px; }
   p { margin-bottom: 16px; }
   @media print {
+    .signature-block { display: block; }
     body { background: #fff; padding: 0; }
     .wrapper { box-shadow: none; border: none; margin: 0; max-width: 100%; border-radius: 0; }
     .header { color: #000; background: transparent; padding: 0 0 20px 0; border-bottom: 2px solid #d4af37; margin-bottom: 20px; }
@@ -752,10 +756,17 @@
       <p>${escapeHtml(params.letter_body_3)}</p>
       <p>${escapeHtml(params.letter_body_4)}</p>
       <div class="sig">
-        <strong>${escapeHtml(params.employee_name)}</strong><br>
-        ${escapeHtml(params.designation)}<br>
-        ${escapeHtml(params.company_name)}<br>
-        <div style="margin-top:12px; font-size:13px; color:#64748b;">Contact: ${escapeHtml(params.phone_number)} &bull; Email: ${escapeHtml(params.sender_email)}</div>
+        <div class="sig-details">
+          <strong style="display:block; margin-bottom:16px;">Sincerely,</strong>
+          <strong>${escapeHtml(params.employee_name)}</strong><br>
+          ${escapeHtml(params.designation)}<br>
+          ${escapeHtml(params.company_name)}<br>
+          <div style="margin-top:12px; font-size:13px; color:#64748b;">Contact: ${escapeHtml(params.phone_number)} &bull; Email: ${escapeHtml(params.sender_email)}</div>
+        </div>
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <strong style="font-size: 14px; color: #0f172a;">Signature</strong>
+        </div>
       </div>
     </div>
   </div>
