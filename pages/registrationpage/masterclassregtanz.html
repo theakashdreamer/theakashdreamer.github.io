@@ -1684,6 +1684,36 @@
               </div>
 
               <div class="form-group">
+                <label for="speaker" class="required">Select Speaker</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-microphone"></i>
+                  <select id="speaker" name="speaker" required>
+                    <option value="">Choose a speaker</option>
+                    <option value="Rajesh Kumar">Rajesh Kumar</option>
+                    <option value="Priya Sharma">Priya Sharma</option>
+                    <option value="Amit Patel">Amit Patel</option>
+                    <option value="Neha Singh">Neha Singh</option>
+                  </select>
+                </div>
+                <div class="error-text" id="speakerError">Please select a speaker.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="lecturer" class="required">Select Lecturer</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-chalkboard-user"></i>
+                  <select id="lecturer" name="lecturer" required>
+                    <option value="">Choose a lecturer</option>
+                    <option value="Dr. Vikram Sinha">Dr. Vikram Sinha</option>
+                    <option value="Ms. Anjali Verma">Ms. Anjali Verma</option>
+                    <option value="Prof. Rohit Gupta">Prof. Rohit Gupta</option>
+                    <option value="Mrs. Divya Reddy">Mrs. Divya Reddy</option>
+                  </select>
+                </div>
+                <div class="error-text" id="lecturerError">Please select a lecturer.</div>
+              </div>
+
+              <div class="form-group">
                 <label for="address" class="required">Address</label>
                 <div class="input-with-icon">
                   <i class="fas fa-map-marker-alt"></i>
@@ -1924,10 +1954,12 @@
       const mobile = ($id('mobile') && $id('mobile').value.trim()) || '';
       const email = ($id('email') && $id('email').value.trim()) || '';
       const gender = (document.querySelector && document.querySelector('input[name="gender"]:checked')) || null;
+      const speaker = ($id('speaker') && $id('speaker').value.trim()) || '';
+      const lecturer = ($id('lecturer') && $id('lecturer').value.trim()) || '';
       const address = ($id('address') && $id('address').value.trim()) || '';
       const transactionId = ($id('transactionId') && $id('transactionId').value.trim()) || '';
 
-      if (name && email && gender && address) {
+      if (name && email && gender && speaker && lecturer && address) {
         currentStep = 2;
       } else {
         currentStep = 1;
@@ -2028,6 +2060,22 @@
         });
       });
 
+      if ($id('speaker')) $id('speaker').addEventListener('change', function () {
+        if (this.value.trim()) {
+          this.classList.remove('field-error');
+          if ($id('speakerError')) $id('speakerError').style.display = 'none';
+        }
+        checkFormCompletion();
+      });
+
+      if ($id('lecturer')) $id('lecturer').addEventListener('change', function () {
+        if (this.value.trim()) {
+          this.classList.remove('field-error');
+          if ($id('lecturerError')) $id('lecturerError').style.display = 'none';
+        }
+        checkFormCompletion();
+      });
+
       // Initialize UI
       resetPrice();
       updateProgressIndicator();
@@ -2061,6 +2109,8 @@
             mobile: ($id('mobile') && $id('mobile').value.trim()) || null,
             email: ($id('email') && $id('email').value.trim()) || '',
             gender: (document.querySelector('input[name="gender"]:checked') && document.querySelector('input[name="gender"]:checked').value) || null,
+            speaker: ($id('speaker') && $id('speaker').value.trim()) || '',
+            lecturer: ($id('lecturer') && $id('lecturer').value.trim()) || '',
             address: ($id('address') && $id('address').value.trim()) || '',
             transactionId: ($id('transactionId') && $id('transactionId').value.trim()) || '',
             paymentMethod: ($id('paymentMethod') && $id('paymentMethod').value) || 'Not specified',
@@ -2128,6 +2178,8 @@
       const mobileEl = $id('mobile');
       const addressEl = $id('address');
       const transactionEl = $id('transactionId');
+      const speakerEl = $id('speaker');
+      const lecturerEl = $id('lecturer');
 
       const name = nameEl && nameEl.value.trim();
       if (!name) { if (nameEl) nameEl.classList.add('field-error'); if ($id('nameError')) $id('nameError').style.display = 'block'; isValid = false; }
@@ -2144,6 +2196,12 @@
 
       const gender = document.querySelector('input[name="gender"]:checked');
       if (!gender) { if ($id('genderError')) $id('genderError').style.display = 'block'; isValid = false; }
+
+      const speaker = speakerEl && speakerEl.value.trim();
+      if (!speaker) { if (speakerEl) speakerEl.classList.add('field-error'); if ($id('speakerError')) $id('speakerError').style.display = 'block'; isValid = false; }
+
+      const lecturer = lecturerEl && lecturerEl.value.trim();
+      if (!lecturer) { if (lecturerEl) lecturerEl.classList.add('field-error'); if ($id('lecturerError')) $id('lecturerError').style.display = 'block'; isValid = false; }
 
       const address = addressEl && addressEl.value.trim();
       if (!address) { if (addressEl) addressEl.classList.add('field-error'); if ($id('addressError')) $id('addressError').style.display = 'block'; isValid = false; }

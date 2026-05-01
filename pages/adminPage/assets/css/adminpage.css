@@ -319,3 +319,248 @@
     min-height: 120px;
     resize: vertical;
   }
+
+  /* Registrations Section */
+  .registrations-card {
+    grid-column: 1 / -1;
+  }
+
+  .registrations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .registrations-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .registrations-controls input {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+  }
+
+  .registrations-controls input::placeholder {
+    color: #94a3b8;
+  }
+
+  .registrations-table-content {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .registrations-table-content thead {
+    background: rgba(99, 102, 241, 0.1);
+    border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+  }
+
+  .registrations-table-content th {
+    padding: 15px;
+    text-align: left;
+    color: #93c5fd;
+    font-weight: 600;
+  }
+
+  .registrations-table-content td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+  }
+
+  .registrations-table-content tbody tr:hover {
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .status-pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+  }
+
+  .status-completed {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+  }
+
+  .status-failed {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+  }
+
+  .btn-icon {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    color: #93c5fd;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+  }
+
+  .btn-icon:hover {
+    background: rgba(99, 102, 241, 0.4);
+    transform: scale(1.05);
+  }
+
+  .loading, .no-data, .error-msg {
+    text-align: center;
+    padding: 40px 20px;
+    color: #94a3b8;
+    font-size: 16px;
+  }
+
+  .loading i, .no-data i, .error-msg i {
+    font-size: 32px;
+    margin-bottom: 10px;
+    display: block;
+    color: #6366f1;
+  }
+
+  /* Certificate Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 16px;
+    max-width: 900px;
+    width: 90%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-header h2 {
+    font-size: 22px;
+    color: white;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .close-btn:hover {
+    color: white;
+  }
+
+  .modal-body {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .certificate-preview {
+    background: white;
+    color: #333;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #d4af37;
+  }
+
+  .certificate-frame {
+    width: 100%;
+  }
+
+  .certificate-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #d4af37;
+    margin-bottom: 30px;
+    font-family: 'Georgia', serif;
+    letter-spacing: 2px;
+  }
+
+  .certificate-line {
+    font-size: 16px;
+    color: #555;
+    margin: 15px 0;
+  }
+
+  .certificate-name {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 0;
+    border-bottom: 2px solid #d4af37;
+    padding-bottom: 10px;
+  }
+
+  .certificate-course {
+    font-size: 20px;
+    color: #333;
+    font-weight: 600;
+    margin: 15px 0;
+  }
+
+  .certificate-date {
+    font-size: 14px;
+    color: #666;
+    margin-top: 30px;
+  }
+
+  .certificate-ref {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding: 0 25px 25px;
+  }
+
+  .modal-actions .btn {
+    flex: 1;
+    max-width: 300px;
+  }

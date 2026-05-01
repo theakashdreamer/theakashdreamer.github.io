@@ -26,7 +26,9 @@
       getDocs,
       doc,
       getDoc,
-      setDoc
+      setDoc,
+      query,
+      where
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -49,6 +51,8 @@
     window.doc = doc;
     window.getDoc = getDoc;
     window.setDoc = setDoc;
+    window.query = query;
+    window.where = where;
   </script>
 </head>
 
@@ -86,6 +90,16 @@
         <div class="stat-info">
           <h3 id="blogCount">0</h3>
           <p>Blog Posts</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#34d399)">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="registrationCount">0</h3>
+          <p>Registrations</p>
         </div>
       </div>
     </div>
@@ -207,11 +221,73 @@
         </form>
       </div>
 
+      <!-- REGISTRATIONS CARD -->
+      <div class="card registrations-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon portfolio-icon"><i class="fas fa-file-certificate"></i></div>
+            <span>Master Class Registrations</span>
+          </div>
+        </div>
+
+        <div class="registrations-container">
+          <div class="registrations-controls">
+            <input id="searchRegistration" type="text" placeholder="Search by name or email..." />
+            <button id="refreshRegistrations" class="btn btn-primary">
+              <i class="fas fa-sync"></i> Refresh
+            </button>
+          </div>
+
+          <div id="registrationsTable" class="registrations-table">
+            <div class="loading">Loading registrations...</div>
+          </div>
+
+          <div class="success-message" id="certSuccess">
+            <i class="fas fa-check-circle"></i>
+            <span id="certSuccessMsg">Certificate generated successfully!</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Certificate Modal -->
+  <div id="certificateModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-certificate"></i> Generate Certificate</h2>
+        <button class="close-btn" id="closeCertModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="certificatePreview" class="certificate-preview">
+          <div class="certificate-frame">
+            <h1 class="certificate-title">Certificate of Completion</h1>
+            <p class="certificate-line">This is to certify that</p>
+            <p class="certificate-name" id="certName">John Doe</p>
+            <p class="certificate-line">has successfully completed the</p>
+            <p class="certificate-course" id="certCourse">Master Class</p>
+            <p class="certificate-date">Date: <span id="certDate">May 2, 2026</span></p>
+            <p class="certificate-ref">Reference ID: <span id="certRefId">N/A</span></p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="downloadCertBtn" class="btn btn-primary">
+            <i class="fas fa-download"></i> Download PDF
+          </button>
+          <button id="closeCertBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Close
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- QUILL -->
   <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+  <!-- HTML2PDF for certificate download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- MAIN SCRIPT -->
   <script>
@@ -222,6 +298,7 @@
     async function updateStats() {
       portfolioCount.textContent = (await getDocs(collection(db, "portfolio"))).size;
       blogCount.textContent = (await getDocs(collection(db, "blogs"))).size;
+      registrationCount.textContent = (await getDocs(collection(db, "registrations"))).size;
     }
 
     async function loadProfileAdmin() {
@@ -306,6 +383,139 @@
 
       resumeForm.reset();
     };
+
+    /* ======= REGISTRATIONS & CERTIFICATES ======= */
+    let allRegistrations = [];
+
+    async function loadRegistrations() {
+      try {
+        const tableDiv = document.getElementById("registrationsTable");
+        tableDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading registrations...</div>';
+        
+        const snap = await getDocs(collection(db, "registrations"));
+        allRegistrations = [];
+        
+        snap.forEach(doc => {
+          allRegistrations.push({ id: doc.id, ...doc.data() });
+        });
+
+        if (allRegistrations.length === 0) {
+          tableDiv.innerHTML = '<div class="no-data"><i class="fas fa-inbox"></i> No registrations found</div>';
+          return;
+        }
+
+        displayRegistrationsTable(allRegistrations);
+      } catch (err) {
+        console.error("Error loading registrations:", err);
+        document.getElementById("registrationsTable").innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-circle"></i> Error loading registrations</div>';
+      }
+    }
+
+    function displayRegistrationsTable(registrations) {
+      let html = `
+        <table class="registrations-table-content">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Speaker</th>
+              <th>Lecturer</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      registrations.forEach((reg, idx) => {
+        const statusClass = reg.status === 'completed' ? 'status-completed' : reg.status === 'pending' ? 'status-pending' : 'status-failed';
+        html += `
+          <tr>
+            <td><strong>${reg.name || 'N/A'}</strong></td>
+            <td>${reg.email || 'N/A'}</td>
+            <td>${reg.mobile || 'N/A'}</td>
+            <td>${reg.speaker || 'N/A'}</td>
+            <td>${reg.lecturer || 'N/A'}</td>
+            <td><span class="status-badge ${statusClass}">${reg.status || 'pending'}</span></td>
+            <td>
+              <button class="btn-icon" title="Generate Certificate" onclick="showCertificateModal('${reg.id}', '${reg.name}', '${reg.speaker}', '${reg.lecturer}')">
+                <i class="fas fa-certificate"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById("registrationsTable").innerHTML = html;
+    }
+
+    function showCertificateModal(regId, name, speaker, lecturer) {
+      document.getElementById('certName').textContent = name || 'Participant';
+      document.getElementById('certCourse').textContent = `Master Class${speaker ? ' - ' + speaker : ''}`;
+      document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certRefId').textContent = regId || 'N/A';
+      
+      document.getElementById('certificateModal').style.display = 'flex';
+      document.getElementById('downloadCertBtn').onclick = () => downloadCertificate(regId, name, speaker, lecturer);
+    }
+
+    function downloadCertificate(regId, name, speaker, lecturer) {
+      const certificateDiv = document.getElementById('certificatePreview');
+      const opt = {
+        margin: 10,
+        filename: `Certificate_${name.replace(/\s+/g, '_')}_${regId.slice(0, 8)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+      };
+
+      html2pdf().set(opt).from(certificateDiv).save();
+      
+      document.getElementById('certSuccess').classList.add('show');
+      setTimeout(() => document.getElementById('certSuccess').classList.remove('show'), 3000);
+    }
+
+    function searchRegistrations() {
+      const searchTerm = document.getElementById('searchRegistration').value.toLowerCase();
+      const filtered = allRegistrations.filter(reg => 
+        (reg.name && reg.name.toLowerCase().includes(searchTerm)) || 
+        (reg.email && reg.email.toLowerCase().includes(searchTerm))
+      );
+      displayRegistrationsTable(filtered);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateStats();
+      loadProfileAdmin();
+      loadRegistrations();
+
+      // Registrations event listeners
+      if (document.getElementById('searchRegistration')) {
+        document.getElementById('searchRegistration').addEventListener('input', searchRegistrations);
+      }
+
+      if (document.getElementById('refreshRegistrations')) {
+        document.getElementById('refreshRegistrations').addEventListener('click', loadRegistrations);
+      }
+
+      if (document.getElementById('closeCertModal')) {
+        document.getElementById('closeCertModal').addEventListener('click', () => {
+          document.getElementById('certificateModal').style.display = 'none';
+        });
+      }
+
+      if (document.getElementById('closeCertBtn')) {
+        document.getElementById('closeCertBtn').addEventListener('click', () => {
+          document.getElementById('certificateModal').style.display = 'none';
+        });
+      }
+    });
 
   </script>
 </body>
