@@ -60,11 +60,14 @@
   <div class="admin-layout">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="sidebar-header">
+      <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
         <div class="logo">
           <div class="logo-icon"><i class="fas fa-cogs"></i></div>
           <h2>Admin Panel</h2>
         </div>
+        <button id="themeToggle" class="btn btn-ghost" style="padding: 8px; border-radius: 50%; min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; margin: 0;" title="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -299,6 +302,33 @@
     // Initialize Quill
     const quill = new Quill('#bContent', { theme: 'snow' });
 
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('i');
+    const themeText = themeToggle.querySelector('span');
+
+    const savedTheme = localStorage.getItem('adminTheme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeUI(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('adminTheme', newTheme);
+      updateThemeUI(newTheme);
+    });
+
+    function updateThemeUI(theme) {
+      if (theme === 'light') {
+        themeIcon.className = 'fas fa-sun';
+        if (themeText) themeText.textContent = 'Light Mode';
+      } else {
+        themeIcon.className = 'fas fa-moon';
+        if (themeText) themeText.textContent = 'Dark Mode';
+      }
+    }
+
     // Navigation
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.content-section');
@@ -432,18 +462,30 @@
     function createPortfolioItemElement(id, item) {
       const div = document.createElement('div');
       div.className = 'item-card';
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '16px';
+      div.style.padding = '16px';
+      
+      const imageUrl = item.image ? item.image : 'https://via.placeholder.com/150';
+      
       div.innerHTML = `
-        <div class="item-info">
-          <h4>${item.title}</h4>
-          <p>Category: ${item.category}</p>
-          <small>Created: ${item.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border-color);">
+          <img src="${imageUrl}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/150'"/>
         </div>
-        <div class="item-actions">
-          <button class="btn btn-secondary btn-sm" onclick="editPortfolioItem('${id}')">
-            <i class="fas fa-edit"></i> Edit
+        <div class="item-info" style="flex: 1;">
+          <h4 style="margin: 0 0 4px 0; font-size: 16px;">${item.title}</h4>
+          <p style="margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-gold);">
+            <i class="fas fa-tag" style="margin-right: 4px;"></i>${item.category}
+          </p>
+          <small style="font-size: 11px; color: var(--text-muted);"><i class="far fa-calendar-alt" style="margin-right: 4px;"></i>${item.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        </div>
+        <div class="item-actions" style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" onclick="editPortfolioItem('${id}')" style="padding: 8px 12px; border-radius: 6px;" title="Edit">
+            <i class="fas fa-edit"></i>
           </button>
-          <button class="btn btn-danger btn-sm" onclick="deletePortfolioItem('${id}')">
-            <i class="fas fa-trash"></i> Delete
+          <button class="btn btn-ghost btn-sm" onclick="deletePortfolioItem('${id}')" style="padding: 8px 12px; border-radius: 6px; color: #ef4444;" title="Delete">
+            <i class="fas fa-trash"></i>
           </button>
         </div>
       `;
@@ -528,18 +570,30 @@
     function createBlogPostElement(id, post) {
       const div = document.createElement('div');
       div.className = 'item-card';
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '16px';
+      div.style.padding = '16px';
+      
+      const imageUrl = post.image ? post.image : 'https://via.placeholder.com/150';
+
       div.innerHTML = `
-        <div class="item-info">
-          <h4>${post.title}</h4>
-          <p>Category: ${post.category} | Date: ${post.date}</p>
-          <small>Created: ${post.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border-color);">
+          <img src="${imageUrl}" alt="${post.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/150'"/>
         </div>
-        <div class="item-actions">
-          <button class="btn btn-secondary btn-sm" onclick="editBlogPost('${id}')">
-            <i class="fas fa-edit"></i> Edit
+        <div class="item-info" style="flex: 1;">
+          <h4 style="margin: 0 0 4px 0; font-size: 16px;">${post.title}</h4>
+          <p style="margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-gold);">
+            <i class="fas fa-folder-open" style="margin-right: 4px;"></i>${post.category}
+          </p>
+          <small style="font-size: 11px; color: var(--text-muted);"><i class="far fa-clock" style="margin-right: 4px;"></i>${post.date} &nbsp;|&nbsp; Added: ${post.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        </div>
+        <div class="item-actions" style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" onclick="editBlogPost('${id}')" style="padding: 8px 12px; border-radius: 6px;" title="Edit">
+            <i class="fas fa-edit"></i>
           </button>
-          <button class="btn btn-danger btn-sm" onclick="deleteBlogPost('${id}')">
-            <i class="fas fa-trash"></i> Delete
+          <button class="btn btn-ghost btn-sm" onclick="deleteBlogPost('${id}')" style="padding: 8px 12px; border-radius: 6px; color: #ef4444;" title="Delete">
+            <i class="fas fa-trash"></i>
           </button>
         </div>
       `;
