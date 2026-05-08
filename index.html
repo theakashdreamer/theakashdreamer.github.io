@@ -1309,13 +1309,7 @@
         shiftCount++;
 
         if (shiftCount === 2) {
-          const pass = prompt("Admin Access");
-
-          if (pass === ADMIN_PASSWORD) {
-            window.location.href = "/pages/adminPage/admin_page.html";
-          } else {
-            alert("Access denied");
-          }
+          showAdminModal();
 
           shiftCount = 0;
           clearTimeout(shiftTimer);
@@ -1328,8 +1322,58 @@
       }
     });
 
+    function showAdminModal() {
+      const modal = document.getElementById('adminModal');
+      modal.style.display = 'flex';
+      document.getElementById('adminPassword').focus();
+    }
+
+    function closeAdminModal() {
+      const modal = document.getElementById('adminModal');
+      modal.style.display = 'none';
+      document.getElementById('adminPassword').value = '';
+    }
+
+    function checkAdminPassword() {
+      const pass = document.getElementById('adminPassword').value;
+      if (pass === ADMIN_PASSWORD) {
+        window.location.href = "./pages/adminPage/admin_page.html";
+      } else {
+        alert("Access denied");
+        closeAdminModal();
+      }
+    }
+
+    // Handle Enter key in password input
+    document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkAdminPassword();
+      }
+    });
+
+    // Close modal on escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeAdminModal();
+      }
+    });
+
 
   </script>
+
+  <!-- Admin Access Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Admin Access</h3>
+        <span class="close" onclick="closeAdminModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <input type="password" id="adminPassword" placeholder="Enter admin password" />
+        <button onclick="checkAdminPassword()">Access</button>
+      </div>
+    </div>
+  </div>
 
 </body>
 

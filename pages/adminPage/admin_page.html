@@ -26,7 +26,9 @@
       getDocs,
       doc,
       getDoc,
-      setDoc
+      setDoc,
+      updateDoc,
+      deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -49,170 +51,244 @@
     window.doc = doc;
     window.getDoc = getDoc;
     window.setDoc = setDoc;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
   </script>
 </head>
 
 <body>
-  <div class="container">
-
-    <!-- HEADER -->
-    <header class="header">
-      <div class="logo">
-        <div class="logo-icon"><i class="fas fa-cogs"></i></div>
-        <h1>Admin Dashboard</h1>
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon"><i class="fas fa-cogs"></i></div>
+          <h2>Admin Panel</h2>
+        </div>
       </div>
-      <div class="header-actions">
-        <a href="../resignation/index.html" class="header-link" title="Resignation Portal">
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item active" data-section="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </li>
+          <li class="nav-item" data-section="resume">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Resume Manager</span>
+          </li>
+          <li class="nav-item" data-section="profile">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+          </li>
+          <li class="nav-item" data-section="portfolio">
+            <i class="fas fa-briefcase"></i>
+            <span>Portfolio Manager</span>
+          </li>
+          <li class="nav-item" data-section="blog">
+            <i class="fas fa-newspaper"></i>
+            <span>Blog Manager</span>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../resignation/index.html" class="sidebar-link" title="Resignation Portal">
           <i class="fas fa-envelope"></i>
+          <span>Resignation Portal</span>
         </a>
         <div class="admin-info">
           <i class="fas fa-user-circle"></i>
           <span>Administrator</span>
         </div>
       </div>
-    </header>
+    </aside>
 
-    <!-- STATS -->
-    <div class="stats-container">
-      <div class="stat-card">
-        <div class="stat-icon" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">
-          <i class="fas fa-chart-line"></i>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard" class="content-section active">
+        <div class="section-header">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome to your admin dashboard</p>
         </div>
-        <div class="stat-info">
-          <h3 id="portfolioCount">0</h3>
-          <p>Portfolio Items</p>
-        </div>
-      </div>
 
-      <div class="stat-card">
-        <div class="stat-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
-          <i class="fas fa-newspaper"></i>
-        </div>
-        <div class="stat-info">
-          <h3 id="blogCount">0</h3>
-          <p>Blog Posts</p>
-        </div>
-      </div>
-    </div>
+        <!-- STATS -->
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="portfolioCount">0</h3>
+              <p>Portfolio Items</p>
+            </div>
+          </div>
 
-    <!-- DASHBOARD GRID -->
-    <div class="dashboard-grid">
-      <!-- RESUME CARD -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <div class="card-icon portfolio-icon"><i class="fas fa-graduation-cap"></i></div>
-            <span>Resume Manager</span>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="blogCount">0</h3>
+              <p>Blog Posts</p>
+            </div>
           </div>
         </div>
+      </section>
 
-        <form id="resumeForm">
-          <select id="resumeType" required>
-            <option value="">Select Section</option>
-            <option value="education">Education</option>
-            <option value="experience">Experience</option>
-            <option value="skills">Skills</option>
-          </select>
-
-          <input id="rTitle" placeholder="Title / Skill Name" required />
-          <input id="rDuration" placeholder="Duration (optional)" />
-          <input id="rPercent" type="number" placeholder="Skill % (only for skills)" />
-          <textarea id="rDescription" placeholder="Description"></textarea>
-
-          <button class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Item
-          </button>
-
-          <div class="success-message" id="rSuccess">Resume updated!</div>
-        </form>
-      </div>
-
-      <!-- PROFILE CARD -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <div class="card-icon portfolio-icon"><i class="fas fa-user-edit"></i></div>
-            <span>Edit Profile</span>
-          </div>
+      <!-- RESUME SECTION -->
+      <section id="resume" class="content-section">
+        <div class="section-header">
+          <h1>Resume Manager</h1>
+          <p>Manage your resume sections</p>
         </div>
 
-        <form id="profileForm">
-          <input id="prName" placeholder="Name" required />
-          <input id="prTitle" placeholder="Title" required />
-          <input id="prAvatar" placeholder="Avatar URL" required />
-          <input id="prEmail" placeholder="Email" required />
-          <input id="prPhone" placeholder="Phone" required />
-          <input id="prBirthday" placeholder="Birthday" />
-          <input id="prLocation" placeholder="Location" />
-          <input id="prFacebook" placeholder="Facebook" />
-          <input id="prLinkedin" placeholder="LinkedIn" />
-          <input id="prInstagram" placeholder="Instagram" />
+        <div class="content-card">
+          <form id="resumeForm">
+            <div class="form-grid">
+              <select id="resumeType" required>
+                <option value="">Select Section</option>
+                <option value="education">Education</option>
+                <option value="experience">Experience</option>
+                <option value="skills">Skills</option>
+              </select>
 
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save"></i> Save Profile
-          </button>
+              <input id="rTitle" placeholder="Title / Skill Name" required />
+              <input id="rDuration" placeholder="Duration (optional)" />
+              <input id="rPercent" type="number" placeholder="Skill % (only for skills)" />
+            </div>
+            <textarea id="rDescription" placeholder="Description"></textarea>
 
-          <div class="success-message" id="profileSuccess">
-            <i class="fas fa-check-circle"></i>
-            Profile updated successfully!
-          </div>
-        </form>
-      </div>
+            <button class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Item
+            </button>
 
-      <!-- PORTFOLIO CARD -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <div class="card-icon portfolio-icon"><i class="fas fa-briefcase"></i></div>
-            <span>Add Portfolio</span>
-          </div>
+            <div class="success-message" id="rSuccess">Resume updated!</div>
+          </form>
+        </div>
+      </section>
+
+      <!-- PROFILE SECTION -->
+      <section id="profile" class="content-section">
+        <div class="section-header">
+          <h1>Edit Profile</h1>
+          <p>Update your personal information</p>
         </div>
 
-        <form id="portfolioForm">
-          <input id="pTitle" placeholder="Project Title" required />
-          <input id="pImage" placeholder="Image URL" required />
-          <select id="pCategory" required>
-            <option value="">Select Category</option>
-            <option>Applications</option>
-            <option>Web design</option>
-            <option>Web development</option>
-          </select>
+        <div class="content-card">
+          <form id="profileForm">
+            <div class="form-grid">
+              <input id="prName" placeholder="Name" required />
+              <input id="prTitle" placeholder="Title" required />
+              <input id="prAvatar" placeholder="Avatar URL" required />
+              <input id="prEmail" placeholder="Email" required />
+              <input id="prPhone" placeholder="Phone" required />
+              <input id="prBirthday" placeholder="Birthday" />
+              <input id="prLocation" placeholder="Location" />
+              <input id="prFacebook" placeholder="Facebook" />
+              <input id="prLinkedin" placeholder="LinkedIn" />
+              <input id="prInstagram" placeholder="Instagram" />
+            </div>
 
-          <button id="portfolioBtn" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Portfolio
-          </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Profile
+            </button>
 
-          <div class="success-message" id="pSuccess">Portfolio added!</div>
-        </form>
-      </div>
+            <div class="success-message" id="profileSuccess">Profile updated!</div>
+          </form>
+        </div>
+      </section>
 
-      <!-- BLOG CARD -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <div class="card-icon blog-icon"><i class="fas fa-blog"></i></div>
+      <!-- PORTFOLIO SECTION -->
+      <section id="portfolio" class="content-section">
+        <div class="section-header">
+          <h1>Portfolio Manager</h1>
+          <p>Add new portfolio items and manage existing ones</p>
+        </div>
+
+        <!-- Add New Portfolio -->
+        <div class="content-card">
+          <h3>Add New Project</h3>
+          <form id="portfolioForm">
+            <div class="form-grid">
+              <input id="pTitle" placeholder="Project Title" required />
+              <input id="pImage" placeholder="Image URL" required />
+              <select id="pCategory" required>
+                <option value="">Select Category</option>
+                <option value="web">Web Development</option>
+                <option value="mobile">Mobile Apps</option>
+                <option value="design">Design</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Project
+            </button>
+
+            <div class="success-message" id="pSuccess">Portfolio item added!</div>
+          </form>
+        </div>
+
+        <!-- Manage Existing Portfolio -->
+        <div class="content-card">
+          <h3>Manage Existing Projects</h3>
+          <div id="portfolioList" class="items-list">
+            <!-- Portfolio items will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- BLOG SECTION -->
+      <section id="blog" class="content-section">
+        <div class="section-header">
+          <h1>Blog Manager</h1>
+          <p>Create and manage blog posts</p>
+        </div>
+
+        <!-- Add New Blog Post -->
+        <div class="content-card">
+          <h3>Create New Post</h3>
+          <form id="blogForm">
+            <div class="form-grid">
+              <input id="bTitle" placeholder="Blog Title" required />
+              <input id="bImage" placeholder="Image URL" required />
+              <select id="bCategory" required>
+                <option value="">Select Category</option>
+                <option value="tech">Technology</option>
+                <option value="design">Design</option>
+                <option value="tutorial">Tutorial</option>
+                <option value="other">Other</option>
+              </select>
+              <input id="bDate" type="date" required />
+              <input id="bVideo" placeholder="YouTube Video ID (optional)" />
+            </div>
+            <div id="bContent" class="quill-editor"></div>
+
+            <button class="btn btn-primary">
+              <i class="fas fa-plus"></i> Publish Blog
+            </button>
+
+            <div class="success-message" id="bSuccess">Blog post published!</div>
+          </form>
+        </div>
+
+        <!-- Manage Existing Blog Posts -->
+        <div class="content-card">
+          <h3>Manage Existing Posts</h3>
+          <div id="blogList" class="items-list">
+            <!-- Blog posts will be loaded here -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
             <span>Add Blog</span>
           </div>
         </div>
-
-        <form id="blogForm">
-          <input id="bTitle" placeholder="Blog Title" required />
-          <input id="bImage" placeholder="Image URL" required />
-          <input id="bVideo" placeholder="YouTube Video ID" />
-          <input id="bCategory" placeholder="Category" required />
-          <input id="bDate" type="date" required />
-          <div id="editor-container"></div>
-          <input type="hidden" id="bContent" required />
-
-          <button id="blogBtn" class="btn btn-secondary">
-            <i class="fas fa-paper-plane"></i> Publish Blog
-          </button>
-
-          <div class="success-message" id="bSuccess">Blog published!</div>
-        </form>
-      </div>
-
-    </div>
+      </section>
+    </main>
   </div>
 
   <!-- QUILL -->
@@ -220,9 +296,25 @@
 
   <!-- MAIN SCRIPT -->
   <script>
-    const quill = new Quill('#editor-container', { theme: 'snow' });
-    quill.on('text-change', () => bContent.value = quill.root.innerHTML);
-    bDate.valueAsDate = new Date();
+    // Initialize Quill
+    const quill = new Quill('#bContent', { theme: 'snow' });
+
+    // Navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.content-section');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Remove active class from all
+        navItems.forEach(nav => nav.classList.remove('active'));
+        sections.forEach(section => section.classList.remove('active'));
+
+        // Add active to clicked
+        item.classList.add('active');
+        const sectionId = item.dataset.section;
+        document.getElementById(sectionId).classList.add('active');
+      });
+    });
 
     async function updateStats() {
       portfolioCount.textContent = (await getDocs(collection(db, "portfolio"))).size;
@@ -268,20 +360,13 @@
       if (!quill.getText().trim()) return alert("Add blog content");
       await addDoc(collection(db, "blogs"), {
         title: bTitle.value, image: bImage.value, videoId: bVideo.value,
-        category: bCategory.value, description: bContent.value,
+        category: bCategory.value, description: quill.root.innerHTML,
         date: bDate.value, createdAt: serverTimestamp()
       });
       bSuccess.classList.add("show");
       updateStats();
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-      updateStats();
-      loadProfileAdmin();
-    });
-
-
-    
     resumeForm.onsubmit = async (e) => {
       e.preventDefault();
 
@@ -312,6 +397,211 @@
       resumeForm.reset();
     };
 
+    document.addEventListener("DOMContentLoaded", () => {
+      updateStats();
+      loadProfileAdmin();
+      loadPortfolioItems();
+      loadBlogPosts();
+    });
+
+    // ===== PORTFOLIO MANAGEMENT =====
+    async function loadPortfolioItems() {
+      const portfolioList = document.getElementById('portfolioList');
+      portfolioList.innerHTML = '<div class="loading">Loading portfolio items...</div>';
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "portfolio"));
+        portfolioList.innerHTML = '';
+
+        if (querySnapshot.empty) {
+          portfolioList.innerHTML = '<div class="empty-state">No portfolio items found</div>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const item = doc.data();
+          const itemElement = createPortfolioItemElement(doc.id, item);
+          portfolioList.appendChild(itemElement);
+        });
+      } catch (error) {
+        console.error("Error loading portfolio items:", error);
+        portfolioList.innerHTML = '<div class="error-state">Error loading portfolio items</div>';
+      }
+    }
+
+    function createPortfolioItemElement(id, item) {
+      const div = document.createElement('div');
+      div.className = 'item-card';
+      div.innerHTML = `
+        <div class="item-info">
+          <h4>${item.title}</h4>
+          <p>Category: ${item.category}</p>
+          <small>Created: ${item.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editPortfolioItem('${id}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deletePortfolioItem('${id}')">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      `;
+      return div;
+    }
+
+    async function editPortfolioItem(id) {
+      const docRef = doc(db, "portfolio", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const item = docSnap.data();
+        pTitle.value = item.title || '';
+        pImage.value = item.image || '';
+        pCategory.value = item.category || '';
+
+        // Scroll to form
+        document.querySelector('#portfolio .content-card:first-child').scrollIntoView({ behavior: 'smooth' });
+
+        // Change button to update
+        const submitBtn = portfolioForm.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Project';
+        submitBtn.onclick = () => updatePortfolioItem(id);
+      }
+    }
+
+    async function updatePortfolioItem(id) {
+      const docRef = doc(db, "portfolio", id);
+      await updateDoc(docRef, {
+        title: pTitle.value,
+        image: pImage.value,
+        category: pCategory.value,
+        updatedAt: serverTimestamp()
+      });
+
+      pSuccess.textContent = 'Portfolio item updated!';
+      pSuccess.classList.add("show");
+      setTimeout(() => pSuccess.classList.remove("show"), 3000);
+
+      // Reset form
+      portfolioForm.reset();
+      const submitBtn = portfolioForm.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Project';
+      submitBtn.onclick = null;
+
+      loadPortfolioItems();
+    }
+
+    async function deletePortfolioItem(id) {
+      if (confirm('Are you sure you want to delete this portfolio item?')) {
+        await deleteDoc(doc(db, "portfolio", id));
+        loadPortfolioItems();
+        updateStats();
+      }
+    }
+
+    // ===== BLOG MANAGEMENT =====
+    async function loadBlogPosts() {
+      const blogList = document.getElementById('blogList');
+      blogList.innerHTML = '<div class="loading">Loading blog posts...</div>';
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "blogs"));
+        blogList.innerHTML = '';
+
+        if (querySnapshot.empty) {
+          blogList.innerHTML = '<div class="empty-state">No blog posts found</div>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          const postElement = createBlogPostElement(doc.id, post);
+          blogList.appendChild(postElement);
+        });
+      } catch (error) {
+        console.error("Error loading blog posts:", error);
+        blogList.innerHTML = '<div class="error-state">Error loading blog posts</div>';
+      }
+    }
+
+    function createBlogPostElement(id, post) {
+      const div = document.createElement('div');
+      div.className = 'item-card';
+      div.innerHTML = `
+        <div class="item-info">
+          <h4>${post.title}</h4>
+          <p>Category: ${post.category} | Date: ${post.date}</p>
+          <small>Created: ${post.createdAt?.toDate()?.toLocaleDateString() || 'N/A'}</small>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editBlogPost('${id}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBlogPost('${id}')">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      `;
+      return div;
+    }
+
+    async function editBlogPost(id) {
+      const docRef = doc(db, "blogs", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const post = docSnap.data();
+        bTitle.value = post.title || '';
+        bImage.value = post.image || '';
+        bCategory.value = post.category || '';
+        bDate.value = post.date || '';
+        bVideo.value = post.videoId || '';
+        quill.root.innerHTML = post.description || '';
+
+        // Scroll to form
+        document.querySelector('#blog .content-card:first-child').scrollIntoView({ behavior: 'smooth' });
+
+        // Change button to update
+        const submitBtn = blogForm.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Post';
+        submitBtn.onclick = () => updateBlogPost(id);
+      }
+    }
+
+    async function updateBlogPost(id) {
+      const docRef = doc(db, "blogs", id);
+      await updateDoc(docRef, {
+        title: bTitle.value,
+        image: bImage.value,
+        category: bCategory.value,
+        date: bDate.value,
+        videoId: bVideo.value,
+        description: quill.root.innerHTML,
+        updatedAt: serverTimestamp()
+      });
+
+      bSuccess.textContent = 'Blog post updated!';
+      bSuccess.classList.add("show");
+      setTimeout(() => bSuccess.classList.remove("show"), 3000);
+
+      // Reset form
+      blogForm.reset();
+      quill.setContents([]);
+      const submitBtn = blogForm.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = '<i class="fas fa-plus"></i> Publish Blog';
+      submitBtn.onclick = null;
+
+      loadBlogPosts();
+    }
+
+    async function deleteBlogPost(id) {
+      if (confirm('Are you sure you want to delete this blog post?')) {
+        await deleteDoc(doc(db, "blogs", id));
+        loadBlogPosts();
+        updateStats();
+      }
+    }
   </script>
 </body>
 
