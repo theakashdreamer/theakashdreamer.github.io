@@ -99,6 +99,33 @@
     margin-top: 2px;
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 18px;
+  }
+
+  .header-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
   /* Certification Section */
   .certification-section {
     background: rgba(15, 23, 42, 0.6);
