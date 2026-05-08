@@ -16,9 +16,14 @@
 # Student Management system
 /studentmgt   /pages/studentmanagementsystem/student_management  301
 
+# Resignation Portal
+/resignation  /pages/resignation/index.html  301
+
 # APK direct file
 /app/sekcustomer.apk  /assets\app\sekcustomer.apk   200
 
+# WorkShop file
+/workshop  /pages/registrationpage/masterclassregtanz.html  200
 # WorkShop file
 /workshop  /pages/registrationpage/masterclassregtanz.html  200
 #Policy pages 
