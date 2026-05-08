@@ -1266,6 +1266,14 @@
       loadResume();
     });
 
+    // ===== CTRL+P to initialize admin password =====
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey && e.key === "p") {
+        e.preventDefault();
+        initializeAdminPassword();
+      }
+    });
+
 
 
 
@@ -1280,13 +1288,7 @@
     if (adminTrigger && window.matchMedia("(pointer: coarse)").matches) {
       adminTrigger.addEventListener("touchstart", () => {
         pressTimer = setTimeout(() => {
-          const pass = prompt("Admin Access");
-
-          if (pass === "Akash@Admin2026") {
-            window.location.href = "/pages/adminPage/admin_page.html";
-          } else {
-            alert("Access denied");
-          }
+          verifyAdminPassword();
         }, 4000); // 4 seconds long press
       });
 
@@ -1298,8 +1300,9 @@
         clearTimeout(pressTimer);
       });
     }
-    // ===== SECRET ADMIN ACCESS (FIXED) =====
-    const ADMIN_PASSWORD = "Akash@Admin2026";
+    // ===== SECURE ADMIN ACCESS =====
+    // localStorage-based password system
+    const ADMIN_KEY = "portfolio_admin_pass";
     let shiftCount = 0;
     let shiftTimer = null;
 
@@ -1328,18 +1331,68 @@
       document.getElementById('adminPassword').focus();
     }
 
+    function initializeAdminPassword() {
+      // Manual initialization via Ctrl+P
+      const storedPass = localStorage.getItem(ADMIN_KEY);
+      
+      if (storedPass) {
+        alert("✓ Admin password already set.");
+        return;
+      }
+      
+      const newPass = prompt("🔐 Set your admin password (min 4 characters):");
+      if (newPass && newPass.length >= 4) {
+        localStorage.setItem(ADMIN_KEY, btoa(newPass));
+        alert("✓ Password saved successfully!");
+      } else if (newPass) {
+        alert("✗ Password must be at least 4 characters.");
+      }
+    }
+
     function closeAdminModal() {
       const modal = document.getElementById('adminModal');
       modal.style.display = 'none';
       document.getElementById('adminPassword').value = '';
     }
 
+    function verifyAdminPassword() {
+      const storedPass = localStorage.getItem(ADMIN_KEY);
+      
+      if (!storedPass) {
+        // First time: Set password
+        const newPass = prompt("🔐 First time access. Set your admin password:");
+        if (newPass && newPass.length >= 4) {
+          localStorage.setItem(ADMIN_KEY, btoa(newPass)); // Simple encoding
+          alert("✓ Password saved! You can now access admin panel.");
+          window.location.href = "/pages/adminPage/admin_page.html";
+        } else {
+          alert("Password must be at least 4 characters.");
+        }
+      } else {
+        // Verify password
+        const pass = prompt("🔐 Enter admin password:");
+        if (pass && btoa(pass) === storedPass) {
+          window.location.href = "/pages/adminPage/admin_page.html";
+        } else {
+          alert("❌ Access denied - Incorrect password.");
+        }
+      }
+    }
+
     function checkAdminPassword() {
+      const storedPass = localStorage.getItem(ADMIN_KEY);
       const pass = document.getElementById('adminPassword').value;
-      if (pass === ADMIN_PASSWORD) {
+      
+      if (!storedPass) {
+        alert("❌ Admin password not set yet. Use mobile long-press to initialize.");
+        closeAdminModal();
+        return;
+      }
+      
+      if (pass && btoa(pass) === storedPass) {
         window.location.href = "./pages/adminPage/admin_page.html";
       } else {
-        alert("Access denied");
+        alert("❌ Access denied - Incorrect password.");
         closeAdminModal();
       }
     }
