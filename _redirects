@@ -26,6 +26,9 @@
 /workshop  /pages/registrationpage/masterclassregtanz.html  200
 # WorkShop file
 /workshop  /pages/registrationpage/masterclassregtanz.html  200
+# WorkShop file
+/resumeMaker  /pages/resumeBuilder/resumebuilder.html  200
+
 #Policy pages 
 /policy     /pages/privacy-policy.html   301
 # Default fallback

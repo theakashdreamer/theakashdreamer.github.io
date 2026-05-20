@@ -73,6 +73,12 @@
   <!-- Particle Background Animation -->
   <div class="particles-background" id="particles-js"></div>
 
+  <!-- Theme Toggle Button -->
+  <div class="theme-btn" id="themeBtn" title="Toggle Theme">
+    <ion-icon name="sunny-outline" class="sun-icon"></ion-icon>
+    <ion-icon name="moon-outline" class="moon-icon"></ion-icon>
+  </div>
+
   <!-- Back to Top Button -->
   <div class="back-to-top" id="backToTop">
     <ion-icon name="arrow-up-outline"></ion-icon>
@@ -789,6 +795,24 @@
           top: 0,
           behavior: 'smooth'
         });
+      });
+
+      // Theme toggle functionality
+      const themeBtn = document.getElementById('themeBtn');
+      const body = document.body;
+      const currentTheme = localStorage.getItem('theme');
+      
+      if (currentTheme === 'light') {
+        body.classList.add('light-theme');
+      }
+
+      themeBtn.addEventListener('click', function () {
+        body.classList.toggle('light-theme');
+        let theme = 'dark';
+        if (body.classList.contains('light-theme')) {
+          theme = 'light';
+        }
+        localStorage.setItem('theme', theme);
       });
 
       // Add fade-in animation to page sections when they come into view
