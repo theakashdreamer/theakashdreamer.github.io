@@ -65,7 +65,9 @@
           <div class="logo-icon"><i class="fas fa-cogs"></i></div>
           <h2>Admin Panel</h2>
         </div>
-        <button id="themeToggle" class="btn btn-ghost" style="padding: 8px; border-radius: 50%; min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; margin: 0;" title="Toggle Theme">
+        <button id="themeToggle" class="btn btn-ghost"
+          style="padding: 8px; border-radius: 50%; min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; margin: 0;"
+          title="Toggle Theme">
           <i class="fas fa-moon"></i>
         </button>
       </div>
@@ -96,6 +98,10 @@
       </nav>
 
       <div class="sidebar-footer">
+        <a href="../jobs/applyjob.html" class="sidebar-link" title="Resignation Portal">
+          <i class="fas fa-envelope"></i>
+          <span>Apply Job Portal</span>
+        </a>
         <a href="../resignation/index.html" class="sidebar-link" title="Resignation Portal">
           <i class="fas fa-envelope"></i>
           <span>Resignation Portal</span>
@@ -287,11 +293,11 @@
       </section>
     </main>
   </div>
-            <span>Add Blog</span>
-          </div>
-        </div>
-      </section>
-    </main>
+  <span>Add Blog</span>
+  </div>
+  </div>
+  </section>
+  </main>
   </div>
 
   <!-- QUILL -->
@@ -466,9 +472,9 @@
       div.style.alignItems = 'center';
       div.style.gap = '16px';
       div.style.padding = '16px';
-      
+
       const imageUrl = item.image ? item.image : 'https://via.placeholder.com/150';
-      
+
       div.innerHTML = `
         <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border-color);">
           <img src="${imageUrl}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/150'"/>
@@ -574,7 +580,7 @@
       div.style.alignItems = 'center';
       div.style.gap = '16px';
       div.style.padding = '16px';
-      
+
       const imageUrl = post.image ? post.image : 'https://via.placeholder.com/150';
 
       div.innerHTML = `

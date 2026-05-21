@@ -28,6 +28,8 @@
 /workshop  /pages/registrationpage/masterclassregtanz.html  200
 # WorkShop file
 /resumeMaker  /pages/resumeBuilder/resumebuilder.html  200
+#resumelink 
+/resumeDownload  https://drive.google.com/uc?export=download&id=1fDC9AeRCFzyQYbElNhCQ3tDRnWLucy7k 301
 
 #Policy pages 
 /policy     /pages/privacy-policy.html   301
