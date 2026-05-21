@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Akhil Bhartiya Sanatan Helpline</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --primary: #b45309;
+      --primary-dark: #78350f;
+      --cream: #fff8ed;
+      --soft: #f7ead7;
+      --white: #ffffff;
+      --text: #2b1607;
+      --muted: #6f4e37;
+      --border: #e7cfad;
+      --shadow: 0 12px 30px rgba(120, 53, 15, 0.12);
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .top-line {
+      height: 5px;
+      background: linear-gradient(90deg, #78350f, #b45309, #f59e0b);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 248, 237, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar {
+      max-width: 1180px;
+      margin: auto;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary-dark);
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--primary);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 24px;
+      animation: rotateOm 8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes rotateOm {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .logo-text h3 {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .logo-text span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    nav ul {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      left: 0;
+      bottom: -6px;
+      transition: 0.3s;
+    }
+
+    nav a:hover::after,
+    nav a.active::after {
+      width: 100%;
+    }
+
+    .nav-btn {
+      border: 1px solid var(--primary);
+      padding: 10px 16px;
+      border-radius: 30px;
+      color: var(--primary-dark);
+    }
+
+    .nav-btn::after {
+      display: none;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .menu-btn {
+      display: none;
+      font-size: 28px;
+      color: var(--primary-dark);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    section {
+      padding: 90px 22px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: auto;
+    }
+
+    .hero {
+      min-height: calc(100vh - 78px);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "ॐ";
+      position: absolute;
+      right: 7%;
+      top: 14%;
+      font-size: 250px;
+      color: rgba(180, 83, 9, 0.06);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .small-title {
+      display: inline-block;
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: var(--white);
+      margin-bottom: 22px;
+      font-size: 14px;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.05;
+      color: var(--primary-dark);
+      margin-bottom: 22px;
+      animation: fadeUp 1s ease forwards;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 650px;
+      margin-bottom: 30px;
+      animation: fadeUp 1.2s ease forwards;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fadeUp 1.4s ease forwards;
+    }
+
+    .btn {
+      padding: 13px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--primary);
+      color: var(--primary-dark);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      animation: floatCard 4s ease-in-out infinite;
+      width: 100%;
+    }
+
+    @keyframes floatCard {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .hero-card-img {
+      height: 250px;
+      border-radius: 20px;
+      background:
+        linear-gradient(rgba(120, 53, 15, 0.25), rgba(120, 53, 15, 0.25)),
+        url("https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80");
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 22px;
+    }
+
+    .hero-card h3 {
+      color: var(--primary-dark);
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .helpline-number {
+      display: inline-block;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--primary-dark);
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 45px;
+    }
+
+    .section-head span {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .section-head h2 {
+      color: var(--primary-dark);
+      font-size: clamp(30px, 4vw, 46px);
+      margin: 12px 0 14px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .classic-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 8px 22px rgba(120, 53, 15, 0.08);
+      transition: 0.35s;
+    }
+
+    .classic-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow);
+    }
+
+    .classic-card .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      margin-bottom: 18px;
+      background: var(--cream);
+    }
+
+    .classic-card h3 {
+      color: var(--primary-dark);
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+
+    .classic-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .services {
+      background: var(--soft);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .service-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(180, 83, 9, 0.08);
+      top: -28px;
+      right: -28px;
+    }
+
+    .service-card:hover {
+      background: white;
+      transform: translateY(-7px);
+      box-shadow: var(--shadow);
+    }
+
+    .service-card h3 {
+      color: var(--primary-dark);
+      font-size: 22px;
+      margin: 14px 0 10px;
+    }
+
+    .service-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .service-icon {
+      font-size: 32px;
+    }
+
+    .banner {
+      background: var(--primary-dark);
+      color: white;
+      border-radius: 28px;
+      padding: 55px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: "ॐ";
+      position: absolute;
+      left: -25px;
+      bottom: -75px;
+      font-size: 190px;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .banner h2 {
+      font-size: clamp(30px, 5vw, 48px);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner p {
+      color: rgba(255,255,255,0.82);
+      font-size: 18px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner .helpline-number {
+      background: white;
+      color: var(--primary-dark);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 22px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .team-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      text-align: center;
+      transition: 0.35s;
+    }
+
+    .team-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow);
+    }
+
+    .team-avatar {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      background: var(--cream);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      font-size: 36px;
+    }
+
+    .team-card h3 {
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .team-card p {
+      color: var(--muted);
+    }
+
+    .contact {
+      background: var(--soft);
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+    }
+
+    .contact-box,
+    form {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 8px 22px rgba(120, 53, 15, 0.08);
+    }
+
+    .contact-box h3,
+    form h3 {
+      color: var(--primary-dark);
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+
+    .contact-item {
+      border-bottom: 1px solid var(--border);
+      padding: 15px 0;
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-item strong {
+      display: block;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .contact-item span {
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--cream);
+      color: var(--text);
+      outline: none;
+      font-size: 15px;
+      transition: 0.25s;
+    }
+
+    textarea {
+      min-height: 125px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1);
+    }
+
+    .submit-btn {
+      width: 100%;
+    }
+
+    footer {
+      background: var(--primary-dark);
+      color: white;
+      text-align: center;
+      padding: 40px 22px;
+    }
+
+    footer h3 {
+      color: #fde68a;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .footer-links {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.85);
+    }
+
+    .footer-links a:hover {
+      color: #fde68a;
+    }
+
+    .floating-actions {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: grid;
+      gap: 12px;
+      z-index: 999;
+    }
+
+    .float-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 22px;
+      box-shadow: var(--shadow);
+      transition: 0.3s;
+    }
+
+    .float-btn:hover {
+      transform: translateY(-4px);
+    }
+
+    .whatsapp {
+      background: #22c55e;
+    }
+
+    .call {
+      background: var(--primary);
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 90px;
+      background: #166534;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      transform: translateX(130%);
+      transition: 0.35s;
+      z-index: 2000;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition: 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================
+       TABLET RESPONSIVE
+    ========================= */
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-content {
+        text-align: center;
+      }
+
+      .hero p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .btn-row {
+        justify-content: center;
+      }
+
+      .hero-card {
+        max-width: 620px;
+        margin: auto;
+      }
+
+      .about-grid,
+      .services-grid,
+      .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* =========================
+       MOBILE RESPONSIVE
+    ========================= */
+
+    @media (max-width: 760px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        padding: 14px 18px;
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      nav ul {
+        position: absolute;
+        left: 0;
+        top: 75px;
+        width: 100%;
+        max-height: calc(100vh - 90px);
+        overflow-y: auto;
+        padding: 18px;
+        background: var(--cream);
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: none;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      nav ul.active {
+        display: flex;
+      }
+
+      nav li,
+      nav a {
+        width: 100%;
+        text-align: center;
+      }
+
+      .nav-btn {
+        display: block;
+      }
+
+      section {
+        padding: 65px 18px;
+      }
+
+      .hero {
+        padding-top: 75px;
+      }
+
+      .hero::before {
+        font-size: 150px;
+        right: -20px;
+        top: 100px;
+      }
+
+      .hero-grid {
+        gap: 32px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+        line-height: 1.15;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .small-title {
+        font-size: 13px;
+      }
+
+      .btn-row {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .about-grid,
+      .services-grid,
+      .team-grid,
+      .form-row,
+      .contact-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .hero-card {
+        width: 100%;
+        animation: none;
+        padding: 18px;
+      }
+
+      .hero-card-img {
+        height: 190px;
+      }
+
+      .helpline-number {
+        width: 100%;
+        text-align: center;
+        font-size: 17px;
+      }
+
+      .classic-card,
+      .service-card,
+      .team-card,
+      .contact-box,
+      form {
+        width: 100%;
+      }
+
+      .section-head h2 {
+        font-size: 27px;
+      }
+
+      .section-head p {
+        font-size: 15px;
+      }
+
+      .banner {
+        padding: 35px 20px;
+        border-radius: 22px;
+      }
+
+      .banner h2 {
+        font-size: 28px;
+      }
+
+      .banner p {
+        font-size: 15px;
+      }
+
+      .banner .helpline-number {
+        width: 100%;
+        font-size: 18px;
+      }
+
+      .floating-actions {
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .float-btn {
+        width: 48px;
+        height: 48px;
+      }
+
+      .toast {
+        left: 14px;
+        right: 14px;
+        bottom: 78px;
+        text-align: center;
+        transform: translateY(140%);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    /* =========================
+       SMALL MOBILE RESPONSIVE
+    ========================= */
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 12px 14px;
+      }
+
+      .logo-mark {
+        width: 38px;
+        height: 38px;
+        font-size: 22px;
+      }
+
+      .logo-text h3 {
+        font-size: 15px;
+      }
+
+      .logo-text span {
+        display: none;
+      }
+
+      section {
+        padding: 55px 14px;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .section-head h2 {
+        font-size: 26px;
+      }
+
+      .hero-card {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .hero-card-img {
+        height: 165px;
+        border-radius: 15px;
+      }
+
+      .classic-card,
+      .service-card,
+      .team-card,
+      .contact-box,
+      form {
+        padding: 20px;
+        border-radius: 18px;
+      }
+
+      .banner {
+        padding: 28px 16px;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 14px;
+      }
+
+      .floating-actions {
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .float-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-line"></div>
+
+  <header>
+    <div class="navbar">
+      <a href="#home" class="logo">
+        <div class="logo-mark">ॐ</div>
+        <div class="logo-text">
+          <h3>Sanatan Helpline</h3>
+          <span>Akhil Bhartiya Seva Platform</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul id="menu">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#helpline" class="nav-link">Helpline</a></li>
+          <li><a href="#team" class="nav-link">Team</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+          <li><a href="tel:+919999999999" class="nav-btn">Call Now</a></li>
+        </ul>
+      </nav>
+
+      <div class="menu-btn" id="menuBtn">☰</div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+
+        <div class="hero-content">
+          <span class="small-title">🕉️ सेवा | संस्कार | संस्कृति</span>
+
+          <h1>
+            Akhil Bhartiya <br />
+            <span>Sanatan Helpline</span>
+          </h1>
+
+          <p>
+            Sanatan Dharma, Mandir Sahayata, Gau Seva aur Samajik Seva ke liye
+            ek simple, trusted aur seva-bhav se juda digital helpline platform.
+          </p>
+
+          <div class="btn-row">
+            <a href="tel:+919999999999" class="btn btn-primary">📞 Call Helpline</a>
+            <a href="#contact" class="btn btn-outline">Volunteer Join</a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-img"></div>
+
+          <h3>Need Help?</h3>
+          <p>
+            Mandir, Dharma Guidance, Gau Seva ya Social Help ke liye aap humse contact kar sakte hain.
+          </p>
+
+          <div class="helpline-number">+91 99999 99999</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <span>About Us</span>
+          <h2>हमारा उद्देश्य</h2>
+          <p>
+            हमारा लक्ष्य सनातन संस्कृति, सेवा और समाज कल्याण को सरल digital platform के माध्यम से लोगों तक पहुँचाना है।
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="classic-card reveal">
+            <div class="icon">ॐ</div>
+            <h3>Sanatan Awareness</h3>
+            <p>
+              सनातन धर्म, संस्कार और संस्कृति से जुड़ी सामान्य जानकारी और जागरूकता।
+            </p>
+          </div>
+
+          <div class="classic-card reveal">
+            <div class="icon">🛕</div>
+            <h3>Mandir Support</h3>
+            <p>
+              मंदिर सहायता, पूजा जानकारी, धार्मिक कार्यक्रम और सेवा कार्यों का सहयोग।
+            </p>
+          </div>
+
+          <div class="classic-card reveal">
+            <div class="icon">🤝</div>
+            <h3>Social Seva</h3>
+            <p>
+              जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer network और coordination।
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-head reveal">
+          <span>Our Services</span>
+          <h2>हमारी सेवाएं</h2>
+          <p>
+            नीचे दी गई सेवाओं के लिए आप हमारी helpline team से संपर्क कर सकते हैं।
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card reveal">
+            <div class="service-icon">🛕</div>
+            <h3>Mandir Sahayata</h3>
+            <p>मंदिर संबंधी सहायता, जानकारी और सेवा कार्यों के लिए मार्गदर्शन।</p>
+          </div>
+
+          <div class="service-card reveal">
+            <div class="service-icon">🐄</div>
+            <h3>Gau Seva</h3>
+            <p>गौ सेवा, गौशाला सहायता और जरूरतमंद पशुओं के लिए सहयोग।</p>
+          </div>
+
+          <div class="service-card reveal">
+            <div class="service-icon">📿</div>
+            <h3>Dharma Guidance</h3>
+            <p>पूजा, व्रत, संस्कार और सनातन धर्म से जुड़ी सामान्य जानकारी।</p>
+          </div>
+
+          <div class="service-card reveal">
+            <div class="service-icon">🤝</div>
+            <h3>Social Help</h3>
+            <p>जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer support।</p>
+          </div>
+
+          <div class="service-card reveal">
+            <div class="service-icon">📢</div>
+            <h3>Event Support</h3>
+            <p>धार्मिक कार्यक्रम, भंडारा, कथा और सामाजिक आयोजन की जानकारी।</p>
+          </div>
+
+          <div class="service-card reveal">
+            <div class="service-icon">👥</div>
+            <h3>Volunteer Join</h3>
+            <p>देशभर से volunteers को जोड़कर सेवा कार्यों को आगे बढ़ाना।</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="helpline">
+      <div class="container">
+        <div class="banner reveal">
+          <h2>24x7 Sanatan Helpline</h2>
+          <p>
+            किसी भी सहायता, सुझाव, volunteer request या धार्मिक जानकारी के लिए हमारी helpline पर संपर्क करें।
+          </p>
+
+          <div class="helpline-number">📞 +91 99999 99999</div>
+
+          <div class="btn-row" style="justify-content:center; margin-bottom:0;">
+            <a href="tel:+919999999999" class="btn btn-primary">Call Now</a>
+            <a href="https://wa.me/919999999999" target="_blank" class="btn btn-outline" style="color:white; border-color:white;">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="team">
+      <div class="container">
+        <div class="section-head reveal">
+          <span>Our Team</span>
+          <h2>सेवा भाव से जुड़ी टीम</h2>
+          <p>
+            हमारी team समाज सेवा, धार्मिक सहायता और volunteer coordination में सहयोग करती है।
+          </p>
+        </div>
+
+        <div class="team-grid">
+          <div class="team-card reveal">
+            <div class="team-avatar">ॐ</div>
+            <h3>National Coordinator</h3>
+            <p>All India Support</p>
+          </div>
+
+          <div class="team-card reveal">
+            <div class="team-avatar">🛕</div>
+            <h3>Mandir Support Head</h3>
+            <p>Temple Assistance</p>
+          </div>
+
+          <div class="team-card reveal">
+            <div class="team-avatar">🤝</div>
+            <h3>Volunteer Manager</h3>
+            <p>Social Service Network</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <span>Contact Us</span>
+          <h2>संपर्क करें</h2>
+          <p>
+            अपनी समस्या, सुझाव, सेवा request या volunteer joining details हमें भेजें।
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-box reveal">
+            <h3>Contact Details</h3>
+
+            <div class="contact-item">
+              <strong>Helpline Number</strong>
+              <span>+91 99999 99999</span>
+            </div>
+
+            <div class="contact-item">
+              <strong>Email Address</strong>
+              <span>support@sanatanhelpline.org</span>
+            </div>
+
+            <div class="contact-item">
+              <strong>Location</strong>
+              <span>Bharat, India</span>
+            </div>
+
+            <div class="contact-item">
+              <strong>Support Time</strong>
+              <span>24x7 Available</span>
+            </div>
+          </div>
+
+          <form id="contactForm" class="reveal">
+            <h3>Send Request</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>आपका नाम</label>
+                <input type="text" id="name" placeholder="Enter your name" required />
+              </div>
+
+              <div class="form-group">
+                <label>मोबाइल नंबर</label>
+                <input type="tel" id="phone" placeholder="Enter mobile number" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>सेवा का प्रकार</label>
+              <select id="service" required>
+                <option value="">Select Service</option>
+                <option>Mandir Sahayata</option>
+                <option>Gau Seva</option>
+                <option>Dharma Guidance</option>
+                <option>Volunteer Join</option>
+                <option>Social Help</option>
+                <option>Other Help</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="message" placeholder="Write your message..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn">Submit Request</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <h3>ॐ Akhil Bhartiya Sanatan Helpline</h3>
+    <p>सेवा | संस्कार | संस्कृति</p>
+
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#helpline">Helpline</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <p>© 2026 Akhil Bhartiya Sanatan Helpline. All Rights Reserved.</p>
+  </footer>
+
+  <div class="floating-actions">
+    <a href="https://wa.me/919999999999" target="_blank" class="float-btn whatsapp">☘</a>
+    <a href="tel:+919999999999" class="float-btn call">☎</a>
+  </div>
+
+  <div class="toast" id="toast">✅ Request submitted successfully!</div>
+
+  <script>
+    const menu = document.getElementById("menu");
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = document.querySelectorAll("section");
+    const revealElements = document.querySelectorAll(".reveal");
+
+    menuBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      menu.classList.toggle("active");
+      menuBtn.textContent = menu.classList.contains("active") ? "×" : "☰";
+    });
+
+    navLinks.forEach(function(link) {
+      link.addEventListener("click", function() {
+        closeMenu();
+      });
+    });
+
+    document.addEventListener("click", function(e) {
+      const header = document.querySelector("header");
+
+      if (!header.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    function closeMenu() {
+      menu.classList.remove("active");
+      menuBtn.textContent = "☰";
+    }
+
+    function revealOnScroll() {
+      revealElements.forEach(function(element) {
+        const windowHeight = window.innerHeight;
+        const elementTop = element.getBoundingClientRect().top;
+        const revealPoint = 110;
+
+        if (elementTop < windowHeight - revealPoint) {
+          element.classList.add("active");
+        }
+      });
+    }
+
+    function activeMenuOnScroll() {
+      let current = "";
+
+      sections.forEach(function(section) {
+        const sectionTop = section.offsetTop - 130;
+        const sectionHeight = section.clientHeight;
+
+        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach(function(link) {
+        link.classList.remove("active");
+
+        if (link.getAttribute("href") === "#" + current) {
+          link.classList.add("active");
+        }
+      });
+    }
+
+    window.addEventListener("scroll", function() {
+      revealOnScroll();
+      activeMenuOnScroll();
+    });
+
+    revealOnScroll();
+    activeMenuOnScroll();
+
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const service = document.getElementById("service").value;
+      const message = document.getElementById("message").value.trim();
+
+      if (name === "" || phone === "" || service === "" || message === "") {
+        alert("Please fill all fields");
+        return;
+      }
+
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        alert("Please enter valid 10 digit Indian mobile number");
+        return;
+      }
+
+      showToast();
+      this.reset();
+    });
+
+    function showToast() {
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+
+      setTimeout(function() {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>

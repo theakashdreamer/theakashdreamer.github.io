@@ -33,5 +33,7 @@
 
 #Policy pages 
 /policy     /pages/privacy-policy.html   301
+#sanatanhelp pages 
+/sanatanhelp     /pages/osr/sanatanhelp.html   301
 # Default fallback
 /*            /index.html                   200

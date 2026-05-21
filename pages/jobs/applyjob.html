@@ -1,692 +1,560 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apply Job Portal - Akash Singh</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+  <title>Apply Job Portal - Resume Link</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init({ publicKey: "fVgfG7vadbALBC7xr" });
+    })();
+  </script>
   <style>
     :root {
-      --gold: #d4af37;
-      --gold-soft: #f5e7a1;
-      --gold-dark: #b8860b;
-      --font-main: 'Outfit', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --success: #22c55e;
-      --error: #ef4444;
-      --radius-lg: 28px;
-      --radius-md: 16px;
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --input: #ffffff;
+      --primary: #1f4fd8;
+      --primary-hover: #183fae;
+      --shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
     }
 
-    :root, [data-theme="dark"] {
-      --bg-primary: #030609;
-      --bg-secondary: #0c1120;
-      --card-bg: rgba(16, 21, 36, 0.72);
-      --input-bg: rgba(0, 0, 0, 0.35);
-      --input-border: rgba(255, 255, 255, 0.1);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-light: rgba(212, 175, 55, 0.2);
-      --text-primary: #e2e8f0;
-      --text-secondary: #cbd5e1;
-      --text-muted: #94a3b8;
-      --shadow: rgba(0, 0, 0, 0.6);
-      --preview-bg: rgba(0, 0, 0, 0.45);
-      --chip-bg: rgba(212, 175, 55, 0.12);
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --border: #334155;
+      --input: #0b1220;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
 
-    [data-theme="light"] {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #f1f5f9;
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --input-bg: rgba(255, 255, 255, 0.98);
-      --input-border: rgba(15, 23, 42, 0.12);
-      --border: rgba(15, 23, 42, 0.1);
-      --border-light: rgba(212, 175, 55, 0.35);
-      --text-primary: #0f172a;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --shadow: rgba(15, 23, 42, 0.14);
-      --preview-bg: rgba(248, 250, 252, 0.96);
-      --chip-bg: rgba(212, 175, 55, 0.14);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
 
     body {
-      min-height: 100vh;
-      font-family: var(--font-main);
-      background: var(--bg-primary);
-      background-image:
-        radial-gradient(circle at 12% 22%, rgba(212, 175, 55, 0.10), transparent 28%),
-        radial-gradient(circle at 88% 18%, rgba(59, 130, 246, 0.12), transparent 30%),
-        radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.10), transparent 38%);
-      color: var(--text-primary);
-      padding: 40px 20px;
-      transition: background-color 0.35s ease, color 0.35s ease;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
     }
 
-    [data-theme="light"] body {
-      background-image:
-        radial-gradient(circle at 12% 22%, rgba(212, 175, 55, 0.06), transparent 28%),
-        radial-gradient(circle at 88% 18%, rgba(59, 130, 246, 0.06), transparent 30%),
-        radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.06), transparent 38%);
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px;
     }
 
-    .theme-toggle {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 20;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      background: var(--card-bg);
-      color: var(--gold);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      font-size: 21px;
-      box-shadow: 0 12px 32px var(--shadow);
-      backdrop-filter: blur(16px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
     }
-
-    .theme-toggle:hover { transform: scale(1.08) rotate(12deg); box-shadow: 0 16px 42px var(--shadow); }
-
-    .container { width: 100%; max-width: 1120px; margin: 0 auto; animation: fadeUp 0.6s ease; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
     .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--gold-soft);
+      color: var(--primary);
       text-decoration: none;
-      font-weight: 700;
-      margin-bottom: 26px;
-      padding: 9px 12px;
-      border-radius: 12px;
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid rgba(212, 175, 55, 0.16);
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    [data-theme="light"] .back-link { color: var(--gold-dark); background: rgba(212, 175, 55, 0.12); }
-
-    .portal-card {
-      background: var(--card-bg);
+    .theme-btn {
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
       overflow: hidden;
-      backdrop-filter: blur(30px);
-      box-shadow: 0 40px 90px var(--shadow), inset 0 1px 0 rgba(212, 175, 55, 0.12);
-      position: relative;
     }
-
-    .portal-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #3b82f6, #d4af37, #8b5cf6, #3b82f6);
-      background-size: 300% 100%;
-      animation: gradientShift 6s ease infinite;
-    }
-
-    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     .header {
-      padding: 42px 42px 30px;
+      padding: 24px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(212, 175, 55, 0.06), transparent);
     }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--chip-bg);
-      border: 1px solid var(--border-light);
-      color: var(--gold);
-      font-weight: 800;
-      font-size: 13px;
-      margin-bottom: 16px;
-      letter-spacing: 0.4px;
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
     }
 
-    .header h1 {
-      font-size: clamp(30px, 4vw, 46px);
-      line-height: 1.05;
-      font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 14px;
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
     }
 
-    [data-theme="dark"] .header h1 {
-      background: linear-gradient(135deg, #fff 0%, var(--gold-soft) 52%, #93c5fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .header p { max-width: 760px; color: var(--text-muted); font-size: 16px; line-height: 1.75; }
-
-    .content { padding: 38px 42px 42px; }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      border: 1px solid var(--border);
-      background: var(--preview-bg);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-
-    .stat-card strong { display: block; font-size: 22px; color: var(--text-primary); margin-bottom: 5px; }
-    .stat-card span { color: var(--text-muted); font-size: 13px; font-weight: 600; }
-
-    .section-title {
-      margin: 34px 0 22px;
-      font-size: 20px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-    }
+    .content { padding: 24px; }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
-    .form-group { display: flex; flex-direction: column; gap: 10px; }
-    .form-group.full { grid-column: 1 / -1; }
+    .full { grid-column: 1 / -1; }
 
-    .form-label {
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
     }
 
-    .form-input, .form-select, .form-textarea {
+    input, select, textarea {
       width: 100%;
-      border: 1.5px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text-primary);
-      border-radius: 15px;
-      padding: 15px 17px;
-      font-size: 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: var(--input);
+      color: var(--text);
+      font-size: 14px;
       outline: none;
       font-family: inherit;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
     }
 
-    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
-
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--gold);
-      background: var(--bg-secondary);
-      box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.14);
-      transform: translateY(-1px);
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
     }
 
-    .form-select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 48px;
+    textarea {
+      min-height: 110px;
+      resize: vertical;
     }
 
-    .form-textarea { resize: vertical; min-height: 105px; line-height: 1.7; }
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-    .helper-text {
-      margin-top: 18px;
-      padding: 16px 18px;
-      border: 1px solid var(--border-light);
-      background: linear-gradient(135deg, rgba(212,175,55,0.10), rgba(59,130,246,0.05));
-      border-radius: 15px;
-      color: var(--text-secondary);
-      line-height: 1.75;
+    .file-note {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .file-name {
+      font-size: 13px;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .section-title {
+      margin: 24px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .preview {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      background: var(--input);
+      white-space: pre-wrap;
+      color: var(--text);
+      min-height: 220px;
       font-size: 14px;
     }
 
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 26px;
-      align-items: start;
-    }
-
-    .preview-box, .plain-preview-box {
+    .resume-preview-wrap {
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 10px;
+      background: var(--input);
       overflow: hidden;
-      box-shadow: 0 18px 42px rgba(0,0,0,0.24);
-      background: var(--preview-bg);
+      display: none;
     }
 
-    .browser-topbar {
-      background: linear-gradient(180deg, #fafbfc, #f3f4f6);
-      padding: 13px 16px;
+    .resume-preview-head {
       display: flex;
-      gap: 9px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .dot { width: 13px; height: 13px; border-radius: 50%; }
-    .dot.red { background: #ef4444; }
-    .dot.yellow { background: #f59e0b; }
-    .dot.green { background: #22c55e; }
-
-    iframe { width: 100%; min-height: 700px; border: 0; background: #fff; display: block; }
-
-    .plain-preview-box {
-      padding: 24px;
-      white-space: pre-wrap;
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
-      font-size: 13px;
-      line-height: 1.85;
-      max-height: 755px;
-      overflow-y: auto;
-      border-color: var(--border-light);
-    }
-
-    .btn-container { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
-
-    .btn {
-      flex: 1;
-      min-width: 170px;
-      border: none;
-      border-radius: 16px;
-      padding: 17px 22px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      font-family: inherit;
-      display: inline-flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 9px;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .resume-preview-head a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .resume-preview-frame {
+      width: 100%;
+      height: 520px;
+      border: 0;
+      background: #fff;
+      display: block;
+    }
+
+    .resume-preview-empty {
+      padding: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .primary {
+      background: var(--primary);
       color: white;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .btn:hover { transform: translateY(-4px); }
-    .btn-success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 12px 30px rgba(16,185,129,0.32); }
-    .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 12px 30px rgba(59,130,246,0.32); }
-    .btn-secondary { background: linear-gradient(135deg, #64748b, #334155); box-shadow: 0 12px 30px rgba(51,65,85,0.30); }
-    .btn-print { background: linear-gradient(135deg, #d4af37, #b8860b); color: #0f172a; box-shadow: 0 12px 30px rgba(212,175,55,0.32); }
+    .primary:hover { background: var(--primary-hover); }
 
-    .status-msg { display: none; margin-top: 22px; padding: 16px 18px; border-radius: 14px; font-weight: 700; }
-    .status-success { display: block; color: #86efac; background: rgba(34,197,94,0.14); border: 1px solid rgba(34,197,94,0.35); }
-    .status-error { display: block; color: #fca5a5; background: rgba(239,68,68,0.14); border: 1px solid rgba(239,68,68,0.35); }
-
-    @media (max-width: 900px) {
-      .grid, .preview-grid, .stats-row { grid-template-columns: 1fr; }
-      .header, .content { padding-left: 26px; padding-right: 26px; }
-      iframe { min-height: 620px; }
+    .success {
+      background: #16a34a;
+      color: white;
     }
 
-    @media (max-width: 520px) {
-      body { padding: 18px 12px; }
-      .theme-toggle { width: 45px; height: 45px; top: 14px; right: 14px; }
-      .header { padding: 30px 18px 22px; }
-      .content { padding: 24px 18px; }
-      .btn { width: 100%; min-width: unset; }
+    .success:hover { background: #15803d; }
+
+    .secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .status {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 22px; }
+      .header, .content { padding: 18px; }
+      .actions button { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">
-    <ion-icon id="theme-icon" name="moon-outline"></ion-icon>
-  </button>
+  <main class="page">
+    <div class="topbar">
+      <a class="back-link" href="../../index.html">← Back</a>
+      <button class="theme-btn" id="themeToggle" type="button">Dark Mode</button>
+    </div>
 
-  <div class="container">
-    <a href="../../index.html" class="back-link">
-      <ion-icon name="arrow-back-outline"></ion-icon>
-      Back to Portfolio
-    </a>
+    <section class="card">
+      <div class="header">
+        <h1>Apply Job Portal</h1>
+        <p>Fill in your details and generate a formal job application email.</p>
+      </div>
 
-    <main class="portal-card">
-      <header class="header">
-        <div class="eyebrow"><ion-icon name="briefcase-outline"></ion-icon> Smart Job Application Portal</div>
-        <h1>Apply for Jobs Faster with a Polished Application</h1>
-        <p>Select a role, fill your profile details, preview your professional application, then copy, print, or open it directly in Gmail.</p>
-      </header>
+      <div class="content">
+        <form class="grid" id="jobForm">
+          <div>
+            <label for="toEmail">Recipient Email</label>
+            <input id="toEmail" name="to_email" type="email" value="hr@example.com" />
+          </div>
 
-      <section class="content">
-        <div class="stats-row">
-          <div class="stat-card"><strong>4</strong><span>Ready job templates</span></div>
-          <div class="stat-card"><strong>Live</strong><span>Application preview</span></div>
-          <div class="stat-card"><strong>Dark/Light</strong><span>Theme supported</span></div>
+          <div>
+            <label for="jobTitle">Job Title</label>
+            <input id="jobTitle" name="job_title" type="text" value="Android Developer" />
+          </div>
+
+          <div>
+            <label for="name">Full Name</label>
+            <input id="name" name="applicant_name" type="text" value="Akash Singh" />
+          </div>
+
+          <div>
+            <label for="email">Your Email</label>
+            <input id="email" name="applicant_email" type="email" value="akash@example.com" />
+          </div>
+
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" name="applicant_phone" type="text" value="+91-XXXXXXXXXX" />
+          </div>
+
+          <div>
+            <label for="experience">Experience</label>
+            <input id="experience" name="experience" type="text" value="2 Years" />
+          </div>
+
+          <div class="full">
+            <label for="skills">Key Skills</label>
+            <input id="skills" name="skills" type="text" value="Android, Kotlin, Java, Firebase, REST API" />
+          </div>
+
+
+          <div class="full">
+            <label for="resumeUrl">Resume Link</label>
+            <input id="resumeUrl" name="resume_link" type="url" value="https://drive.google.com/uc?export=download&id=1fDC9AeRCFzyQYbElNhCQ3tDRnWLucy7k" placeholder="Paste Google Drive / OneDrive / Dropbox resume link" />
+            <div class="file-note">Upload your resume to Google Drive, OneDrive, Dropbox, or your portfolio, make it viewable, then paste the link here. This avoids EmailJS attachment subscription limits.</div>
+          </div>
+
+          <input type="hidden" id="emailSubject" name="subject" />
+          <input type="hidden" id="emailMessage" name="message" />
+          <input type="hidden" id="letterBody" name="letter_body" />
+          <input type="hidden" id="senderEmail" name="sender_email" />
+          <input type="hidden" id="designation" name="designation" />
+          <input type="hidden" id="employeeName" name="employee_name" />
+          <input type="hidden" id="phoneNumber" name="phone_number" />
+
+          <div class="full">
+            <label for="message">Cover Letter</label>
+            <textarea id="message" name="cover_letter">I am interested in applying for this position. I have relevant experience in mobile application development and can contribute effectively to your team.</textarea>
+          </div>
+        </form>
+
+        <div class="section-title">Application Preview</div>
+        <div class="preview" id="preview"></div>
+
+        <div class="section-title">Resume Preview</div>
+        <div class="resume-preview-wrap" id="resumePreviewWrap">
+          <div class="resume-preview-head">
+            <span id="resumePreviewTitle">Resume link preview</span>
+            <a id="resumeOpenLink" href="#" target="_blank" rel="noopener">Open Resume</a>
+          </div>
+          <iframe class="resume-preview-frame" id="resumePreviewFrame" title="Resume Preview"></iframe>
+        </div>
+        <div class="resume-preview-empty" id="resumePreviewEmpty">Paste a public resume link to preview it here.</div>
+
+        <div class="actions">
+          <button class="success" id="directSendBtn" type="button">Direct Send</button>
+          <button class="primary" id="gmailBtn" type="button">Open in Gmail</button>
+          <button class="secondary" id="copyBtn" type="button">Copy</button>
+          <button class="secondary" id="printBtn" type="button">Print</button>
         </div>
 
-        <div class="section-title">Job Details</div>
-        <div class="grid">
-          <div class="form-group">
-            <label class="form-label" for="job-select">Select Job Role</label>
-            <select id="job-select" class="form-select">
-              <option value="android">Android Developer</option>
-              <option value="flutter">Flutter Developer</option>
-              <option value="frontend">Frontend Developer</option>
-              <option value="backend">Backend Developer</option>
-              <option value="custom">Custom Role</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="company-name">Company Name</label>
-            <input id="company-name" class="form-input" value="Technosys Technologies Pvt. Ltd." placeholder="Enter company name" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="hr-email">HR / Recruiter Email</label>
-            <input id="hr-email" type="email" class="form-input" value="hr@example.com" placeholder="hr@example.com" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="job-location">Job Location</label>
-            <input id="job-location" class="form-input" value="Lucknow, Uttar Pradesh" placeholder="Remote / Noida / Bengaluru" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="experience">Experience</label>
-            <input id="experience" class="form-input" value="2+ years" placeholder="Fresher / 1 year / 2+ years" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="expected-salary">Expected Salary</label>
-            <input id="expected-salary" class="form-input" value="As per company standards" placeholder="Example: 4 LPA" />
-          </div>
-
-          <div class="form-group full" id="custom-role-group" style="display:none;">
-            <label class="form-label" for="custom-role">Custom Job Role</label>
-            <input id="custom-role" class="form-input" placeholder="Enter custom role" />
-          </div>
-        </div>
-
-        <div class="section-title">Applicant Details</div>
-        <div class="grid">
-          <div class="form-group">
-            <label class="form-label" for="applicant-name">Full Name</label>
-            <input id="applicant-name" class="form-input" value="Akash Singh" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="applicant-email">Email</label>
-            <input id="applicant-email" type="email" class="form-input" value="akash.tsscommunity@gmail.com" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="phone-number">Phone Number</label>
-            <input id="phone-number" class="form-input" value="+91-XXXXXXXXXX" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="portfolio-link">Portfolio / GitHub / LinkedIn</label>
-            <input id="portfolio-link" class="form-input" value="https://github.com/theakashdreamer" />
-          </div>
-
-          <div class="form-group full">
-            <label class="form-label" for="skills">Key Skills</label>
-            <input id="skills" class="form-input" value="Kotlin, Java, Android SDK, MVVM, Firebase, REST API, Room Database" />
-          </div>
-
-          <div class="form-group full">
-            <label class="form-label" for="resume-link">Resume Link</label>
-            <input id="resume-link" class="form-input" placeholder="Paste Google Drive / portfolio resume link" />
-          </div>
-        </div>
-
-        <div class="section-title">Cover Letter</div>
-        <div class="grid">
-          <div class="form-group full">
-            <label class="form-label" for="subject-line">Subject Line</label>
-            <input id="subject-line" class="form-input" value="Application for Android Developer Position" />
-          </div>
-
-          <div class="form-group full">
-            <label class="form-label" for="cover-letter">Application Message</label>
-            <textarea id="cover-letter" class="form-textarea" rows="7">I am writing to apply for the Android Developer position. I have practical experience in building Android applications using Kotlin, Java, MVVM architecture, Firebase, REST APIs, Room Database, and modern UI development. I am confident that my technical skills and project experience can contribute positively to your organization.</textarea>
-          </div>
-        </div>
-
-        <div class="helper-text">
-          <strong>Tip:</strong> Keep your application short, clear and role-specific. Add your resume link before sending through Gmail.
-        </div>
-
-        <div class="section-title">Live Preview</div>
-        <div class="preview-grid">
-          <div class="preview-box">
-            <div class="browser-topbar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-            </div>
-            <iframe id="application-preview-frame" title="Job Application Preview"></iframe>
-          </div>
-          <div class="plain-preview-box" id="plain-preview"></div>
-        </div>
-
-        <div class="btn-container">
-          <button id="gmail-btn" class="btn btn-primary" type="button"><ion-icon name="logo-google"></ion-icon> Apply via Gmail</button>
-          <button id="copy-btn" class="btn btn-success" type="button"><ion-icon name="copy-outline"></ion-icon> Copy Application</button>
-          <button id="download-btn" class="btn btn-secondary" type="button"><ion-icon name="download-outline"></ion-icon> Download TXT</button>
-          <button id="print-btn" class="btn btn-print" type="button"><ion-icon name="print-outline"></ion-icon> Print</button>
-        </div>
-
-        <div id="status-msg" class="status-msg"></div>
-      </section>
-    </main>
-  </div>
-
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <div class="status" id="status"></div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    const $ = (id) => document.getElementById(id);
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const statusBox = document.getElementById('status');
+    const jobForm = document.getElementById('jobForm');
 
-    const jobSelect = $('job-select');
-    const customRoleGroup = $('custom-role-group');
-    const customRoleInput = $('custom-role');
-    const companyNameInput = $('company-name');
-    const hrEmailInput = $('hr-email');
-    const jobLocationInput = $('job-location');
-    const experienceInput = $('experience');
-    const expectedSalaryInput = $('expected-salary');
-    const applicantNameInput = $('applicant-name');
-    const applicantEmailInput = $('applicant-email');
-    const phoneNumberInput = $('phone-number');
-    const portfolioLinkInput = $('portfolio-link');
-    const skillsInput = $('skills');
-    const resumeLinkInput = $('resume-link');
-    const subjectLineInput = $('subject-line');
-    const coverLetterInput = $('cover-letter');
-    const previewFrame = $('application-preview-frame');
-    const plainPreview = $('plain-preview');
-    const statusMsg = $('status-msg');
-    const themeToggle = $('theme-toggle');
-    const themeIcon = $('theme-icon');
-
-    const roleTemplates = {
-      android: {
-        role: 'Android Developer',
-        subject: 'Application for Android Developer Position',
-        skills: 'Kotlin, Java, Android SDK, MVVM, Firebase, REST API, Room Database',
-        message: 'I am writing to apply for the Android Developer position. I have practical experience in building Android applications using Kotlin, Java, MVVM architecture, Firebase, REST APIs, Room Database, and modern UI development. I am confident that my technical skills and project experience can contribute positively to your organization.'
-      },
-      flutter: {
-        role: 'Flutter Developer',
-        subject: 'Application for Flutter Developer Position',
-        skills: 'Flutter, Dart, Provider, REST API, Firebase, Clean Architecture, UI Development',
-        message: 'I am writing to apply for the Flutter Developer position. I have experience developing cross-platform mobile applications with Flutter, Dart, REST APIs, Firebase, state management and clean UI implementation. I would be happy to contribute my skills to your development team.'
-      },
-      frontend: {
-        role: 'Frontend Developer',
-        subject: 'Application for Frontend Developer Position',
-        skills: 'HTML, CSS, JavaScript, React, Responsive UI, API Integration, Git',
-        message: 'I am writing to apply for the Frontend Developer position. I have experience creating responsive, user-friendly web interfaces using HTML, CSS, JavaScript, React and API integration. I am interested in contributing to high-quality digital products at your organization.'
-      },
-      backend: {
-        role: 'Backend Developer',
-        subject: 'Application for Backend Developer Position',
-        skills: 'Node.js, Express.js, REST API, MySQL, MongoDB, Authentication, Deployment',
-        message: 'I am writing to apply for the Backend Developer position. I have experience working with REST APIs, database design, authentication, server-side logic and deployment workflows. I am confident that I can support your backend development requirements effectively.'
-      }
+    const hiddenFields = {
+      subject: document.getElementById('emailSubject'),
+      message: document.getElementById('emailMessage'),
+      letterBody: document.getElementById('letterBody'),
+      senderEmail: document.getElementById('senderEmail'),
+      designation: document.getElementById('designation'),
+      employeeName: document.getElementById('employeeName'),
+      phoneNumber: document.getElementById('phoneNumber')
     };
 
-    function escapeHtml(str) {
-      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    const fields = {
+      toEmail: document.getElementById('toEmail'),
+      jobTitle: document.getElementById('jobTitle'),
+      name: document.getElementById('name'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      experience: document.getElementById('experience'),
+      skills: document.getElementById('skills'),
+      resumeUrl: document.getElementById('resumeUrl'),
+      message: document.getElementById('message')
+    };
+
+    const preview = document.getElementById('preview');
+    const resumePreviewWrap = document.getElementById('resumePreviewWrap');
+    const resumePreviewEmpty = document.getElementById('resumePreviewEmpty');
+    const resumePreviewFrame = document.getElementById('resumePreviewFrame');
+    const resumeOpenLink = document.getElementById('resumeOpenLink');
+    const resumePreviewTitle = document.getElementById('resumePreviewTitle');
+
+    function getData() {
+      return Object.fromEntries(Object.entries(fields).map(([key, el]) => [key, el.value.trim()]));
+    }
+
+    function buildLetter() {
+      const d = getData();
+      const resumeLine = d.resumeUrl ? `\nResume Link: ${d.resumeUrl}` : '\nResume Link: Not provided';
+      return `Subject: Application for ${d.jobTitle}\n\nDear Hiring Manager,\n\n${d.message}\n\nPlease find my details below:\n\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nExperience: ${d.experience}\nSkills: ${d.skills}${resumeLine}\n\nI would be grateful for the opportunity to discuss my application further.\n\nSincerely,\n${d.name}`;
+    }
+
+    function getPreviewableResumeUrl(url) {
+      if (!url || !/^https?:\/\//i.test(url)) return '';
+
+      const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/i) || url.match(/[?&]id=([^&]+)/i);
+      if (driveMatch && url.includes('drive.google.com')) {
+        return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+      }
+
+      if (/dropbox\.com/i.test(url)) {
+        return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('?dl=1', '');
+      }
+
+      return url;
+    }
+
+    function updateResumePreview() {
+      const d = getData();
+      const url = d.resumeUrl;
+
+      if (!url) {
+        resumePreviewWrap.style.display = 'none';
+        resumePreviewEmpty.style.display = 'block';
+        resumePreviewEmpty.textContent = 'Paste a public resume link to preview it here.';
+        resumePreviewFrame.removeAttribute('src');
+        return;
+      }
+
+      if (!/^https?:\/\//i.test(url)) {
+        resumePreviewWrap.style.display = 'none';
+        resumePreviewEmpty.style.display = 'block';
+        resumePreviewEmpty.textContent = 'Resume preview needs a valid link starting with http:// or https://.';
+        resumePreviewFrame.removeAttribute('src');
+        return;
+      }
+
+      const previewUrl = getPreviewableResumeUrl(url);
+      resumeOpenLink.href = url;
+      resumePreviewTitle.textContent = 'Resume preview from link';
+      resumePreviewFrame.src = previewUrl;
+      resumePreviewWrap.style.display = 'block';
+      resumePreviewEmpty.style.display = 'none';
     }
 
     function isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function getRole() {
-      if (jobSelect.value === 'custom') return customRoleInput.value.trim() || 'Job Role';
-      return roleTemplates[jobSelect.value].role;
-    }
-
-    function getParams() {
+    function getTemplateParams() {
+      const d = getData();
       return {
-        role: getRole(),
-        company: companyNameInput.value.trim(),
-        hrEmail: hrEmailInput.value.trim(),
-        location: jobLocationInput.value.trim(),
-        experience: experienceInput.value.trim(),
-        salary: expectedSalaryInput.value.trim(),
-        name: applicantNameInput.value.trim(),
-        email: applicantEmailInput.value.trim(),
-        phone: phoneNumberInput.value.trim(),
-        portfolio: portfolioLinkInput.value.trim(),
-        skills: skillsInput.value.trim(),
-        resume: resumeLinkInput.value.trim(),
-        subject: subjectLineInput.value.trim(),
-        message: coverLetterInput.value.trim()
+        to_email: d.toEmail,
+        subject: `Application for ${d.jobTitle}`,
+        applicant_name: d.name,
+        applicant_email: d.email,
+        applicant_phone: d.phone,
+        job_title: d.jobTitle,
+        experience: d.experience,
+        skills: d.skills,
+        resume_link: d.resumeUrl,
+        cover_letter: d.message,
+        message: buildLetter(),
+        letter_body: buildLetter(),
+        sender_email: d.email,
+        employee_name: d.name,
+        designation: d.jobTitle,
+        phone_number: d.phone
       };
     }
 
-    function buildPlainApplication(p) {
-      return `To: HR / Recruitment Team\n${p.company}\n${p.location}\n\nSubject: ${p.subject}\n\nDear Hiring Manager,\n\n${p.message}\n\nPlease find my profile details below:\n\nName: ${p.name}\nApplied Role: ${p.role}\nExperience: ${p.experience}\nKey Skills: ${p.skills}\nExpected Salary: ${p.salary}\nEmail: ${p.email}\nPhone: ${p.phone}\nPortfolio/GitHub/LinkedIn: ${p.portfolio || 'Not provided'}\nResume Link: ${p.resume || 'Not provided'}\n\nI would be grateful for the opportunity to discuss how my skills match your requirements.\n\nSincerely,\n${p.name}`;
-    }
-
-    function buildPreviewHtml(p) {
-      return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-        body{margin:0;padding:30px 14px;background:#f8fafc;font-family:'Segoe UI',Arial,sans-serif;color:#334155;}
-        .wrap{max-width:720px;margin:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.08)}
-        .accent{height:6px;background:linear-gradient(90deg,#2563eb,#d4af37,#7c3aed)}
-        .head{padding:32px;background:#0f172a;color:#fff}.head h2{margin:0 0 8px;font-size:25px}.head p{margin:0;color:#cbd5e1}
-        .body{padding:36px;line-height:1.72;font-size:15px}.subject{padding:15px 18px;background:#fffbeb;border-left:4px solid #d4af37;border-radius:0 10px 10px 0;font-weight:700;color:#0f172a;margin:22px 0}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px}.label{font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase}.value{margin-top:4px;color:#0f172a;font-weight:700;word-break:break-word}
-        .skills{background:#eff6ff;border:1px solid #bfdbfe;padding:14px;border-radius:10px;color:#1e3a8a;font-weight:600}.sig{margin-top:32px;padding-top:22px;border-top:1px solid #e2e8f0}a{color:#2563eb}
-        @media print{body{background:#fff;padding:0}.wrap{box-shadow:none;border:none}.head{background:#fff;color:#0f172a;border-bottom:2px solid #d4af37}.head p{color:#475569}.accent{display:none}}
-      </style></head><body><div class="wrap"><div class="accent"></div><div class="head"><h2>${escapeHtml(p.role)} Application</h2><p>${escapeHtml(p.name)} · ${escapeHtml(p.experience)} · ${escapeHtml(p.location)}</p></div><div class="body">
-        <p><strong>To,</strong><br>HR / Recruitment Team<br>${escapeHtml(p.company)}</p>
-        <div class="subject">Subject: ${escapeHtml(p.subject)}</div>
-        <p>Dear Hiring Manager,</p><p>${escapeHtml(p.message)}</p>
-        <div class="grid"><div class="item"><div class="label">Applicant</div><div class="value">${escapeHtml(p.name)}</div></div><div class="item"><div class="label">Applied Role</div><div class="value">${escapeHtml(p.role)}</div></div><div class="item"><div class="label">Email</div><div class="value">${escapeHtml(p.email)}</div></div><div class="item"><div class="label">Phone</div><div class="value">${escapeHtml(p.phone)}</div></div><div class="item"><div class="label">Expected Salary</div><div class="value">${escapeHtml(p.salary)}</div></div><div class="item"><div class="label">Resume</div><div class="value">${escapeHtml(p.resume || 'Not provided')}</div></div></div>
-        <div class="skills">Key Skills: ${escapeHtml(p.skills)}</div>
-        <p style="margin-top:24px;">Portfolio / GitHub / LinkedIn: ${p.portfolio ? `<a href="${escapeHtml(p.portfolio)}">${escapeHtml(p.portfolio)}</a>` : 'Not provided'}</p>
-        <p>I would be grateful for the opportunity to discuss how my skills match your requirements.</p>
-        <div class="sig"><strong>Sincerely,</strong><br><strong>${escapeHtml(p.name)}</strong><br>${escapeHtml(p.email)} · ${escapeHtml(p.phone)}</div>
-      </div></div></body></html>`;
+    function syncHiddenFields() {
+      const d = getData();
+      const letter = buildLetter();
+      hiddenFields.subject.value = `Application for ${d.jobTitle}`;
+      hiddenFields.message.value = letter;
+      hiddenFields.letterBody.value = letter;
+      hiddenFields.senderEmail.value = d.email;
+      hiddenFields.designation.value = d.jobTitle;
+      hiddenFields.employeeName.value = d.name;
+      hiddenFields.phoneNumber.value = d.phone;
     }
 
     function updatePreview() {
-      const params = getParams();
-      previewFrame.srcdoc = buildPreviewHtml(params);
-      plainPreview.textContent = buildPlainApplication(params);
+      preview.textContent = buildLetter();
+      updateResumePreview();
+      syncHiddenFields();
     }
 
-    function showStatus(message, success = true) {
-      statusMsg.textContent = message;
-      statusMsg.className = `status-msg ${success ? 'status-success' : 'status-error'}`;
-      statusMsg.style.display = 'block';
+    function showStatus(message) {
+      statusBox.textContent = message;
+      statusBox.style.display = 'block';
+      setTimeout(() => statusBox.style.display = 'none', 2500);
     }
 
-    function applyTemplate() {
-      const selected = jobSelect.value;
-      customRoleGroup.style.display = selected === 'custom' ? 'block' : 'none';
-      if (roleTemplates[selected]) {
-        subjectLineInput.value = roleTemplates[selected].subject;
-        skillsInput.value = roleTemplates[selected].skills;
-        coverLetterInput.value = roleTemplates[selected].message;
-      }
-      updatePreview();
-    }
-
-    function setTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('applyPortalTheme', theme);
-      themeIcon.setAttribute('name', theme === 'dark' ? 'sunny-outline' : 'moon-outline');
-    }
+    Object.values(fields).forEach(input => input.addEventListener('input', updatePreview));
 
     themeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      setTheme(current === 'dark' ? 'light' : 'dark');
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      themeToggle.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
     });
 
-    jobSelect.addEventListener('change', applyTemplate);
-    [customRoleInput, companyNameInput, hrEmailInput, jobLocationInput, experienceInput, expectedSalaryInput, applicantNameInput, applicantEmailInput, phoneNumberInput, portfolioLinkInput, skillsInput, resumeLinkInput, subjectLineInput, coverLetterInput].forEach(el => el.addEventListener('input', updatePreview));
-
-    $('gmail-btn').addEventListener('click', () => {
-      const p = getParams();
-      if (!isValidEmail(p.hrEmail)) { showStatus('Please enter a valid HR / Recruiter email.', false); return; }
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(p.hrEmail)}&su=${encodeURIComponent(p.subject)}&body=${encodeURIComponent(buildPlainApplication(p))}`;
-      window.open(gmailUrl, '_blank');
-    });
-
-    $('copy-btn').addEventListener('click', async () => {
+    document.getElementById('directSendBtn').addEventListener('click', async () => {
+      const d = getData();
+      const btn = document.getElementById('directSendBtn');
+      if (!isValidEmail(d.toEmail)) {
+        showStatus('Please enter a valid recipient email.');
+        return;
+      }
+      if (d.resumeUrl && !/^https?:\/\/.+/i.test(d.resumeUrl)) {
+        showStatus('Please enter a valid resume link starting with http or https.');
+        return;
+      }
+      syncHiddenFields();
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
       try {
-        await navigator.clipboard.writeText(buildPlainApplication(getParams()));
-        showStatus('Application copied successfully.');
+        await emailjs.send('service_9lr2pdn', 'template_udr19sl', getTemplateParams());
+        showStatus('Application sent successfully with resume link.');
       } catch (error) {
-        showStatus('Copy failed. Please copy from the preview box manually.', false);
+        showStatus('Direct send failed. Please check EmailJS service/template fields.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Direct Send';
       }
     });
 
-    $('download-btn').addEventListener('click', () => {
-      const p = getParams();
-      const blob = new Blob([buildPlainApplication(p)], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${p.role.replace(/\s+/g, '-').toLowerCase()}-application.txt`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-      showStatus('Application TXT downloaded.');
+    document.getElementById('gmailBtn').addEventListener('click', () => {
+      const d = getData();
+      if (!isValidEmail(d.toEmail)) {
+        showStatus('Please enter a valid recipient email.');
+        return;
+      }
+      const subject = `Application for ${d.jobTitle}`;
+      const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(d.toEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildLetter())}`;
+      window.open(url, '_blank');
+      showStatus('Gmail opened. Resume link is included in the email body.');
     });
 
-    $('print-btn').addEventListener('click', () => {
-      try { previewFrame.contentWindow.print(); }
-      catch (e) { showStatus('Print blocked by browser. Try again.', false); }
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(buildLetter());
+      showStatus('Application copied.');
     });
 
-    setTheme(localStorage.getItem('applyPortalTheme') || 'dark');
-    applyTemplate();
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    updatePreview();
   </script>
 </body>
 </html>
