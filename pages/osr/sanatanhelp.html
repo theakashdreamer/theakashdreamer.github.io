@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Akhil Bhartiya Sanatan Helpline</title>
+  <title id="pageTitle">ABSH - अखिल भारतीय सनातन हेल्पलाइन</title>
 
   <style>
+
     * {
       margin: 0;
       padding: 0;
@@ -62,6 +62,57 @@
       justify-content: space-between;
       align-items: center;
       position: relative;
+    }
+
+    .event-marquee {
+      background: var(--primary);
+      color: var(--white);
+      text-align: center;
+      padding: 10px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .event-marquee marquee {
+      display: inline-block;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .locale-bar {
+      max-width: 1180px;
+      margin: auto;
+      padding: 14px 22px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      background: #fff6eb;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .locale-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .locale-item label {
+      font-weight: 700;
+    }
+
+    .locale-item select {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: white;
+      color: var(--text);
+      min-width: 150px;
+      font-size: 14px;
+      appearance: none;
     }
 
     .logo {
@@ -1019,347 +1070,1182 @@
         font-size: 19px;
       }
     }
+  
+  
+    .white-outline {
+      color: white !important;
+      border-color: white !important;
+    }
+
+    .white-outline:hover {
+      background: white !important;
+      color: var(--primary-dark) !important;
+    }
   </style>
 </head>
 
 <body>
-
   <div class="top-line"></div>
 
   <header>
     <div class="navbar">
       <a href="#home" class="logo">
-        <div class="logo-mark">ॐ</div>
+        <div class="logo-mark" id="logoMark">ॐ</div>
         <div class="logo-text">
-          <h3>Sanatan Helpline</h3>
-          <span>Akhil Bhartiya Seva Platform</span>
+          <h3 id="logoShort">ABSH</h3>
+          <span id="logoFull">अखिल भारतीय सनातन हेल्पलाइन</span>
         </div>
       </a>
 
       <nav>
-        <ul id="menu">
-          <li><a href="#home" class="nav-link active">Home</a></li>
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#services" class="nav-link">Services</a></li>
-          <li><a href="#helpline" class="nav-link">Helpline</a></li>
-          <li><a href="#team" class="nav-link">Team</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-          <li><a href="tel:+919999999999" class="nav-btn">Call Now</a></li>
-        </ul>
+        <ul id="menu"></ul>
       </nav>
 
       <div class="menu-btn" id="menuBtn">☰</div>
     </div>
   </header>
 
-  <main>
+  <div class="event-marquee" id="eventMarquee"></div>
 
+  <div class="locale-bar">
+    <div class="locale-item">
+      <label for="languageSelect" id="languageSelectLabel">भाषा</label>
+      <select id="languageSelect"></select>
+    </div>
+    <div class="locale-item">
+      <label for="stateSelect" id="stateSelectLabel">राज्य</label>
+      <select id="stateSelect"></select>
+    </div>
+  </div>
+
+  <main>
     <section class="hero" id="home">
       <div class="container hero-grid">
-
-        <div class="hero-content">
-          <span class="small-title">🕉️ सेवा | संस्कार | संस्कृति</span>
-
-          <h1>
-            Akhil Bhartiya <br />
-            <span>Sanatan Helpline</span>
-          </h1>
-
-          <p>
-            Sanatan Dharma, Mandir Sahayata, Gau Seva aur Samajik Seva ke liye
-            ek simple, trusted aur seva-bhav se juda digital helpline platform.
-          </p>
-
-          <div class="btn-row">
-            <a href="tel:+919999999999" class="btn btn-primary">📞 Call Helpline</a>
-            <a href="#contact" class="btn btn-outline">Volunteer Join</a>
-          </div>
-        </div>
-
-        <div class="hero-card">
-          <div class="hero-card-img"></div>
-
-          <h3>Need Help?</h3>
-          <p>
-            Mandir, Dharma Guidance, Gau Seva ya Social Help ke liye aap humse contact kar sakte hain.
-          </p>
-
-          <div class="helpline-number">+91 99999 99999</div>
-        </div>
-
+        <div class="hero-content" id="heroContent"></div>
+        <div class="hero-card" id="heroCard"></div>
       </div>
     </section>
 
     <section id="about">
       <div class="container">
-        <div class="section-head reveal">
-          <span>About Us</span>
-          <h2>हमारा उद्देश्य</h2>
-          <p>
-            हमारा लक्ष्य सनातन संस्कृति, सेवा और समाज कल्याण को सरल digital platform के माध्यम से लोगों तक पहुँचाना है।
-          </p>
-        </div>
-
-        <div class="about-grid">
-          <div class="classic-card reveal">
-            <div class="icon">ॐ</div>
-            <h3>Sanatan Awareness</h3>
-            <p>
-              सनातन धर्म, संस्कार और संस्कृति से जुड़ी सामान्य जानकारी और जागरूकता।
-            </p>
-          </div>
-
-          <div class="classic-card reveal">
-            <div class="icon">🛕</div>
-            <h3>Mandir Support</h3>
-            <p>
-              मंदिर सहायता, पूजा जानकारी, धार्मिक कार्यक्रम और सेवा कार्यों का सहयोग।
-            </p>
-          </div>
-
-          <div class="classic-card reveal">
-            <div class="icon">🤝</div>
-            <h3>Social Seva</h3>
-            <p>
-              जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer network और coordination।
-            </p>
-          </div>
-        </div>
+        <div class="section-head reveal" id="aboutHead"></div>
+        <div class="about-grid" id="aboutGrid"></div>
       </div>
     </section>
 
     <section class="services" id="services">
       <div class="container">
-        <div class="section-head reveal">
-          <span>Our Services</span>
-          <h2>हमारी सेवाएं</h2>
-          <p>
-            नीचे दी गई सेवाओं के लिए आप हमारी helpline team से संपर्क कर सकते हैं।
-          </p>
-        </div>
-
-        <div class="services-grid">
-          <div class="service-card reveal">
-            <div class="service-icon">🛕</div>
-            <h3>Mandir Sahayata</h3>
-            <p>मंदिर संबंधी सहायता, जानकारी और सेवा कार्यों के लिए मार्गदर्शन।</p>
-          </div>
-
-          <div class="service-card reveal">
-            <div class="service-icon">🐄</div>
-            <h3>Gau Seva</h3>
-            <p>गौ सेवा, गौशाला सहायता और जरूरतमंद पशुओं के लिए सहयोग।</p>
-          </div>
-
-          <div class="service-card reveal">
-            <div class="service-icon">📿</div>
-            <h3>Dharma Guidance</h3>
-            <p>पूजा, व्रत, संस्कार और सनातन धर्म से जुड़ी सामान्य जानकारी।</p>
-          </div>
-
-          <div class="service-card reveal">
-            <div class="service-icon">🤝</div>
-            <h3>Social Help</h3>
-            <p>जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer support।</p>
-          </div>
-
-          <div class="service-card reveal">
-            <div class="service-icon">📢</div>
-            <h3>Event Support</h3>
-            <p>धार्मिक कार्यक्रम, भंडारा, कथा और सामाजिक आयोजन की जानकारी।</p>
-          </div>
-
-          <div class="service-card reveal">
-            <div class="service-icon">👥</div>
-            <h3>Volunteer Join</h3>
-            <p>देशभर से volunteers को जोड़कर सेवा कार्यों को आगे बढ़ाना।</p>
-          </div>
-        </div>
+        <div class="section-head reveal" id="servicesHead"></div>
+        <div class="services-grid" id="servicesGrid"></div>
       </div>
     </section>
 
     <section id="helpline">
       <div class="container">
-        <div class="banner reveal">
-          <h2>24x7 Sanatan Helpline</h2>
-          <p>
-            किसी भी सहायता, सुझाव, volunteer request या धार्मिक जानकारी के लिए हमारी helpline पर संपर्क करें।
-          </p>
-
-          <div class="helpline-number">📞 +91 99999 99999</div>
-
-          <div class="btn-row" style="justify-content:center; margin-bottom:0;">
-            <a href="tel:+919999999999" class="btn btn-primary">Call Now</a>
-            <a href="https://wa.me/919999999999" target="_blank" class="btn btn-outline" style="color:white; border-color:white;">WhatsApp</a>
-          </div>
-        </div>
+        <div class="banner reveal" id="helplineBanner"></div>
       </div>
     </section>
 
     <section id="team">
       <div class="container">
-        <div class="section-head reveal">
-          <span>Our Team</span>
-          <h2>सेवा भाव से जुड़ी टीम</h2>
-          <p>
-            हमारी team समाज सेवा, धार्मिक सहायता और volunteer coordination में सहयोग करती है।
-          </p>
-        </div>
-
-        <div class="team-grid">
-          <div class="team-card reveal">
-            <div class="team-avatar">ॐ</div>
-            <h3>National Coordinator</h3>
-            <p>All India Support</p>
-          </div>
-
-          <div class="team-card reveal">
-            <div class="team-avatar">🛕</div>
-            <h3>Mandir Support Head</h3>
-            <p>Temple Assistance</p>
-          </div>
-
-          <div class="team-card reveal">
-            <div class="team-avatar">🤝</div>
-            <h3>Volunteer Manager</h3>
-            <p>Social Service Network</p>
-          </div>
-        </div>
+        <div class="section-head reveal" id="teamHead"></div>
+        <div class="team-grid" id="teamGrid"></div>
       </div>
     </section>
 
     <section class="contact" id="contact">
       <div class="container">
-        <div class="section-head reveal">
-          <span>Contact Us</span>
-          <h2>संपर्क करें</h2>
-          <p>
-            अपनी समस्या, सुझाव, सेवा request या volunteer joining details हमें भेजें।
-          </p>
-        </div>
+        <div class="section-head reveal" id="contactHead"></div>
 
         <div class="contact-grid">
           <div class="contact-box reveal">
-            <h3>Contact Details</h3>
-
-            <div class="contact-item">
-              <strong>Helpline Number</strong>
-              <span>+91 99999 99999</span>
-            </div>
-
-            <div class="contact-item">
-              <strong>Email Address</strong>
-              <span>support@sanatanhelpline.org</span>
-            </div>
-
-            <div class="contact-item">
-              <strong>Location</strong>
-              <span>Bharat, India</span>
-            </div>
-
-            <div class="contact-item">
-              <strong>Support Time</strong>
-              <span>24x7 Available</span>
-            </div>
+            <h3 id="contactDetailsTitle"></h3>
+            <div id="contactDetails"></div>
           </div>
 
           <form id="contactForm" class="reveal">
-            <h3>Send Request</h3>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>आपका नाम</label>
-                <input type="text" id="name" placeholder="Enter your name" required />
-              </div>
-
-              <div class="form-group">
-                <label>मोबाइल नंबर</label>
-                <input type="tel" id="phone" placeholder="Enter mobile number" required />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>सेवा का प्रकार</label>
-              <select id="service" required>
-                <option value="">Select Service</option>
-                <option>Mandir Sahayata</option>
-                <option>Gau Seva</option>
-                <option>Dharma Guidance</option>
-                <option>Volunteer Join</option>
-                <option>Social Help</option>
-                <option>Other Help</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Message</label>
-              <textarea id="message" placeholder="Write your message..." required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary submit-btn">Submit Request</button>
+            <h3 id="contactFormTitle"></h3>
+            <div id="dynamicFormFields"></div>
+            <button type="submit" id="submitButton" class="btn btn-primary submit-btn"></button>
           </form>
         </div>
       </div>
     </section>
-
   </main>
 
-  <footer>
-    <h3>ॐ Akhil Bhartiya Sanatan Helpline</h3>
-    <p>सेवा | संस्कार | संस्कृति</p>
+  <footer id="footer"></footer>
 
-    <div class="footer-links">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#helpline">Helpline</a>
-      <a href="#contact">Contact</a>
-    </div>
-
-    <p>© 2026 Akhil Bhartiya Sanatan Helpline. All Rights Reserved.</p>
-  </footer>
-
-  <div class="floating-actions">
-    <a href="https://wa.me/919999999999" target="_blank" class="float-btn whatsapp">☘</a>
-    <a href="tel:+919999999999" class="float-btn call">☎</a>
-  </div>
-
-  <div class="toast" id="toast">✅ Request submitted successfully!</div>
+  <div class="floating-actions" id="floatingActions"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    const menu = document.getElementById("menu");
-    const menuBtn = document.getElementById("menuBtn");
-    const navLinks = document.querySelectorAll(".nav-link");
-    const sections = document.querySelectorAll("section");
-    const revealElements = document.querySelectorAll(".reveal");
+    const websiteData = {
+      brand: {
+        shortName: "ABSH",
+        fullName: "अखिल भारतीय सनातन हेल्पलाइन",
+        tagline: "सेवा | संस्कार | संस्कृति",
+        logoMark: "ॐ",
+        title: "ABSH - अखिल भारतीय सनातन हेल्पलाइन"
+      },
 
-    menuBtn.addEventListener("click", function(e) {
-      e.stopPropagation();
-      menu.classList.toggle("active");
-      menuBtn.textContent = menu.classList.contains("active") ? "×" : "☰";
-    });
+      contact: {
+        phone: "+91 99999 99999",
+        phoneRaw: "919999999999",
+        email: "support@sanatanhelpline.org",
+        location: "Bharat, India",
+        supportTime: "24x7 Available"
+      },
 
-    navLinks.forEach(function(link) {
-      link.addEventListener("click", function() {
-        closeMenu();
-      });
-    });
+      languages: [
+        { code: "hi", label: "हिन्दी" },
+        { code: "en", label: "English" },
+        { code: "mr", label: "मराठी" },
+        { code: "bn", label: "বাংলা" },
+        { code: "ta", label: "தமிழ்" }
+      ],
 
-    document.addEventListener("click", function(e) {
-      const header = document.querySelector("header");
+      selectedLanguage: "hi",
+      selectedState: "Bharat",
+      localeLabels: {
+        language: "भाषा",
+        state: "राज्य",
+        selectLanguage: "भाषा चुनें",
+        selectState: "राज्य चुनें"
+      },
 
-      if (!header.contains(e.target)) {
-        closeMenu();
+      states: [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal"
+      ],
+
+      translations: {
+        en: {
+          localeLabels: {
+            language: "Language",
+            state: "State",
+            selectLanguage: "Select Language",
+            selectState: "Select State"
+          },
+          brand: {
+            shortName: "ABSH",
+            fullName: "Akhil Bhartiya Sanatan Helpline",
+            tagline: "Service | Culture | Community",
+            logoMark: "ॐ",
+            title: "ABSH - Akhil Bhartiya Sanatan Helpline"
+          },
+          menu: [
+            { label: "Home", href: "#home" },
+            { label: "About", href: "#about" },
+            { label: "Services", href: "#services" },
+            { label: "Helpline", href: "#helpline" },
+            { label: "Team", href: "#team" },
+            { label: "Contact", href: "#contact" }
+          ],
+          hero: {
+            badge: "🕉️ Service | Culture | Community",
+            titleLine1: "Akhil Bhartiya",
+            titleLine2: "Sanatan Helpline",
+            description: "A trusted digital helpline platform for Sanatan Dharma guidance, temple support, cow care, and social service across India.",
+            buttons: [
+              { text: "📞 Call Helpline", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "Volunteer Join", href: "#contact", className: "btn-outline" }
+            ],
+            card: {
+              image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80",
+              title: "Need Help?",
+              description: "Contact us for temple support, Dharma guidance, cow care, or social help."
+            }
+          },
+          about: {
+            subtitle: "About Us",
+            title: "Our Purpose",
+            description: "Our goal is to bring Sanatan culture, service, and social welfare to people through an easy digital platform.",
+            cards: [
+              {
+                icon: "ॐ",
+                title: "Sanatan Awareness",
+                description: "General guidance and awareness about Sanatan Dharma, tradition, and culture."
+              },
+              {
+                icon: "🛕",
+                title: "Temple Support",
+                description: "Support for temples, rituals, religious events, and service activities."
+              },
+              {
+                icon: "🤝",
+                title: "Social Service",
+                description: "Connecting volunteers to help people in need through service coordination."
+              }
+            ]
+          },
+          services: {
+            subtitle: "Our Services",
+            title: "Services We Offer",
+            description: "Reach out to our helpline team for the services listed below.",
+            items: [
+              { icon: "🛕", title: "Temple Assistance", description: "Guidance for temple-related help and religious programs." },
+              { icon: "🐄", title: "Cow Care", description: "Support for Gau Seva, gaushala assistance, and animal welfare." },
+              { icon: "📿", title: "Dharma Guidance", description: "Information on puja, fasts, rituals, and Sanatan Dharma." },
+              { icon: "🤝", title: "Social Help", description: "Volunteer support to reach people in need." },
+              { icon: "📢", title: "Event Support", description: "Religious events, bhandara, katha, and social gatherings." },
+              { icon: "👥", title: "Volunteer Join", description: "Connecting volunteers nationwide for service work." }
+            ]
+          },
+          helpline: {
+            title: "24x7 Sanatan Helpline",
+            description: "Contact our helpline for any support, suggestions, volunteer requests, or religious guidance.",
+            buttons: [
+              { text: "Call Now", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "WhatsApp", href: "https://wa.me/919999999999", className: "btn-outline white-outline" }
+            ]
+          },
+          team: {
+            subtitle: "Our Team",
+            title: "Service-Oriented Team",
+            description: "Our team supports religious help, social assistance, and volunteer coordination."
+          },
+          contactSection: {
+            subtitle: "Contact Us",
+            title: "Reach Out",
+            description: "Send us your request, suggestions, or volunteer details.",
+            detailsHeading: "Contact Details",
+            formHeading: "Send Request",
+            submitButtonText: "Submit Request",
+            details: [
+              { label: "Helpline Number", valueKey: "phone" },
+              { label: "Email Address", valueKey: "email" },
+              { label: "Location", valueKey: "location" },
+              { label: "Support Time", valueKey: "supportTime" }
+            ],
+            formFields: [
+              { type: "text", id: "name", label: "Your Name", placeholder: "Enter your name", required: true, group: "row" },
+              { type: "tel", id: "phone", label: "Mobile Number", placeholder: "Enter mobile number", required: true, group: "row" },
+              {
+                type: "select",
+                id: "service",
+                label: "Select Service",
+                required: true,
+                options: ["Mandir Sahayata", "Gau Seva", "Dharma Guidance", "Volunteer Join", "Social Help", "Other Help"]
+              },
+              { type: "textarea", id: "message", label: "Message", placeholder: "Write your message...", required: true }
+            ]
+          },
+          formValidation: {
+            required: "Please fill all fields",
+            invalidPhone: "Please enter a valid 10 digit Indian mobile number",
+            success: "✅ Request submitted successfully!"
+          },
+          footer: {
+            copyright: "© 2026 Akhil Bhartiya Sanatan Helpline. All Rights Reserved."
+          },
+          newsTicker: [
+            "🎉 Sanatan Sewa Sammelan on 5 June 2026 — Register now at +91 99999 99999",
+            "📣 Weekly Pooja Assistance Clinic on 28 May 2026 — Call for volunteer support.",
+            "🛕 Mandir Sahayata Camp on 2 June 2026 — Free guidance for ritual planning.",
+            "🤝 Social Seva Drive on 10 June 2026 — Join our volunteer network today."
+          ]
+        },
+        mr: {
+          localeLabels: {
+            language: "भाषा",
+            state: "राज्य",
+            selectLanguage: "भाषा निवडा",
+            selectState: "राज्य निवडा"
+          },
+          brand: {
+            shortName: "ABSH",
+            fullName: "अखिल भारतीय सनातन हेल्पलाइन",
+            tagline: "सेवा | संस्कृती | समुदाय",
+            logoMark: "ॐ",
+            title: "ABSH - अखिल भारतीय सनातन हेल्पलाइन"
+          },
+          menu: [
+            { label: "मुखपान", href: "#home" },
+            { label: "आमच्याबद्दल", href: "#about" },
+            { label: "सेवा", href: "#services" },
+            { label: "हेल्पलाइन", href: "#helpline" },
+            { label: "टीम", href: "#team" },
+            { label: "संपर्क", href: "#contact" }
+          ],
+          hero: {
+            badge: "🕉️ सेवा | संस्कृती | समुदाय",
+            titleLine1: "अखिल भारतीय",
+            titleLine2: "सनातन हेल्पलाइन",
+            description: "सनातन धर्म, मंदिर सहकार्य, गौसेवा आणि सामाजिक सेवेकरिता एक विश्वासार्ह डिजिटल हेल्पलाइन प्लॅटफॉर्म।",
+            buttons: [
+              { text: "📞 कॉल हेल्पलाइन", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "स्वयंसेवक व्हा", href: "#contact", className: "btn-outline" }
+            ],
+            card: {
+              image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80",
+              title: "मदतीची गरज आहे?",
+              description: "मंदिर, धर्म मार्गदर्शन, गौसेवा किंवा सामाजिक सहाय्यासाठी आमच्याशी संपर्क साधा."
+            }
+          },
+          about: {
+            subtitle: "आमच्याबद्दल",
+            title: "आमचे उद्दिष्ट",
+            description: "लोकांपर्यंत सनातन संस्कृती, सेवा आणि सामाजिक कल्याण पोहोचवणे हे आमचे ध्येय आहे.",
+            cards: [
+              {
+                icon: "ॐ",
+                title: "सनातन जागरूकता",
+                description: "सनातन धर्म, परंपरा आणि संस्कृती बद्दल मार्गदर्शन आणि जागरूकता."
+              },
+              {
+                icon: "🛕",
+                title: "मंदिर समर्थन",
+                description: "मंदिरे, पूजा आणि धार्मिक कार्यक्रमांसाठी सहाय्य."
+              },
+              {
+                icon: "🤝",
+                title: "सामाजिक सेवा",
+                description: "गरजू लोकांपर्यंत सेवाक्षेत्र पोहोचविण्यासाठी स्वयंसेवक जोडणी."
+              }
+            ]
+          },
+          services: {
+            subtitle: "आमची सेवा",
+            title: "आम्ही काय पुरवतो",
+            description: "खालील सेवांसाठी आमच्या हेल्पलाइन टीमशी संपर्क साधा.",
+            items: [
+              { icon: "🛕", title: "मंदिर सहाय्य", description: "मंदिर संबंधित सहयोग आणि धार्मिक कार्यक्रम मार्गदर्शन." },
+              { icon: "🐄", title: "गौसेवा", description: "गौशाळा सहाय्य आणि पशु कल्याण." },
+              { icon: "📿", title: "धर्म मार्गदर्शन", description: "पूजा, व्रत आणि संस्कारांबद्दल माहिती." },
+              { icon: "🤝", title: "सामाजिक सहाय्य", description: "गरजू लोकांपर्यंत स्वयंसेवक मदत पोहोचवणे." },
+              { icon: "📢", title: "कार्यक्रम समर्थन", description: "धार्मिक कार्यक्रम आणि भंडारा समर्थन." },
+              { icon: "👥", title: "स्वयंसेवक जॉइन", description: "देशभरातील स्वयंसेवकांना जोडणे." }
+            ]
+          },
+          helpline: {
+            title: "२४x७ सनातन हेल्पलाइन",
+            description: "कोणतीही मदत, सूचना किंवा स्वयंसेवक अर्जासाठी आमच्या हेल्पलाइनशी संपर्क करा.",
+            buttons: [
+              { text: "आता कॉल करा", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "व्हॉट्सअॅप", href: "https://wa.me/919999999999", className: "btn-outline white-outline" }
+            ]
+          },
+          team: {
+            subtitle: "आमची टीम",
+            title: "सेवा भावाची टीम",
+            description: "आपली टीम धार्मिक आणि सामाजिक सहाय्यात मदत करते.",
+            members: [
+              { avatar: "ॐ", name: "राष्ट्रीय समन्वयक", role: "सर्व भारत समर्थन" },
+              { avatar: "🛕", name: "मंदिर सहाय्य प्रमुख", role: "मंदिर समर्थन" },
+              { avatar: "🤝", name: "स्वयंसेवक व्यवस्थापक", role: "सामाजिक सेवा नेटवर्क" }
+            ]
+          },
+          contactSection: {
+            subtitle: "आमच्याशी संपर्क करा",
+            title: "संपर्क",
+            description: "आपल्या विनंती, सूचना किंवा स्वयंसेवक तपशील आम्हाला पाठवा.",
+            detailsHeading: "संपर्क तपशील",
+            formHeading: "विनंती पाठवा",
+            submitButtonText: "विनंती पाठवा",
+            details: [
+              { label: "हेल्पलाइन नंबर", valueKey: "phone" },
+              { label: "ईमेल पत्ता", valueKey: "email" },
+              { label: "स्थान", valueKey: "location" },
+              { label: "समर्थन वेळ", valueKey: "supportTime" }
+            ],
+            formFields: [
+              { type: "text", id: "name", label: "तुमचे नाव", placeholder: "तुमचे नाव टाका", required: true, group: "row" },
+              { type: "tel", id: "phone", label: "मोबाइल नंबर", placeholder: "मोबाइल नंबर टाका", required: true, group: "row" },
+              {
+                type: "select",
+                id: "service",
+                label: "सेवा प्रकार",
+                required: true,
+                options: ["मंदिर सहाय्य", "गौसेवा", "धर्म मार्गदर्शन", "स्वयंसेवक जोडा", "सामाजिक सहाय्य", "इतर सहाय्य"]
+              },
+              { type: "textarea", id: "message", label: "संदेश", placeholder: "आपला संदेश लिहा...", required: true }
+            ]
+          },
+          formValidation: {
+            required: "कृपया सर्व फील्ड भरा",
+            invalidPhone: "कृपया वैध 10 अंकी भारतीय मोबाइल नंबर प्रविष्ट करा",
+            success: "✅ तुमची विनंती यशस्वीरित्या पाठवली गेली आहे!"
+          },
+          footer: {
+            copyright: "© 2026 अखिल भारतीय सनातन हेल्पलाइन. सर्व अधिकार राखीव."
+          },
+          newsTicker: [
+            "🎉 सनातन सेवा संमेलन 5 जून 2026 रोजी — आता नोंदणी करा +91 99999 99999",
+            "📣 साप्ताहिक पूजा सहाय्य क्लिनिक 28 मे 2026 रोजी — स्वयंसेवक सहाय्यासाठी कॉल करा.",
+            "🛕 मंदिर सहाय्य शिबिर 2 जून 2026 रोजी — विधी नियोजनासाठी मार्गदर्शन.",
+            "🤝 सामाजिक सेवा ड्राइव्ह 10 जून 2026 रोजी — आजच आमच्या स्वयंसेवक नेटवर्कमध्ये सहभागी व्हा."
+          ]
+        },
+        bn: {
+          localeLabels: {
+            language: "ভাষা",
+            state: "রাজ্য",
+            selectLanguage: "ভাষা নির্বাচন করুন",
+            selectState: "রাজ্য নির্বাচন করুন"
+          },
+          brand: {
+            shortName: "ABSH",
+            fullName: "অখিল ভারতীয় সনাতন হেল্পলাইন",
+            tagline: "সেবা | সংস্কৃতি | সম্প্রদায়",
+            logoMark: "ॐ",
+            title: "ABSH - অখিল ভারতীয় সনাতন হেল्पলাইন"
+          },
+          menu: [
+            { label: "হোম", href: "#home" },
+            { label: "আমাদের সম্পর্কে", href: "#about" },
+            { label: "সেবা", href: "#services" },
+            { label: "হেল্পলাইন", href: "#helpline" },
+            { label: "টিম", href: "#team" },
+            { label: "যোগাযোগ", href: "#contact" }
+          ],
+          hero: {
+            badge: "🕉️ সেবা | সংস্কৃতি | সম্প্রদায়",
+            titleLine1: "অখিল ভারতীয়",
+            titleLine2: "সনাতন হেল্পলাইন",
+            description: "সনাতন ধর্ম, মন্দির সহায়তা, গরু সেবা এবং সামাজিক সেবার জন্য একটি বিশ্বস্ত ডিজিটাল হেল্পলাইন প্ল্যাটফর্ম।",
+            buttons: [
+              { text: "📞 কল হেল্পলাইন", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "স্বেচ্ছাসেবক যোগ দিন", href: "#contact", className: "btn-outline" }
+            ],
+            card: {
+              image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80",
+              title: "সাহায্য প্রয়োজন?",
+              description: "মন্দির, ধর্ম নির্দেশনা, গরু সেবা বা সামাজিক সহায়তার জন্য আমাদের সাথে যোগাযোগ করুন।"
+            }
+          },
+          about: {
+            subtitle: "আমাদের সম্পর্কে",
+            title: "আমাদের লক্ষ্য",
+            description: "জনসাধারণের কাছে সনাতন সংস্কৃতি, সেবা ও সামাজিক কল্যাণ পৌঁছে দেওয়াই আমাদের উদ্দেশ্য।",
+            cards: [
+              {
+                icon: "ॐ",
+                title: "সনাতন সচেতনতা",
+                description: "সনাতন ধর্ম, ঐতিহ্য এবং সংস্কৃতি সম্পর্কে সাধারণ দিকনির্দেশনা।"
+              },
+              {
+                icon: "🛕",
+                title: "মন্দির সহায়তা",
+                description: "মন্দির, পূজা ও ধর্মীয় অনুষ্ঠানের সহায়তা।"
+              },
+              {
+                icon: "🤝",
+                title: "সামাজিক সেবা",
+                description: "প্রয়োজনীয় মানুষের জন্য স্বেচ্ছাসেবকদের সংযোগ।"
+              }
+            ]
+          },
+          services: {
+            subtitle: "আমাদের সেবা",
+            title: "আমরা কী প্রদান করি",
+            description: "নীচের সেবাগুলোর জন্য আমাদের হেল্পলাইন টিমের সাথে যোগাযোগ করুন।",
+            items: [
+              { icon: "🛕", title: "মন্দির সহায়তা", description: "মন্দির সম্পর্কিত সহায়তা ও ধর্মীয় কর্মসূচির জন্য নির্দেশনা।" },
+              { icon: "🐄", title: "গরু সেবা", description: "গোশালা সহায়তা এবং প্রাণী কল্যাণের জন্য সমর্থন।" },
+              { icon: "📿", title: "ধর্ম নির্দেশনা", description: "পূজা, উপবাস, রীতি ও সনাতন ধর্ম সম্পর্কে তথ্য।" },
+              { icon: "🤝", title: "সামাজিক সহায়তা", description: "প্রয়োজনীয় মানুষের কাছে স্বেচ্ছাসেবক সহায়তা পৌঁছে দেওয়া।" },
+              { icon: "📢", title: "ইভেন্ট সমর্থন", description: "ধর্মীয় সমাবেশ, ভাণ্ডার ও সামাজিক অনুষ্ঠানগুলোর সহায়তা।" },
+              { icon: "👥", title: "স্বেচ্ছাসেবক যোগ দিন", description: "দেশব্যাপী স্বেচ্ছাসেবকদের সংযোগ।" }
+            ]
+          },
+          helpline: {
+            title: "24x7 সনাতন হেল্পলাইন",
+            description: "কোনও সহায়তা, সুপারিশ অথবা ধর্মীয় প্রশ্নের জন্য আমাদের হেল্পলাইনে যোগাযোগ করুন।",
+            buttons: [
+              { text: "এখন কল করুন", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "ওয়াটসঅ্যাপ", href: "https://wa.me/919999999999", className: "btn-outline white-outline" }
+            ]
+          },
+          team: {
+            subtitle: "আমাদের টিম",
+            title: "সেবা কেন্দ্রিক টিম",
+            description: "আমাদের টিম ধর্মীয় ও সামাজিক সহায়তা প্রদান করে।",
+            members: [
+              { avatar: "ॐ", name: "জাতীয় সমন্বয়কারী", role: "সার্বজনীন সহায়তা" },
+              { avatar: "🛕", name: "মন্দির সহায়তা প্রধান", role: "মন্দির সহায়তা" },
+              { avatar: "🤝", name: "স্বেচ্ছাসেবক ব্যবস্থাপক", role: "সামাজিক সেবা নেটওয়ার্ক" }
+            ]
+          },
+          contactSection: {
+            subtitle: "যোগাযোগ করুন",
+            title: "যোগাযোগ করুন",
+            description: "আপনার অনুরোধ, পরামর্শ বা স্বেচ্ছাসেবক বিবরণ আমাদের পাঠান।",
+            detailsHeading: "যোগাযোগ বিবরণ",
+            formHeading: "অনুরোধ জমা দিন",
+            submitButtonText: "অনুরোধ জমা দিন",
+            details: [
+              { label: "হেল্পলাইন নম্বর", valueKey: "phone" },
+              { label: "ইমেল ঠিকানা", valueKey: "email" },
+              { label: "স্থান", valueKey: "location" },
+              { label: "সাপোর্ট সময়", valueKey: "supportTime" }
+            ],
+            formFields: [
+              { type: "text", id: "name", label: "আপনার নাম", placeholder: "আপনার নাম লিখুন", required: true, group: "row" },
+              { type: "tel", id: "phone", label: "মোবাইল নম্বর", placeholder: "মোবাইল নম্বর লিখুন", required: true, group: "row" },
+              {
+                type: "select",
+                id: "service",
+                label: "সেবা নির্বাচন করুন",
+                required: true,
+                options: ["মন্দির সহায়তা", "গরু সেবা", "ধর্ম নির্দেশনা", "স্বেচ্ছাসেবক যোগ দিন", "সামাজিক সহায়তা", "অন্যান্য সহায়তা"]
+              },
+              { type: "textarea", id: "message", label: "বার্তা", placeholder: "আপনার বার্তা লিখুন...", required: true }
+            ]
+          },
+          formValidation: {
+            required: "অনুগ্রহ করে সব ক্ষেত্র পূরণ করুন",
+            invalidPhone: "একটি বৈধ 10 অঙ্কের ভারতীয় মোবাইল নম্বর লিখুন",
+            success: "✅ আপনার অনুরোধ সফলভাবে পাঠানো হয়েছে!"
+          },
+          footer: {
+            copyright: "© 2026 অখিল ভারতীয় সনাতন হেল্পলাইন। সর্বস্বত্ব সংরক্ষিত।"
+          },
+          newsTicker: [
+            "🎉 5 জুন 2026-এ সনাতন সেবা সম্মেলন — এখনই নিবন্ধন করুন +91 99999 99999",
+            "📣 28 মে 2026-এ সাপ্তাহিক পূজা সহায়তা ক্লিনিক — স্বেচ্ছাসেবক সহায়তার জন্য কল করুন।",
+            "🛕 2 জুন 2026-এ মন্দির সহায়তা শিবির — ধর্মীয় পরিকল্পনার জন্য নির্দেশনা।",
+            "🤝 10 জুন 2026-এ সামাজিক সেবা ড্রাইভ — আজই আমাদের স্বেচ্ছাসেবক নেটওয়ার্কে যোগ দিন।"
+          ]
+        },
+        ta: {
+          localeLabels: {
+            language: "மொழி",
+            state: "மாநிலம்",
+            selectLanguage: "மொழியை தேர்ந்தெடுக்கவும்",
+            selectState: "மாநிலத்தை தேர்ந்தெடுக்கவும்"
+          },
+          brand: {
+            shortName: "ABSH",
+            fullName: "அகில் இந்தியா சனாதன் ஹெல்ப்லைன்",
+            tagline: "சேவை | பண்பாடு | சமூகம்",
+            logoMark: "ॐ",
+            title: "ABSH - அகில் இந்தியா சனாதன் ஹெல்ப்லைன்"
+          },
+          menu: [
+            { label: "முகப்பு", href: "#home" },
+            { label: "எங்களை பற்றி", href: "#about" },
+            { label: "சேவைகள்", href: "#services" },
+            { label: "ஹெல்ப்லைன்", href: "#helpline" },
+            { label: "அணி", href: "#team" },
+            { label: "தொடர்பு", href: "#contact" }
+          ],
+          hero: {
+            badge: "🕉️ சேவை | பண்பாடு | சமூகம்",
+            titleLine1: "அகில் இந்தியா",
+            titleLine2: "சனாதன் ஹெல்ப்லைன்",
+            description: "சனாதன் மதம், கோயில் உதவி, பசு பராமரிப்பு மற்றும் சமூக சேவைக்காக ஒரு நம்பகமான டிஜிட்டல் ஹெல்ப்லைன் платформம்.",
+            buttons: [
+              { text: "📞 ஹெல்ப்லைன் அழைப்பு", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "தன்னார்வமாக சேருங்கள்", href: "#contact", className: "btn-outline" }
+            ],
+            card: {
+              image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80",
+              title: "உதவி வேண்டுமா?",
+              description: "கோயில், மத வழிகாட்டி, பசு சேவை அல்லது சமூக உதவிக்காக எங்களை தொடர்புகொள்ளுங்கள்."
+            }
+          },
+          about: {
+            subtitle: "எங்களை பற்றி",
+            title: "எமது நோக்கம்",
+            description: "அமைப்பின் நோக்கம் சனாதன் பண்பாடு, சேவை மற்றும் சமூக ந welfareயத்தை பொதுமக்களுக்கு கொண்டு சேர்ப்பது.",
+            cards: [
+              {
+                icon: "ॐ",
+                title: "சனாதன் விழிப்புணர்வு",
+                description: "சனாதன் மதம், மரபுகள் மற்றும் பண்பாடு குறித்த பொது அறிவு."
+              },
+              {
+                icon: "🛕",
+                title: "கோயில் ஆதரவு",
+                description: "கோயிலுக்கு உதவி, பூஜை மற்றும் மத நிகழ்வுகளுக்கான வழிகாட்டி."
+              },
+              {
+                icon: "🤝",
+                title: "சமூக சேவை",
+                description: "தரமற்றோருக்கு உதவி செய்ய தன்னார்வம்செய்திகளை இணைப்பது."
+              }
+            ]
+          },
+          services: {
+            subtitle: "எமது சேவைகள்",
+            title: "நாம் வழங்குவது",
+            description: "கீழ்காணும் சேவைகளுக்காக எங்கள் ஹெல்ப்லைன் குழுவை தொடர்பு கொள்ளுங்கள்.",
+            items: [
+              { icon: "🛕", title: "கோயில் உதவி", description: "கோயில் தொடர்பான உதவி மற்றும் மத நிகழ்வுகளுக்கான வழிகாட்டி." },
+              { icon: "🐄", title: "பசு சேவை", description: "காவசாலை உதவி மற்றும் கால்நடை நலன்." },
+              { icon: "📿", title: "மத வழிகாட்டி", description: "ப பூஜை, விரதம் மற்றும் சனாதன் மதம் பற்றிய தகவல்." },
+              { icon: "🤝", title: "சமூக உதவி", description: "தரமற்றோருக்கு தன்னார்வ உதவி வழங்குதல்." },
+              { icon: "📢", title: "நிகழ்ச்சி ஆதரவு", description: "மத நிகழ்ச்சிகள் மற்றும் சமூக கூட்டங்களுக்கான ஆதரவு." },
+              { icon: "👥", title: "தன்னார்வலராக சேருங்கள்", description: "தேசிய அளவில் தன்னாரோக்கியர்களை இணைத்தல்." }
+            ]
+          },
+          helpline: {
+            title: "24x7 சனாதன் ஹெல்ப்லைன்",
+            description: "எந்த உதவிக்காகவோ, ஆலோசனைக்காகவோ அல்லது மத வழிகாட்டலுக்காகவோ எங்களை தொடர்பு கொள்ளவும்.",
+            buttons: [
+              { text: "இப்போதே அழைப்பு", href: "tel:+919999999999", className: "btn-primary" },
+              { text: "வாட்ஸ்அப்", href: "https://wa.me/919999999999", className: "btn-outline white-outline" }
+            ]
+          },
+          team: {
+            subtitle: "எங்கள் குழு",
+            title: "சேவை நோக்குடன் உள்ள குழு",
+            description: "நமது குழு மத மற்றும் சமூக உதவியில் உதவுகிறது.",
+            members: [
+              { avatar: "ॐ", name: "தேசிய ஒருங்கிணைப்பாளர்", role: "முழு இந்தியா ஆதரவு" },
+              { avatar: "🛕", name: "கோயில் உதவி தலைவர்", role: "கோயில் ஆதரவு" },
+              { avatar: "🤝", name: "தன்னார்வ மேலாளர்", role: "சமூக சேவை நெட்வொர்க்" }
+            ]
+          },
+          contactSection: {
+            subtitle: "தொடர்பு கொள்ளுங்கள்",
+            title: "தொடர்பு",
+            description: "உங்கள் கோரிக்கை, ஆலோசனை அல்லது தன்னார்வ விவரங்களை எங்களுக்கு அனுப்புங்கள்.",
+            detailsHeading: "தொடர்பு விவரங்கள்",
+            formHeading: "கோரிக்கை சமர்ப்பிக்கவும்",
+            submitButtonText: "கோரிக்கை சமர்ப்பிக்கவும்",
+            details: [
+              { label: "ஹெல்ப்லைன் எண்", valueKey: "phone" },
+              { label: "மின் அஞ்சல் முகவரி", valueKey: "email" },
+              { label: "இடம்", valueKey: "location" },
+              { label: "ஆதரவு நேரம்", valueKey: "supportTime" }
+            ],
+            formFields: [
+              { type: "text", id: "name", label: "உங்கள் பெயர்", placeholder: "உங்கள் பெயரை உள்ளிடவும்", required: true, group: "row" },
+              { type: "tel", id: "phone", label: "மொபைல் எண்", placeholder: "மொபைல் எண் உள்ளிடவும்", required: true, group: "row" },
+              {
+                type: "select",
+                id: "service",
+                label: "சேவை தேர்வு செய்க",
+                required: true,
+                options: ["கோயில் உதவி", "பசு சேவை", "மத வழிகாட்டி", "தன்னார்வலராக சேரவும்", "சமூக உதவி", "மற்ற உதவி"]
+              },
+              { type: "textarea", id: "message", label: "செய்தி", placeholder: "உங்கள் செய்தியை எழுதவும்...", required: true }
+            ]
+          },
+          formValidation: {
+            required: "தயவுசெய்து அனைத்து புலங்களையும் நிரப்பவும்",
+            invalidPhone: "தயவுசெய்து செல்லுபடியாகும் 10 இலக்க இந்திய மொபைல் எண்னை உள்ளிடவும்",
+            success: "✅ உங்கள் கோரிக்கை வெற்றிகரமாகப் பதியப்பட்டுள்ளது!"
+          },
+          footer: {
+            copyright: "© 2026 அகில் இந்தியா சனாதன் ஹெல்ப்லைன். அனைத்து உரிமைகளும் பாதுகாக்கபட்டவை."
+          },
+          newsTicker: [
+            "🎉 5 ஜூன் 2026 அன்று சனாதன் சேவை மாநாடு — இப்போது பதிவு செய்யவும் +91 99999 99999",
+            "📣 28 மே 2026 அன்று வாராந்திர பூஜை உதவி கிளினிக் — தன்னார்வ உதவிக்கு இலக்கை அழைக்கவும்.",
+            "🛕 2 ஜூன் 2026 அன்று கோயில் உதவி முகாம் — மத திட்டமிடலுக்கான வழிகாட்டி.",
+            "🤝 10 ஜூன் 2026 அன்று சமூக சேவை இயக்கம் — இன்றே எங்கள் தன்னார்வ நெட்வொர்க்கில் இணையுங்கள்."
+          ]
+        }
+      },
+
+      newsTicker: [
+        "🎉 सनातन सेवा सम्मेलन 5 जून 2026 को — अभी पंजीकरण करें +91 99999 99999",
+        "📣 साप्ताहिक पूजा सहायता क्लिनिक 28 मई 2026 को — स्वयंसेवक समर्थन के लिए कॉल करें।",
+        "🛕 मंदिर सहायता शिविर 2 जून 2026 को — अनुष्ठान योजना के लिए मार्गदर्शन।",
+        "🤝 सामाजिक सेवा ड्राइव 10 जून 2026 को — आज ही हमारे स्वयंसेवक नेटवर्क में शामिल हों।"
+      ],
+
+      menu: [
+        { label: "होम", href: "#home" },
+        { label: "हमारे बारे में", href: "#about" },
+        { label: "सेवाएं", href: "#services" },
+        { label: "हेल्पलाइन", href: "#helpline" },
+        { label: "टीम", href: "#team" },
+        { label: "संपर्क", href: "#contact" }
+      ],
+
+      hero: {
+        badge: "🕉️ सेवा | संस्कार | संस्कृति",
+        titleLine1: "अखिल भारतीय",
+        titleLine2: "सनातन हेल्पलाइन",
+        description: "सनातन धर्म, मंदिर सहायता, गौ सेवा और सामाजिक सेवा के लिए एक भरोसेमंद डिजिटल हेल्पलाइन प्लेटफ़ॉर्म।",
+        buttons: [
+          { text: "📞 कॉल हेल्पलाइन", href: "tel:+919999999999", className: "btn-primary" },
+          { text: "वॉलंटियर बनें", href: "#contact", className: "btn-outline" }
+        ],
+        card: {
+          image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80",
+          title: "मदद चाहिए?",
+          description: "मंदिर, धर्म मार्गदर्शन, गौ सेवा या सामाजिक सहायता के लिए हमसे संपर्क करें।"
+        }
+      },
+
+      about: {
+        subtitle: "हमारे बारे में",
+        title: "हमारा उद्देश्य",
+        description: "हमारा लक्ष्य सनातन संस्कृति, सेवा और समाज कल्याण को सरल डिजिटल प्लेटफ़ॉर्म के माध्यम से लोगों तक पहुँचाना है।",
+        cards: [
+          {
+            icon: "ॐ",
+            title: "Sanatan Awareness",
+            description: "सनातन धर्म, संस्कार और संस्कृति से जुड़ी सामान्य जानकारी और जागरूकता।"
+          },
+          {
+            icon: "🛕",
+            title: "Mandir Support",
+            description: "मंदिर सहायता, पूजा जानकारी, धार्मिक कार्यक्रम और सेवा कार्यों का सहयोग।"
+          },
+          {
+            icon: "🤝",
+            title: "Social Seva",
+            description: "जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer network और coordination।"
+          }
+        ]
+      },
+
+      services: {
+        subtitle: "हमारी सेवाएं",
+        title: "हम क्या प्रदान करते हैं",
+        description: "नीचे दी गई सेवाओं के लिए आप हमारी हेल्पलाइन टीम से संपर्क कर सकते हैं।",
+        items: [
+          { icon: "🛕", title: "Mandir Sahayata", description: "मंदिर संबंधी सहायता, जानकारी और सेवा कार्यों के लिए मार्गदर्शन।" },
+          { icon: "🐄", title: "Gau Seva", description: "गौ सेवा, गौशाला सहायता और जरूरतमंद पशुओं के लिए सहयोग।" },
+          { icon: "📿", title: "Dharma Guidance", description: "पूजा, व्रत, संस्कार और सनातन धर्म से जुड़ी सामान्य जानकारी।" },
+          { icon: "🤝", title: "Social Help", description: "जरूरतमंद लोगों तक सहायता पहुँचाने के लिए volunteer support।" },
+          { icon: "📢", title: "Event Support", description: "धार्मिक कार्यक्रम, भंडारा, कथा और सामाजिक आयोजन की जानकारी।" },
+          { icon: "👥", title: "Volunteer Join", description: "देशभर से volunteers को जोड़कर सेवा कार्यों को आगे बढ़ाना।" }
+        ]
+      },
+
+      helpline: {
+        title: "24x7 सनातन हेल्पलाइन",
+        description: "किसी भी सहायता, सुझाव, स्वयंसेवक आवेदन या धार्मिक जानकारी के लिए हमारी हेल्पलाइन पर संपर्क करें।",
+        buttons: [
+          { text: "अभी कॉल करें", href: "tel:+919999999999", className: "btn-primary" },
+          { text: "व्हाट्सएप", href: "https://wa.me/919999999999", className: "btn-outline white-outline" }
+        ]
+      },
+
+      team: {
+        subtitle: "हमारी टीम",
+        title: "सेवा भाव से जुड़ी टीम",
+        description: "हमारी टीम समाज सेवा, धार्मिक सहायता और स्वयंसेवक समन्वय में सहयोग करती है।",
+        members: [
+          { avatar: "ॐ", name: "राष्ट्रीय समन्वयक", role: "सम्पूर्ण भारत सहायता" },
+          { avatar: "🛕", name: "मंदिर सहायता प्रमुख", role: "मंदिर समर्थन" },
+          { avatar: "🤝", name: "स्वयंसेवक प्रबंधक", role: "सामाजिक सेवा नेटवर्क" }
+        ]
+      },
+
+      contactSection: {
+        subtitle: "हमसे संपर्क करें",
+        title: "संपर्क करें",
+        description: "अपनी समस्या, सुझाव, सेवा अनुरोध या स्वयंसेवक शामिल होने के विवरण हमें भेजें।",
+        detailsHeading: "संपर्क विवरण",
+        formHeading: "अनुरोध भेजें",
+        submitButtonText: "अनुरोध भेजें",
+        details: [
+          { label: "हेल्पलाइन नंबर", valueKey: "phone" },
+          { label: "ईमेल पता", valueKey: "email" },
+          { label: "स्थान", valueKey: "location" },
+          { label: "समर्थन समय", valueKey: "supportTime" }
+        ],
+        formFields: [
+          { type: "text", id: "name", label: "आपका नाम", placeholder: "अपना नाम लिखें", required: true, group: "row" },
+          { type: "tel", id: "phone", label: "मोबाइल नंबर", placeholder: "मोबाइल नंबर लिखें", required: true, group: "row" },
+          {
+            type: "select",
+            id: "service",
+            label: "सेवा का प्रकार",
+            required: true,
+            options: ["मंदिर सहायता", "गौ सेवा", "धर्म मार्गदर्शन", "स्वयंसेवक शामिल हों", "सामाजिक सहायता", "अन्य सहायता"]
+          },
+          { type: "textarea", id: "message", label: "संदेश", placeholder: "अपना संदेश लिखें...", required: true }
+        ]
+      },
+
+      formValidation: {
+        required: "कृपया सभी फ़ील्ड भरें",
+        invalidPhone: "कृपया वैध 10 अंकों का भारतीय मोबाइल नंबर दर्ज करें",
+        success: "✅ आपका अनुरोध सफलतापूर्वक भेज दिया गया!"
+      },
+      footer: {
+        copyright: "© 2026 अखिल भारतीय सनातन हेल्पलाइन. सर्व अधिकार सुरक्षित।"
       }
-    });
+    };
+
+    function updateDynamicLinks() {
+      const phoneHref = "tel:+" + websiteData.contact.phoneRaw;
+      const whatsappHref = "https://wa.me/" + websiteData.contact.phoneRaw;
+
+      websiteData.hero.buttons[0].href = phoneHref;
+      websiteData.helpline.buttons[0].href = phoneHref;
+      websiteData.helpline.buttons[1].href = whatsappHref;
+    }
+
+    function sectionHead(data) {
+      return `
+        <span>${data.subtitle}</span>
+        <h2>${data.title}</h2>
+        <p>${data.description}</p>
+      `;
+    }
+
+    function getL10n() {
+      const translation = websiteData.translations[websiteData.selectedLanguage];
+      if (!translation) {
+        return websiteData;
+      }
+
+      return {
+        ...websiteData,
+        ...translation,
+        brand: { ...websiteData.brand, ...translation.brand },
+        menu: translation.menu || websiteData.menu,
+        hero: { ...websiteData.hero, ...translation.hero },
+        about: { ...websiteData.about, ...translation.about },
+        services: { ...websiteData.services, ...translation.services },
+        helpline: { ...websiteData.helpline, ...translation.helpline },
+        team: { ...websiteData.team, ...translation.team },
+        contactSection: { ...websiteData.contactSection, ...translation.contactSection },
+        footer: { ...translation.footer },
+        localeLabels: { ...websiteData.localeLabels, ...translation.localeLabels },
+        formValidation: { ...websiteData.formValidation, ...translation.formValidation }
+      };
+    }
+
+    function renderBrand() {
+      const current = getL10n();
+      document.title = current.brand.title;
+      document.getElementById("logoMark").textContent = current.brand.logoMark;
+      document.getElementById("logoShort").textContent = current.brand.shortName;
+      document.getElementById("logoFull").textContent = current.brand.fullName;
+    }
+
+    function renderMenu() {
+      const current = getL10n();
+      const menu = document.getElementById("menu");
+      menu.innerHTML = current.menu.map((item, index) => `
+        <li>
+          <a href="${item.href}" class="nav-link ${index === 0 ? "active" : ""}">${item.label}</a>
+        </li>
+      `).join("") + `
+        <li><a href="tel:+${websiteData.contact.phoneRaw}" class="nav-btn">${current.helpline.buttons[0].text}</a></li>
+      `;
+    }
+
+    function renderEventTicker() {
+      const current = getL10n();
+      const tickerItems = current.newsTicker || websiteData.newsTicker || [];
+      const tickerText = tickerItems.map(text => text.trim()).join("  •  ");
+      const container = document.getElementById("eventMarquee");
+
+      if (!container || !tickerText) {
+        return;
+      }
+
+      container.innerHTML = `
+        <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
+          ${tickerText}
+        </marquee>
+      `;
+    }
+
+    function renderLocaleControls() {
+      const current = getL10n();
+      const languageSelect = document.getElementById("languageSelect");
+      const stateSelect = document.getElementById("stateSelect");
+      const labels = current.localeLabels || websiteData.localeLabels;
+
+      const languageOptions = websiteData.languages.map(lang => `
+        <option value="${lang.code}" ${lang.code === websiteData.selectedLanguage ? "selected" : ""}>${lang.label}</option>
+      `).join("");
+
+      const stateOptions = [
+        `<option value="">${labels.selectState}</option>`,
+        ...websiteData.states.map(state => `
+          <option value="${state}" ${state === websiteData.selectedState ? "selected" : ""}>${state}</option>
+        `)
+      ].join("");
+
+      if (languageSelect) {
+        languageSelect.innerHTML = languageOptions;
+      }
+
+      if (stateSelect) {
+        stateSelect.innerHTML = stateOptions;
+      }
+
+      const languageLabel = document.getElementById("languageSelectLabel");
+      const stateLabel = document.getElementById("stateSelectLabel");
+
+      if (languageLabel) {
+        languageLabel.textContent = labels.language;
+      }
+      if (stateLabel) {
+        stateLabel.textContent = labels.state;
+      }
+    }
+
+    function renderLocalizedContent() {
+      updateDynamicLinks();
+      renderBrand();
+      renderMenu();
+      renderEventTicker();
+      renderHero();
+      renderAbout();
+      renderServices();
+      renderHelpline();
+      renderTeam();
+      renderContact();
+      renderFooter();
+      renderLocaleControls();
+      renderFloatingActions();
+    }
+
+    function setLanguage(lang) {
+      websiteData.selectedLanguage = lang;
+      renderLocalizedContent();
+    }
+
+    function setState(state) {
+      websiteData.selectedState = state || "Bharat";
+      websiteData.contact.location = state ? `${state}, India` : "Bharat, India";
+      renderContact();
+    }
+
+    function renderHero() {
+      const current = getL10n();
+      const hero = current.hero;
+
+      document.getElementById("heroContent").innerHTML = `
+        <span class="small-title">${hero.badge}</span>
+        <h1>${hero.titleLine1} <br /><span>${hero.titleLine2}</span></h1>
+        <p>${hero.description}</p>
+        <div class="btn-row">
+          ${hero.buttons.map(btn => `<a href="${btn.href}" class="btn ${btn.className}">${btn.text}</a>`).join("")}
+        </div>
+      `;
+
+      document.getElementById("heroCard").innerHTML = `
+        <div class="hero-card-img" style="background:
+          linear-gradient(rgba(120, 53, 15, 0.25), rgba(120, 53, 15, 0.25)),
+          url('${hero.card.image}'); background-size: cover; background-position: center;"></div>
+        <h3>${hero.card.title}</h3>
+        <p>${hero.card.description}</p>
+        <div class="helpline-number">${websiteData.contact.phone}</div>
+      `;
+    }
+
+    function renderAbout() {
+      const current = getL10n();
+      document.getElementById("aboutHead").innerHTML = sectionHead(current.about);
+      document.getElementById("aboutGrid").innerHTML = current.about.cards.map(card => `
+        <div class="classic-card reveal">
+          <div class="icon">${card.icon}</div>
+          <h3>${card.title}</h3>
+          <p>${card.description}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderServices() {
+      const current = getL10n();
+      document.getElementById("servicesHead").innerHTML = sectionHead(current.services);
+      document.getElementById("servicesGrid").innerHTML = current.services.items.map(item => `
+        <div class="service-card reveal">
+          <div class="service-icon">${item.icon}</div>
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderHelpline() {
+      const current = getL10n();
+      const h = current.helpline;
+      document.getElementById("helplineBanner").innerHTML = `
+        <h2>${h.title}</h2>
+        <p>${h.description}</p>
+        <div class="helpline-number">📞 ${websiteData.contact.phone}</div>
+        <div class="btn-row" style="justify-content:center; margin-bottom:0;">
+          ${h.buttons.map(btn => `<a href="${btn.href}" target="${btn.href.includes('wa.me') ? '_blank' : '_self'}" class="btn ${btn.className}">${btn.text}</a>`).join("")}
+        </div>
+      `;
+    }
+
+    function renderTeam() {
+      const current = getL10n();
+      document.getElementById("teamHead").innerHTML = sectionHead(current.team);
+      document.getElementById("teamGrid").innerHTML = current.team.members.map(member => `
+        <div class="team-card reveal">
+          <div class="team-avatar">${member.avatar}</div>
+          <h3>${member.name}</h3>
+          <p>${member.role}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderContact() {
+      const current = getL10n();
+      document.getElementById("contactHead").innerHTML = sectionHead(current.contactSection);
+
+      document.getElementById("contactDetailsTitle").textContent = current.contactSection.detailsHeading;
+      document.getElementById("contactFormTitle").textContent = current.contactSection.formHeading;
+      document.getElementById("submitButton").textContent = current.contactSection.submitButtonText;
+
+      document.getElementById("contactDetails").innerHTML = current.contactSection.details.map(item => `
+        <div class="contact-item">
+          <strong>${item.label}</strong>
+          <span>${websiteData.contact[item.valueKey]}</span>
+        </div>
+      `).join("");
+
+      const rowFields = current.contactSection.formFields.filter(field => field.group === "row");
+      const normalFields = current.contactSection.formFields.filter(field => field.group !== "row");
+
+      let formHtml = `
+        <div class="form-row">
+          ${rowFields.map(renderField).join("")}
+        </div>
+        ${normalFields.map(renderField).join("")}
+      `;
+
+      document.getElementById("dynamicFormFields").innerHTML = formHtml;
+    }
+
+    function renderField(field) {
+      const required = field.required ? "required" : "";
+
+      if (field.type === "textarea") {
+        return `
+          <div class="form-group">
+            <label>${field.label}</label>
+            <textarea id="${field.id}" placeholder="${field.placeholder}" ${required}></textarea>
+          </div>
+        `;
+      }
+
+      if (field.type === "select") {
+        return `
+          <div class="form-group">
+            <label>${field.label}</label>
+            <select id="${field.id}" ${required}>
+              <option value="">${field.label}</option>
+              ${field.options.map(opt => `<option>${opt}</option>`).join("")}
+            </select>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="form-group">
+          <label>${field.label}</label>
+          <input type="${field.type}" id="${field.id}" placeholder="${field.placeholder}" ${required} />
+        </div>
+      `;
+    }
+
+    function renderFooter() {
+      const current = getL10n();
+      document.getElementById("footer").innerHTML = `
+        <h3>${current.brand.logoMark} ${current.brand.fullName}</h3>
+        <p>${current.brand.tagline}</p>
+        <div class="footer-links">
+          ${current.menu.filter(item => item.href !== "#team").map(item => `<a href="${item.href}">${item.label}</a>`).join("")}
+        </div>
+        <p>${current.footer?.copyright || `© 2026 ${current.brand.fullName}. All Rights Reserved.`}</p>
+      `;
+    }
+
+    function renderFloatingActions() {
+      document.getElementById("floatingActions").innerHTML = `
+        <a href="https://wa.me/${websiteData.contact.phoneRaw}" target="_blank" class="float-btn whatsapp">☘</a>
+        <a href="tel:+${websiteData.contact.phoneRaw}" class="float-btn call">☎</a>
+      `;
+    }
+
+    function renderSite() {
+      updateDynamicLinks();
+      websiteData.contact.location = websiteData.selectedState ? `${websiteData.selectedState}, India` : "Bharat, India";
+      renderLocalizedContent();
+      initEvents();
+    }
+
+    function initEvents() {
+      const menu = document.getElementById("menu");
+      const menuBtn = document.getElementById("menuBtn");
+      const languageSelect = document.getElementById("languageSelect");
+      const stateSelect = document.getElementById("stateSelect");
+
+      menuBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        menu.classList.toggle("active");
+        menuBtn.textContent = menu.classList.contains("active") ? "×" : "☰";
+      });
+
+      const menuList = document.getElementById("menu");
+      if (menuList) {
+        menuList.addEventListener("click", function(e) {
+          if (e.target.classList.contains("nav-link")) {
+            closeMenu();
+          }
+        });
+      }
+
+      if (languageSelect) {
+        languageSelect.addEventListener("change", function(e) {
+          setLanguage(e.target.value);
+        });
+      }
+
+      if (stateSelect) {
+        stateSelect.addEventListener("change", function(e) {
+          setState(e.target.value);
+        });
+      }
+
+      document.addEventListener("click", function(e) {
+        const header = document.querySelector("header");
+        if (!header.contains(e.target)) closeMenu();
+      });
+
+      document.getElementById("contactForm").addEventListener("submit", handleFormSubmit);
+
+      window.addEventListener("scroll", function() {
+        revealOnScroll();
+        activeMenuOnScroll();
+      });
+
+      revealOnScroll();
+      activeMenuOnScroll();
+    }
 
     function closeMenu() {
-      menu.classList.remove("active");
-      menuBtn.textContent = "☰";
+      document.getElementById("menu").classList.remove("active");
+      document.getElementById("menuBtn").textContent = "☰";
     }
 
     function revealOnScroll() {
-      revealElements.forEach(function(element) {
+      document.querySelectorAll(".reveal").forEach(function(element) {
         const windowHeight = window.innerHeight;
         const elementTop = element.getBoundingClientRect().top;
         const revealPoint = 110;
@@ -1372,6 +2258,8 @@
 
     function activeMenuOnScroll() {
       let current = "";
+      const sections = document.querySelectorAll("section");
+      const navLinks = document.querySelectorAll(".nav-link");
 
       sections.forEach(function(section) {
         const sectionTop = section.offsetTop - 130;
@@ -1384,52 +2272,57 @@
 
       navLinks.forEach(function(link) {
         link.classList.remove("active");
-
         if (link.getAttribute("href") === "#" + current) {
           link.classList.add("active");
         }
       });
     }
 
-    window.addEventListener("scroll", function() {
-      revealOnScroll();
-      activeMenuOnScroll();
-    });
-
-    revealOnScroll();
-    activeMenuOnScroll();
-
-    document.getElementById("contactForm").addEventListener("submit", function(e) {
+    function handleFormSubmit(e) {
       e.preventDefault();
+      const current = getL10n();
 
       const name = document.getElementById("name").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const service = document.getElementById("service").value;
       const message = document.getElementById("message").value.trim();
 
-      if (name === "" || phone === "" || service === "" || message === "") {
-        alert("Please fill all fields");
+      if (!name || !phone || !service || !message) {
+        alert(current.formValidation.required);
         return;
       }
 
       if (!/^[6-9]\d{9}$/.test(phone)) {
-        alert("Please enter valid 10 digit Indian mobile number");
+        alert(current.formValidation.invalidPhone);
         return;
       }
 
+      const requestData = {
+        name,
+        phone,
+        service,
+        message,
+        submittedAt: new Date().toISOString()
+      };
+
+      console.log("Form Data:", requestData);
+
       showToast();
-      this.reset();
-    });
+      e.target.reset();
+    }
 
     function showToast() {
+      const current = getL10n();
       const toast = document.getElementById("toast");
+      toast.textContent = current.formValidation.success;
       toast.classList.add("show");
 
       setTimeout(function() {
         toast.classList.remove("show");
       }, 3000);
     }
-  </script>
 
+    renderSite();
+  </script>
 </body>
 </html>
