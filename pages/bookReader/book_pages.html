@@ -41,7 +41,7 @@
 
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 
     <!-- Quill Rich Text Editor CSS -->
@@ -508,11 +508,228 @@
                 box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
             }
         }
+
+
+        /* ============================================= */
+        /* MODERN UI ENHANCEMENTS - Firebase untouched   */
+        /* ============================================= */
+        :root {
+            --brand-1: #4f46e5;
+            --brand-2: #7c3aed;
+            --brand-3: #06b6d4;
+            --surface-glass: rgba(255, 255, 255, 0.78);
+            --soft-ring: rgba(79, 70, 229, 0.18);
+        }
+
+        html.dark { --surface-glass: rgba(17, 24, 39, 0.72); --soft-ring: rgba(129, 140, 248, 0.18); }
+        html.sepia { --surface-glass: rgba(253, 252, 248, 0.76); --soft-ring: rgba(120, 84, 45, 0.14); }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 12% 8%, rgba(79, 70, 229, 0.16), transparent 32%),
+                radial-gradient(circle at 86% 14%, rgba(6, 182, 212, 0.12), transparent 28%),
+                radial-gradient(circle at 72% 88%, rgba(124, 58, 237, 0.12), transparent 30%);
+        }
+
+        html.dark body::before {
+            background:
+                radial-gradient(circle at 10% 8%, rgba(99, 102, 241, 0.22), transparent 34%),
+                radial-gradient(circle at 88% 18%, rgba(6, 182, 212, 0.12), transparent 28%),
+                radial-gradient(circle at 70% 90%, rgba(124, 58, 237, 0.16), transparent 32%);
+        }
+
+        .glass-panel {
+            background: var(--surface-glass);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+
+        html.dark .glass-panel { border-color: rgba(255, 255, 255, 0.08); }
+        html.sepia .glass-panel { border-color: rgba(120, 84, 45, 0.12); }
+
+        .hero-shell {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2rem;
+            background:
+                linear-gradient(135deg, rgba(79, 70, 229, .96), rgba(124, 58, 237, .92) 52%, rgba(6, 182, 212, .82)),
+                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.18)' stroke-width='1'%3E%3Cpath d='M0 30h120M0 60h120M0 90h120M30 0v120M60 0v120M90 0v120'/%3E%3C/g%3E%3C/svg%3E");
+            box-shadow: 0 28px 80px -35px rgba(79, 70, 229, .75);
+        }
+
+        .hero-shell::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            right: -90px;
+            top: -90px;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            filter: blur(1px);
+        }
+
+        .nav-pill {
+            box-shadow: 0 18px 55px -35px rgba(15, 23, 42, .55);
+        }
+
+        .modern-book-card {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .modern-book-card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 1.35rem;
+            background: linear-gradient(135deg, rgba(79,70,229,.24), rgba(6,182,212,.12), transparent 45%);
+            opacity: 0;
+            transition: opacity .3s ease;
+            z-index: -1;
+        }
+
+        .modern-book-card:hover::before { opacity: 1; }
+
+        .book-cover-shadow {
+            box-shadow: 14px 14px 32px -18px rgba(15, 23, 42, .72);
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+            box-shadow: 0 14px 28px -16px rgba(79, 70, 229, .75);
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 20px 36px -18px rgba(79, 70, 229, .95);
+        }
+
+        .soft-input:focus {
+            box-shadow: 0 0 0 5px var(--soft-ring);
+        }
+
+        #paperWrapper {
+            box-shadow: 0 26px 80px -45px rgba(15, 23, 42, .65), 0 8px 28px -22px rgba(15, 23, 42, .5);
+        }
+
+        html.dark #paperWrapper { box-shadow: 0 26px 90px -48px rgba(0, 0, 0, .95); }
+
+        .reader-ui-overlay {
+            max-width: calc(100vw - 24px);
+            overflow-x: auto;
+        }
+
+        .reader-progress-panel {
+            position: relative;
+            z-index: 3;
+            padding: 0.9rem 0.95rem 0.75rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+        }
+
+        html.dark .reader-progress-panel {
+            background: rgba(15, 23, 42, 0.72);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        html.sepia .reader-progress-panel {
+            background: rgba(248, 240, 224, 0.9);
+            border-color: rgba(156, 134, 95, 0.18);
+        }
+
+        .reader-simple-toolbar button {
+            min-width: 5rem;
+        }
+
+        #pageSeek {
+            outline: none;
+            transition: box-shadow 0.2s ease;
+        }
+
+        #pageSeek:hover,
+        #pageSeek:focus {
+            box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.12);
+        }
+
+        .reader-progress-panel .text-right {
+            margin-top: -0.25rem;
+        }
+
+        .reader-progress-panel input[type="range"]::-webkit-slider-runnable-track {
+            height: 0.5rem;
+            border-radius: 999px;
+        }
+
+        .reader-progress-panel input[type="range"]::-webkit-slider-thumb {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 999px;
+            background: #4f46e5;
+            border: 3px solid white;
+            margin-top: -0.23rem;
+            cursor: pointer;
+        }
+
+        .reader-progress-panel input[type="range"]::-moz-range-track {
+            height: 0.5rem;
+            border-radius: 999px;
+            background: transparent;
+        }
+
+        .reader-progress-panel input[type="range"]::-moz-range-thumb {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 999px;
+            background: #4f46e5;
+            border: 3px solid white;
+            cursor: pointer;
+        }
+
+        .reader-progress-panel input[type="range"]::-webkit-slider-runnable-track {
+            background: #dbeafe;
+        }
+
+        .reader-progress-panel input[type="range"]::-moz-range-track {
+            background: #dbeafe;
+        }
+
+        .ql-toolbar.ql-snow {
+            border: 0 !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .ql-container.ql-snow { border: 0 !important; }
+        html.dark .ql-toolbar.ql-snow { background: #111827; border-bottom-color: #1f2937 !important; }
+
+        @media (max-width: 640px) {
+            #view-library { padding-top: 1.25rem; }
+            .hero-shell { border-radius: 1.35rem; }
+            #booksGrid { gap: 1rem; }
+            #pageContainer { padding-left: 1.25rem; padding-right: 1.25rem; }
+            #paperWrapper .absolute.top-0 { padding-left: 1.25rem; padding-right: 1.25rem; }
+            #paperWrapper .absolute.bottom-0 { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .reader-content { line-height: 1.75; text-align: left; }
+            .book-wrapper { width: 280px; height: 410px; }
+        }
+
     </style>
 </head>
 
 <body
-    class="bg-gray-50 text-gray-900 dark:bg-black dark:text-ink-dark sepia:bg-[#e8dec5] sepia:text-ink-sepia antialiased min-h-screen flex flex-col transition-colors duration-500">
+    class="bg-slate-50 text-gray-900 dark:bg-[#030712] dark:text-ink-dark sepia:bg-[#e8dec5] sepia:text-ink-sepia antialiased min-h-screen flex flex-col transition-colors duration-500">
 
     <!-- Global Toast Notification -->
     <div id="toast"
@@ -523,15 +740,14 @@
 
     <!-- Top Navigation -->
     <header id="mainNav"
-        class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 sepia:bg-[#f4ecd8]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] shadow-sm transition-colors">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+        class="sticky top-0 z-40 bg-white/70 dark:bg-[#030712]/75 sepia:bg-[#f4ecd8]/75 backdrop-blur-2xl border-b border-white/60 dark:border-white/10 sepia:border-[#e0d5ba]/80 shadow-sm transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center nav-pill">
             <button onclick="app.navigate('library')" class="flex items-center gap-2 hover:opacity-80 transition group">
                 <div
-                    class="bg-indigo-600 dark:bg-indigo-500 p-1.5 rounded-lg group-hover:rotate-12 transition-transform">
+                    class="bg-gradient-to-br from-indigo-600 via-violet-600 to-cyan-500 p-2 rounded-2xl group-hover:rotate-6 group-hover:scale-105 transition-transform shadow-lg shadow-indigo-500/25">
                     <i class="ph ph-books text-xl text-white"></i>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white sepia:text-ink-sepia">Lumina
-                </h1>
+                <div class="leading-tight"><h1 class="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white sepia:text-ink-sepia">Lumina</h1><p class="hidden sm:block text-[11px] text-gray-500 dark:text-gray-400 -mt-0.5">Reader Studio</p></div>
             </button>
 
             <div id="navSearch" class="hidden md:block flex-1 max-w-md mx-6">
@@ -539,13 +755,13 @@
                     <i
                         class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="searchInput" placeholder="Search your library..."
-                        class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] bg-gray-100 dark:bg-gray-900 sepia:bg-[#e8dec5] dark:text-white sepia:text-ink-sepia focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                        class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200/80 dark:border-white/10 sepia:border-[#e0d5ba] bg-white/80 dark:bg-white/5 sepia:bg-[#e8dec5]/70 dark:text-white sepia:text-ink-sepia focus:outline-none focus:ring-4 focus:ring-indigo-500/15 focus:border-indigo-400 transition-all text-sm soft-input">
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
                 <button onclick="app.navigate('admin')"
-                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-600 dark:text-gray-300 sepia:text-ink-sepia"
+                    class="px-3 py-2 rounded-2xl bg-gray-900 text-white dark:bg-white dark:text-gray-950 sepia:bg-[#433422] sepia:text-white hover:scale-[1.02] transition shadow-lg shadow-gray-900/10 flex items-center gap-2"
                     title="Publisher Dashboard">
                     <i class="ph ph-pencil-simple text-xl"></i>
                 </button>
@@ -563,13 +779,40 @@
     <main class="flex-grow relative">
 
         <!-- 1. LIBRARY VIEW -->
-        <section id="view-library" class="view-section active max-w-6xl mx-auto px-4 py-10">
-            <div class="flex justify-between items-end mb-10">
+        <section id="view-library" class="view-section active max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+            <div class="hero-shell text-white p-6 sm:p-8 md:p-10 mb-8 sm:mb-10">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold tracking-wide mb-4">
+                        <i class="ph ph-sparkle"></i> Firebase powered reading library
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-3 font-sans">Read beautifully, publish faster.</h2>
+                    <p class="text-white/80 max-w-2xl text-sm sm:text-base leading-7">A modern digital bookshelf with chapter publishing, reading progress, theme controls, PDF export, and immersive page flip reading.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <button onclick="app.navigate('admin')" class="premium-btn px-5 py-3 rounded-2xl font-semibold text-white transition flex items-center justify-center gap-2">
+                            <i class="ph ph-plus-circle text-xl"></i> Publish New Book
+                        </button>
+                        <button onclick="document.getElementById('searchInput').focus()" class="px-5 py-3 rounded-2xl font-semibold bg-white/15 hover:bg-white/25 transition backdrop-blur-md flex items-center justify-center gap-2">
+                            <i class="ph ph-magnifying-glass text-xl"></i> Search Library
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:hidden mb-6">
+                <div class="relative">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="mobileSearchInput" placeholder="Search books..."
+                        class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 sepia:border-[#e0d5ba] bg-white/90 dark:bg-white/5 sepia:bg-[#fdfcf8] dark:text-white sepia:text-ink-sepia focus:outline-none focus:ring-4 focus:ring-indigo-500/15 soft-input text-sm">
+                </div>
+            </div>
+
+            <div class="flex items-end justify-between mb-6">
                 <div>
-                    <h2 class="text-3xl font-bold mb-2 font-serif text-gray-900 dark:text-white sepia:text-ink-sepia">
-                        Discover</h2>
-                    <p class="text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] font-sans">Your digital bookshelf.
-                    </p>
+                    <h3 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white sepia:text-ink-sepia">Your Library</h3>
+                    <p class="text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] text-sm mt-1">Continue reading or open a new chapter.</p>
+                </div>
+                <div id="libraryCount" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/5 sepia:bg-[#fdfcf8] border border-gray-200 dark:border-white/10 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                    <i class="ph ph-books"></i><span>0 books</span>
                 </div>
             </div>
 
@@ -580,7 +823,7 @@
             </div>
 
             <div id="booksGrid"
-                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-8 hidden">
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-7 hidden">
                 <!-- Book Cards injected here -->
             </div>
 
@@ -641,57 +884,40 @@
 
             <!-- Floating Dock Toolbar (Bottom Center) -->
             <div
-                class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 reader-ui-overlay flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 sepia:bg-[#fdfcf8]/90 backdrop-blur-md px-4 py-2 rounded-full shadow-floating border border-gray-200 dark:border-gray-700 sepia:border-[#e0d5ba]">
-
+                class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 reader-ui-overlay reader-simple-toolbar flex items-center gap-2 bg-white/85 dark:bg-gray-900/85 sepia:bg-[#fdfcf8]/85 backdrop-blur-xl px-3 py-2 rounded-full shadow-floating border border-gray-200 dark:border-gray-700 sepia:border-[#e0d5ba] text-sm">
                 <button onclick="app.navigate('library')"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    class="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-200 sepia:text-ink-sepia"
                     title="Library">
-                    <i class="ph ph-books text-xl"></i>
+                    <i class="ph ph-books text-lg"></i>
+                    <span class="hidden sm:inline">Library</span>
                 </button>
-
-                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
 
                 <button onclick="app.reader.toggleTOC()"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    class="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-200 sepia:text-ink-sepia"
                     title="Table of Contents">
-                    <i class="ph ph-list-dashes text-xl"></i>
+                    <i class="ph ph-list-dashes text-lg"></i>
+                    <span class="hidden sm:inline">Contents</span>
                 </button>
-
-                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
-
-                <button onclick="app.reader.adjustFont(-1)"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
-                    title="Decrease Font">
-                    <i class="ph ph-text-a-under text-sm"></i>
-                </button>
-                <button onclick="app.reader.adjustFont(1)"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
-                    title="Increase Font">
-                    <i class="ph ph-text-a-under text-lg"></i>
-                </button>
-                <button onclick="app.reader.toggleFontFamily()"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia font-serif font-bold text-sm px-3"
-                    title="Toggle Font Style">
-                    Aa
-                </button>
-
-                <div class="w-px h-6 bg-gray-300 dark:bg-gray-700 sepia:bg-[#dcd0b3] mx-1"></div>
 
                 <button onclick="app.reader.cycleTheme()"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia flex items-center gap-1"
-                    title="Cycle Theme">
-                    <i id="themeIcon" class="ph ph-sun text-xl"></i>
+                    class="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-200 sepia:text-ink-sepia"
+                    title="Toggle Theme">
+                    <i id="themeIcon" class="ph ph-sun text-lg"></i>
+                    <span class="hidden sm:inline">Theme</span>
                 </button>
 
                 <button onclick="app.reader.toggleFullscreen()"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia hidden sm:block"
+                    class="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-200 sepia:text-ink-sepia hidden sm:flex"
                     title="Fullscreen">
-                    <i id="fsIcon" class="ph ph-corners-out text-xl"></i>
+                    <i id="fsIcon" class="ph ph-corners-out text-lg"></i>
+                    <span>Fullscreen</span>
                 </button>
+
                 <button onclick="app.reader.downloadPDF()"
-                    class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-300 sepia:text-ink-sepia"
+                    class="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 sepia:hover:bg-[#e8dec5] transition text-gray-700 dark:text-gray-200 sepia:text-ink-sepia"
                     title="Download PDF">
-                    <i class="ph ph-download-simple text-xl"></i>
+                    <i class="ph ph-download-simple text-lg"></i>
+                    <span class="hidden sm:inline">PDF</span>
                 </button>
             </div>
 
@@ -703,7 +929,7 @@
                 <!-- A4 Page Container Wrapper -->
                 <div id="paperWrapper"
                     class="w-full max-w-3xl bg-paper-light dark:bg-paper-dark sepia:bg-paper-sepia shadow-reader dark:shadow-none sm:rounded-xl overflow-hidden relative shrink-0 transition-colors duration-500 border border-transparent dark:border-gray-800 sepia:border-[#e0d5ba]"
-                    style="height: 100vh; sm:height: 75vh; min-height: 500px; max-height: 850px;">
+                    style="height: 85vh; min-height: 500px; max-height: 850px;">
 
                     <!-- Paper Noise Overlay -->
                     <div class="paper-texture"></div>
@@ -735,6 +961,17 @@
 
                     <!-- Content Viewport -->
                     <div id="pageContainer" class="w-full h-full pt-24 pb-20 px-10 md:px-14 overflow-hidden relative">
+                        <div id="readerControls" class="reader-progress-panel mb-6">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] font-medium">
+                                    <span id="readerStatus" class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/80 dark:bg-gray-900/70 sepia:bg-[#fdfcf8]/80 border border-gray-200 dark:border-gray-700 sepia:border-[#e0d5ba] shadow-sm">Chapter 1 • Page 1 / 1</span>
+                                    <span id="readerThemeLabel" class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-indigo-50 dark:bg-indigo-900/20 sepia:bg-[#dcd0b3]/80 text-indigo-700 dark:text-indigo-200 sepia:text-[#6b4f2f]">Light theme</span>
+                                </div>
+                                <div class="text-right text-[11px] sm:text-xs text-gray-400 dark:text-gray-500 sepia:text-[#9a8c78]">Drag to jump pages quickly</div>
+                            </div>
+                            <input id="pageSeek" type="range" min="1" max="1" value="1"
+                                class="mt-3 w-full h-2 rounded-full accent-indigo-500 bg-gray-200 dark:bg-gray-700 sepia:bg-[#dcd0b3]" onchange="app.reader.seekPage(parseInt(this.value, 10) - 1)" />
+                        </div>
                         <div id="readerContent"
                             class="reader-content text-ink-light dark:text-ink-dark sepia:text-ink-sepia">
                             <!-- Chapter HTML injected here -->
@@ -753,9 +990,9 @@
         </section>
 
         <!-- 3. ADMIN VIEW -->
-        <section id="view-admin" class="view-section max-w-4xl mx-auto px-4 py-10 font-sans">
+        <section id="view-admin" class="view-section max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 font-sans">
             <div
-                class="bg-white dark:bg-gray-900 sepia:bg-[#fdfcf8] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] p-6 md:p-10">
+                class="glass-panel rounded-[2rem] shadow-2xl shadow-indigo-500/5 p-5 sm:p-7 md:p-10">
                 <h2
                     class="text-2xl font-bold mb-8 flex items-center gap-3 text-gray-900 dark:text-white sepia:text-ink-sepia">
                     <div
@@ -842,7 +1079,7 @@
                     <div
                         class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 sepia:border-[#e0d5ba] flex justify-end">
                         <button type="submit" id="adminSubmitBtn"
-                            class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition flex items-center gap-2 shadow-md">
+                            class="premium-btn px-8 py-3 text-white font-semibold rounded-2xl transition flex items-center gap-2">
                             <i class="ph ph-paper-plane-tilt text-lg"></i> <span>Publish Content</span>
                         </button>
                     </div>
@@ -967,8 +1204,18 @@
             library: {
                 init() {
                     document.getElementById('searchInput').addEventListener('input', (e) => {
+                        const mobile = document.getElementById('mobileSearchInput');
+                        if (mobile && mobile.value !== e.target.value) mobile.value = e.target.value;
                         this.render(e.target.value.toLowerCase());
                     });
+                    const mobileSearch = document.getElementById('mobileSearchInput');
+                    if (mobileSearch) {
+                        mobileSearch.addEventListener('input', (e) => {
+                            const desktop = document.getElementById('searchInput');
+                            if (desktop && desktop.value !== e.target.value) desktop.value = e.target.value;
+                            this.render(e.target.value.toLowerCase());
+                        });
+                    }
                 },
 
                 render(filter = '') {
@@ -977,8 +1224,11 @@
                     grid.innerHTML = '';
 
                     const filteredBooks = app.state.books.filter(b =>
-                        b.title.toLowerCase().includes(filter) || b.author.toLowerCase().includes(filter)
+                        (b.title || '').toLowerCase().includes(filter) || (b.author || '').toLowerCase().includes(filter)
                     );
+
+                    const count = document.querySelector('#libraryCount span');
+                    if (count) count.textContent = `${filteredBooks.length} ${filteredBooks.length === 1 ? 'book' : 'books'}`;
 
                     if (filteredBooks.length === 0) {
                         grid.classList.add('hidden');
@@ -1006,24 +1256,30 @@
                         }
 
                         const card = document.createElement('div');
-                        card.className = "group cursor-pointer bg-white dark:bg-gray-900 sepia:bg-[#fdfcf8] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 dark:border-gray-800 sepia:border-[#e0d5ba] flex flex-col h-full relative";
+                        card.className = "modern-book-card group cursor-pointer bg-white/90 dark:bg-white/[0.055] sepia:bg-[#fdfcf8]/95 rounded-[1.35rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 transform hover:-translate-y-2 border border-white/80 dark:border-white/10 sepia:border-[#e0d5ba] flex flex-col h-full relative";
                         card.onclick = () => app.reader.open(book.id);
 
                         card.innerHTML = `
-                            <div class="relative pt-[140%] overflow-hidden bg-gray-200 dark:bg-gray-800">
-                                <img src="${cover}" alt="${book.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400'">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                                    <span class="text-white text-sm font-medium flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="ph ph-book-open"></i> Read Now</span>
+                            <div class="p-3 pb-0">
+                                <div class="relative pt-[138%] overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-2xl book-cover-shadow">
+                                    <img src="${cover}" alt="${book.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400'">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                                        <span class="text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full"><i class="ph ph-book-open"></i> Read Now</span>
+                                    </div>
+                                    <div class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white grid place-items-center opacity-0 group-hover:opacity-100 transition">
+                                        <i class="ph ph-arrow-up-right"></i>
+                                    </div>
+                                    ${progPercent > 0 ? `<div class="absolute bottom-0 left-0 w-full h-1.5 bg-white/25"><div class="h-full bg-gradient-to-r from-indigo-400 to-cyan-300" style="width: ${progPercent}%"></div></div>` : ''}
                                 </div>
-                                ${progPercent > 0 ? `<div class="absolute top-0 left-0 w-full h-1 bg-gray-200/30"><div class="h-full bg-indigo-500" style="width: ${progPercent}%"></div></div>` : ''}
                             </div>
                             <div class="p-4 flex flex-col flex-grow">
-                                <h3 class="font-bold text-base leading-tight mb-1 text-gray-900 dark:text-white sepia:text-ink-sepia line-clamp-2 font-serif">${book.title}</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] mb-3">${book.author}</p>
-                                <div class="mt-auto flex items-center justify-between text-xs font-medium text-gray-400 dark:text-gray-500">
-                                    <span>${book.chapters ? book.chapters.length : 0} Chapters</span>
-                                    <span class="${progPercent > 0 ? 'text-indigo-600 dark:text-indigo-400' : ''}">${progText}</span>
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="text-[11px] font-bold uppercase tracking-wide text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-full">${book.chapters ? book.chapters.length : 0} Chapters</span>
+                                    <span class="text-[11px] font-semibold ${progPercent > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}">${progText}</span>
                                 </div>
+                                <h3 class="font-extrabold text-base leading-tight mb-1 text-gray-900 dark:text-white sepia:text-ink-sepia line-clamp-2 font-serif">${book.title}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 sepia:text-[#7a6b58] mb-3 line-clamp-1">${book.author}</p>
+                                <button class="mt-auto w-full py-2 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-950 sepia:bg-[#433422] sepia:text-white text-sm font-semibold opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">Open Book</button>
                             </div>
                         `;
                         grid.appendChild(card);
@@ -1240,6 +1496,25 @@
                         document.getElementById('pageIndicator').textContent = `Page ${app.state.currentPageIdx + 1} / ${app.state.totalPages}`;
                         document.getElementById('percentIndicator').textContent = `${percent}%`;
 
+                        const status = document.getElementById('readerStatus');
+                        if (status) {
+                            status.textContent = `Chapter ${app.state.currentChapterIdx + 1} • Page ${app.state.currentPageIdx + 1} / ${app.state.totalPages}`;
+                        }
+
+                        const themeLabel = document.getElementById('readerThemeLabel');
+                        if (themeLabel) {
+                            const html = document.documentElement;
+                            if (html.classList.contains('dark')) themeLabel.textContent = 'Dark Theme';
+                            else if (html.classList.contains('sepia')) themeLabel.textContent = 'Sepia Theme';
+                            else themeLabel.textContent = 'Light Theme';
+                        }
+
+                        const pageSeek = document.getElementById('pageSeek');
+                        if (pageSeek) {
+                            pageSeek.max = app.state.totalPages;
+                            pageSeek.value = app.state.currentPageIdx + 1;
+                        }
+
                         localStorage.setItem(`lumina_prog_${app.state.currentBook.id}`, JSON.stringify({
                             chapter: app.state.currentChapterIdx,
                             page: app.state.currentPageIdx
@@ -1251,6 +1526,14 @@
                     } else {
                         uiUpdate();
                     }
+                },
+
+                seekPage(index) {
+                    if (app.state.isAnimating) return;
+                    index = Math.max(0, Math.min(index, app.state.totalPages - 1));
+                    app.state.currentPageIdx = index;
+                    this.updatePageRender('none');
+                    this.resetUIHideTimer();
                 },
 
                 nextPage() {
